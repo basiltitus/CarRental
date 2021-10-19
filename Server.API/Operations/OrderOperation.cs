@@ -83,7 +83,7 @@ namespace Server.API.Operations
         {
             List<OrderTable> orderList = new List<OrderTable>();
             SqlCommand command;
-            command = new SqlCommand("sp_getorderdetailbyuserid", sqlConnection);
+            command = new SqlCommand("sp_carjoinorderbyuserid", sqlConnection);
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
@@ -94,6 +94,10 @@ namespace Server.API.Operations
                 order.OrderId = Convert.ToInt32(rdr["OrderId"]);
                 order.UserId = Convert.ToInt32(rdr["UserId"]);
                 order.CarId = Convert.ToInt32(rdr["CarId"]);
+                order.Cardetail.CarName = Convert.ToString(rdr["CarName"]);
+                order.Cardetail.CarRegNo = Convert.ToString(rdr["CarRegNo"]);
+                order.Cardetail.CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]);
+                order.Cardetail.ChargePerDay= Convert.ToInt32(rdr["ChargePerDay"]);
                 order.FromDate = Convert.ToDateTime(rdr["FromDate"].ToString());
                 order.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
                 order.Total = Convert.ToInt32(rdr["Total"]);

@@ -14,7 +14,9 @@ namespace CarRentalPortal.Models
         [Display(Name = "User ID")]
         public int UserId { get; set; }
         [Display(Name = "Car ID")]
+        [ForeignKey("CarTable")]
         public int CarId { get; set; }
+        public CarTable CarDetail { get; set; }
         [DataType(DataType.Date)]
         [Display(Name = "Booking Start Date")]
         public DateTime FromDate { get; set; }
