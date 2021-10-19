@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Server.API.Operations;
 using Microsoft.Extensions.Configuration;
-using Server.API.Operations;
 using Server.API.Models;
 namespace Server.API.Controllers
 {
@@ -28,7 +27,7 @@ namespace Server.API.Controllers
             return Ok(paymentOperation.AddPayment(item));
         }
         [HttpGet("{userId}")]
-        public IActionResult getPaymentList(int userId)
+        public IActionResult GetPaymentList(int userId)
         {
             return Ok(paymentOperation.GetPaymentList(userId));
         }

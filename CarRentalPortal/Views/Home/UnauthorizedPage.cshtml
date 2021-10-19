@@ -5,7 +5,9 @@
 }
 <div class="container-fluid row">
     <img src="https://cdn2.vectorstock.com/i/thumb-large/03/31/unauthorized-access-rgb-color-icon-vector-33390331.jpg" class="unauthorizedImg col" />
-    <span class="unauthorizedText col">ACCESS DENIED </span>
+    <span class="unauthorizedText col">ACCESS DENIED <br />Please Login again to continue 
+                                                     <button type="button" class="btn btn-primary btn-lg " onclick="location.href='@Url.Action("SignIn", "home")';return false;">Sign In</button>
+    </span>
     
 
 </div>

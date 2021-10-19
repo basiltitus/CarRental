@@ -13,10 +13,15 @@ namespace Server.API.Operations
         SqlConnection sqlConnection;
         string conStr;
         private IConfiguration Configuration;
+        public CarOperation(IConfiguration _configuration)
+        {
+            Configuration = _configuration;
+            conStr = this.Configuration.GetConnectionString("CarRentDB");
+            sqlConnection = new SqlConnection(conStr);
+        }
         public bool AddCar(CarTable car)
         {
-            SqlCommand command;
-            command = new SqlCommand("sp_addcar", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_addcar", sqlConnection);
             command.Parameters.Add("@CarName", SqlDbType.NVarChar).Value = car.CarName;
             command.Parameters.Add("@CarRegNo", SqlDbType.NVarChar).Value = car.CarRegNo;
             command.Parameters.Add("@CarType", SqlDbType.Int).Value = (int)car.CarType;
@@ -30,29 +35,25 @@ namespace Server.API.Operations
             else
                 return false;
         }
-        public CarOperation (IConfiguration _configuration)
-        {
-            Configuration = _configuration;
-            conStr = this.Configuration.GetConnectionString("CarRentDB");
-            sqlConnection = new SqlConnection(conStr);
-        }
+        
         public List<CarTable> GetList()
         {
             List<CarTable> carList = new List<CarTable>();
-            SqlCommand command;
-            command = new SqlCommand("sp_getcarlist", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_getcarlist", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             SqlDataReader rdr = command.ExecuteReader();
 
             while (rdr.Read())
             {
-                CarTable car = new CarTable();
-                car.CarId = Convert.ToInt32(rdr["CarId"]);
-                car.CarName = rdr["CarName"].ToString();
-                car.CarRegNo = rdr["CarRegNo"].ToString();
-                car.CarType = (CarVarient) Convert.ToInt32(rdr["CarType"]);
-                car.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
+                CarTable car = new CarTable
+                {
+                    CarId = Convert.ToInt32(rdr["CarId"]),
+                    CarName = rdr["CarName"].ToString(),
+                    CarRegNo = rdr["CarRegNo"].ToString(),
+                    CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]),
+                    ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"])
+                };
                 carList.Add(car);
                 /* lstStudent.Add(student);*/
             }
@@ -61,8 +62,7 @@ namespace Server.API.Operations
         }
         public CarTable GetCar(int id)
         {
-            SqlCommand command;
-            command = new SqlCommand("sp_getcardetails", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_getcardetails", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.Add("@CarId", SqlDbType.Int).Value = id;
             sqlConnection.Open();
@@ -82,8 +82,7 @@ namespace Server.API.Operations
         public bool UpdateCar(CarTable car)
         {
 
-            SqlCommand command;
-            command = new SqlCommand("sp_updatecar", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_updatecar", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.Add("@CarId", SqlDbType.Int).Value = car.CarId;
             command.Parameters.Add("@CarName", SqlDbType.NVarChar).Value = car.CarName;
@@ -107,8 +106,7 @@ namespace Server.API.Operations
         }
         public bool DeleteCar(int id)
         {
-            SqlCommand command;
-            command = new SqlCommand("sp_deletecar", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_deletecar", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.Add("@CarId", SqlDbType.Int).Value = id;
             sqlConnection.Open();

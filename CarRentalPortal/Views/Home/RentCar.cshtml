@@ -8,7 +8,7 @@
     var type = ViewBag.CarVarients;
 }
 <div>
-    @Html.Partial("_NavBar")
+    <partial name="_NavBar" />
 </div>
 <div class="container">
     @if (ViewBag.PendingOrders > 0)
@@ -33,7 +33,7 @@
                         @Html.LabelFor(model => model.ToDate, new { @class = "rentLabel" })
                         <input type="Date" id="toDatePicker" name="ToDate" onchange="dateSelected()" class="form-control formInput" />
                         @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
-                        <span id="dateValidationMessage"></span>
+                        <span id="dateValidationMessage" class="text-danger"></span>
                         <span class= "rentLabel">Car Name</span><br />
                         <select id="carSelector" class="form-control formInput" onchange="carSelected()" name="CarId">
                             <option selected value="0">---Select---</option>

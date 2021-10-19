@@ -65,6 +65,11 @@ namespace CarRentalPortal
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                //If request from anyother url comes redirect to Error page
+                endpoints.MapControllerRoute(
+                    name: "viewName",
+                    pattern: "{*controller}",
+                    defaults: new { controller = "Home", action = "ErrorPage" });
             });
         }
     }

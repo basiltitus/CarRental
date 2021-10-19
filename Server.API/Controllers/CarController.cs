@@ -25,37 +25,37 @@ namespace Server.API.Controllers
         }
         [HttpPost]
         [Route("adddetails")]
-        public IActionResult post(CarTable car)
+        public IActionResult Post(CarTable car)
         {
 
             return Ok(carOperation.AddCar(car));
         }
         [HttpGet]
         [Route("getlist")]
-        public IActionResult get()
+        public IActionResult Get()
         {
             return Ok(carOperation.GetList());
         }
         [HttpGet("{id}")]
-        public IActionResult getCar(int id)
+        public IActionResult GetCar(int id)
         {
             return Ok(carOperation.GetCar(id));
         }
         [HttpGet("carvarient")]
-        public IActionResult getCarVarient()
+        public IActionResult GetCarVarient()
         {
             return Ok(carOperation.GetCarVarients());
         }
         [HttpPost]
         [Route("updatecar")]
-        public IActionResult updateCar(CarTable car)
+        public IActionResult UpdateCar(CarTable car)
         {
             return Ok(carOperation.UpdateCar(car));
 
         }
         [HttpPost]
         [Route("deletecar")]
-        public IActionResult deletecar([FromBody]  int id)
+        public IActionResult Deletecar([FromBody]  int id)
         {
             return Ok(carOperation.DeleteCar(id));
         }

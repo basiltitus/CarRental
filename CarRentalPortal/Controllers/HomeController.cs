@@ -18,7 +18,7 @@ namespace CarRentalPortal.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient client;
-        public async Task<List<CarTable>> retrieveCarList()
+        public async Task<List<CarTable>> RetrieveCarList()
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
             HttpResponseMessage response = await client.GetAsync("Car/getlist");
@@ -152,11 +152,6 @@ namespace CarRentalPortal.Controllers
                         ModelState.Clear();
                         return View();
                     }
-                    else
-                    {
-                        ViewBag.SuccessMessage = "Some Error Occured Please Try Again Later!";
-                        return View();
-                    }
                 }
                 }
             ViewBag.SuccessMessage = "";
@@ -191,7 +186,7 @@ namespace CarRentalPortal.Controllers
             if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction("UnauthorizedPage");
 
-            List<CarTable> carList =await this.retrieveCarList();
+            List<CarTable> carList =await RetrieveCarList();
                 return View(carList);
            
         }
@@ -207,10 +202,9 @@ namespace CarRentalPortal.Controllers
                 CarTable carDetails = JsonConvert.DeserializeObject<CarTable>(stringData);
                 return View(carDetails);
             }
-            else 
                 return View();
         }
-            public IActionResult ErrorPage()
+        public IActionResult ErrorPage()
         {
             return View();
         }
@@ -267,15 +261,14 @@ namespace CarRentalPortal.Controllers
                 });
             }
                 ViewBag.PendingOrders = pendingOrders;
-                List<CarTable> carList = await this.retrieveCarList();
-            ViewBag.CarListed =carList;
-            ViewBag.CarVarients = System.Enum.GetNames(typeof(CarVarient));
+                ViewBag.CarListed = (List<CarTable>)await RetrieveCarList();
+            ViewBag.CarVarients = Enum.GetNames(typeof(CarVarient));
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> RentCar(OrderTable order)
         {
-            if (ModelState.IsValid) { 
+            if (ModelState.IsValid) {
             order.UserId = (int)HttpContext.Session.GetInt32("_userId");
             int noOfDays = (int)(order.ToDate - order.FromDate).TotalDays;
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
@@ -284,8 +277,7 @@ namespace CarRentalPortal.Controllers
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     CarTable carDetails = JsonConvert.DeserializeObject<CarTable>(stringData);
-                    int totalCharge = noOfDays * carDetails.ChargePerDay;
-                    order.Total = totalCharge;
+                    order.Total = noOfDays * carDetails.ChargePerDay;
                     order.Completed = false;
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
                     HttpResponseMessage orderResponse = await client.PostAsJsonAsync("Order/addorder", order);
@@ -345,10 +337,12 @@ namespace CarRentalPortal.Controllers
         {
             if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction("UnauthorizedPage");
-            PaymentTable payment = new PaymentTable();
-            payment.OrderId = orderId;
-            payment.UserId = (int)HttpContext.Session.GetInt32("_userId");
-            payment.Total = total;
+            PaymentTable payment = new PaymentTable
+            {
+                OrderId = orderId,
+                UserId = (int)HttpContext.Session.GetInt32("_userId"),
+                Total = total
+            };
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
             HttpResponseMessage response = await client.PostAsJsonAsync("Payment/addPayment", payment);
             if (response.IsSuccessStatusCode)

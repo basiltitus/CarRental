@@ -22,8 +22,7 @@ namespace Server.API.Operations
         }
         public bool AddPayment(PaymentTable payment)
         {
-            SqlCommand command;
-            command = new SqlCommand("sp_insertpayment", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_insertpayment", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.Add("@OrderId", SqlDbType.Int).Value = payment.OrderId;
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = payment.UserId;
@@ -39,19 +38,20 @@ namespace Server.API.Operations
         public List<PaymentTable> GetPaymentList(int userId)
         {
             List<PaymentTable> paymentList = new List<PaymentTable>();
-            SqlCommand command;
-            command = new SqlCommand("sp_getpaymentList", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_getpaymentList", sqlConnection);
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             SqlDataReader rdr = command.ExecuteReader();
             while (rdr.Read())
             {
-                PaymentTable payment = new PaymentTable();
-                payment.OrderId = Convert.ToInt32(rdr["OrderId"]);
-                payment.UserId = Convert.ToInt32(rdr["UserId"]);
-                payment.PaymentId = Convert.ToInt32(rdr["PaymentId"]);
-                payment.Total = Convert.ToInt32(rdr["Total"]);
+                PaymentTable payment = new PaymentTable
+                {
+                    OrderId = Convert.ToInt32(rdr["OrderId"]),
+                    UserId = Convert.ToInt32(rdr["UserId"]),
+                    PaymentId = Convert.ToInt32(rdr["PaymentId"]),
+                    Total = Convert.ToInt32(rdr["Total"])
+                };
                 paymentList.Add(payment);
             }
             sqlConnection.Close();

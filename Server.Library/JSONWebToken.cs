@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Server.Library
 {
-   public class JSONWebToken
+   public static class JSONWebToken
     {
         public static string GenerateJSONWebToken(string username, string userRole)
         {

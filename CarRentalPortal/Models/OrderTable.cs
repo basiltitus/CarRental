@@ -15,13 +15,16 @@ namespace CarRentalPortal.Models
         public int UserId { get; set; }
         [Display(Name = "Car ID")]
         [ForeignKey("CarTable")]
+        [Required(ErrorMessage = "Please select a car")]
         public int CarId { get; set; }
         public CarTable CarDetail { get; set; }
         [DataType(DataType.Date)]
         [Display(Name = "Booking Start Date")]
+        [Required(ErrorMessage ="From Date is required")]
         public DateTime FromDate { get; set; }
         [DataType(DataType.Date)]
         [Display(Name = "Booking End Date")]
+        [Required(ErrorMessage = "From Date is required")]
         public DateTime ToDate { get; set; }
         [Display(Name = "Total Charge")]
         public int Total { get; set; }

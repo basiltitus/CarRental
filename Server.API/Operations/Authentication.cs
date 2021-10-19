@@ -1,12 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Server.API.Models;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Server.Library;
 namespace Server.API.Operations
 {
@@ -24,8 +20,7 @@ namespace Server.API.Operations
         }
         public UserProfile SignIn(string userName, string password)
         {
-            SqlCommand command;
-            command = new SqlCommand("sp_login", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_login", sqlConnection);
             command.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = userName;
             command.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
             command.CommandType = CommandType.StoredProcedure;
@@ -37,8 +32,10 @@ namespace Server.API.Operations
             else
                 userId = 0;
             sqlConnection.Close();
-            UserProfile userProfile = new UserProfile();
-            userProfile.userId = userId;
+            UserProfile userProfile = new UserProfile
+            {
+                userId = userId
+            };
             if (userId == 0)
             {
                 userProfile.token = "unavailable";
@@ -47,7 +44,6 @@ namespace Server.API.Operations
             }
             else 
             {
-                string token;
                 if (userName.Contains("admin"))
                 {
 
@@ -63,8 +59,7 @@ namespace Server.API.Operations
             }
         public UserProfile SignUp(User user)
         {
-            SqlCommand commandCheck;
-            commandCheck = new SqlCommand("sp_userexist", sqlConnection);
+            SqlCommand commandCheck = new SqlCommand("sp_userexist", sqlConnection);
             commandCheck.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = user.UserName;
             commandCheck.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
@@ -78,21 +73,18 @@ namespace Server.API.Operations
                 userProfile.token = "unavailable";
                 return userProfile;
             }
-            SqlCommand commandInsert;
-            commandInsert = new SqlCommand("sp_signup", sqlConnection);
+            SqlCommand commandInsert = new SqlCommand("sp_signup", sqlConnection);
             commandInsert.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = user.UserName;
             commandInsert.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.Password;
             commandInsert.Parameters.Add("@AadharNo", SqlDbType.NVarChar).Value = user.AadharNumber;
             commandInsert.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
-            int userId;
-           userId= Convert.ToInt32(commandInsert.ExecuteScalar());
+            int userId = Convert.ToInt32(commandInsert.ExecuteScalar());
             
             sqlConnection.Close();
             userProfile.userId = userId;
             if (userId >= 1000)
             {
-                string token;
                 if (user.UserName.Contains("admin"))
                 {
                     userProfile.token = JSONWebToken.GenerateJSONWebToken(user.UserName, "Admin");

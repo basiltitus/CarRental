@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Server.API.Models;
 using Microsoft.Extensions.Configuration;
-using Server.API.Models;
+
 namespace Server.API.Operations
 {
     [Route("api/[controller]")]
@@ -24,25 +24,25 @@ namespace Server.API.Operations
         }
         [HttpPost]
         [Route("addorder")]
-        public IActionResult addOrder(OrderTable order)
+        public IActionResult AddOrder(OrderTable order)
         {
             return Ok(orderOperation.AddOrder(order));
         }
         [HttpGet("{orderId}")]
-        public IActionResult getOrderDetails(int orderId)
+        public IActionResult GetOrderDetails(int orderId)
         {
-            return Ok(orderOperation.getOrderDetails(orderId));
+            return Ok(orderOperation.GetOrderDetails(orderId));
         }
         [HttpGet("ExtraDays")]
-        public IActionResult completeOrder(int orderId,int extraDays)
+        public IActionResult CompleteOrder(int orderId,int extraDays)
         {
-            return Ok(orderOperation.completeOrder(orderId, extraDays));
+            return Ok(orderOperation.CompleteOrder(orderId, extraDays));
         }
         [HttpGet("userId")]
         [ActionName("orderByUserId")]
-        public IActionResult getOrderDetailsByUserId(int userId)
+        public IActionResult GetOrderDetailsByUserId(int userId)
         {
-            return Ok(orderOperation.getOrderDetailsByUserId(userId));
+            return Ok(orderOperation.GetOrderDetailsByUserId(userId));
         }
     }
 }
