@@ -1,0 +1,61 @@
+﻿@model CarRentalPortal.Models.CarTable
+
+@{
+    ViewData["Title"] = "EditCar";
+}
+
+<div>
+    @Html.Partial("_AdminNavBar")
+</div>
+
+<hr />
+<div class="carDetailsDiv container">
+ <h3>Update Car Details</h3>
+            <form asp-action="EditCar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group invisible">
+                    <label asp-for="CarId" class="control-label carLabel"></label>
+                    <input asp-for="CarId" class="form-control formInput" />
+                    <span asp-validation-for="CarId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CarName" class="control-label carLabel"></label>
+                    <input asp-for="CarName" class="form-control formInput" />
+                    <span asp-validation-for="CarName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CarRegNo" class="control-label carLabel"></label>
+                    <input asp-for="CarRegNo" class="form-control formInput" onchange="capitalizeRegNo()" />
+                    <span asp-validation-for="CarRegNo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="CarType" class="control-label carLabel"></label>
+                    @Html.DropDownListFor(m => m.CarType,
+                 new SelectList(Enum.GetValues(typeof(CarVarient))),
+                 "Select Car Type", new { @class = "form-control formInput" })
+                    <span asp-validation-for="CarType" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ChargePerDay" class="control-label carLabel"></label>
+                    <input asp-for="ChargePerDay" class="form-control formInput" />
+                    <span asp-validation-for="ChargePerDay" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary formSubmit" />
+                </div>
+            </form>
+        </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+<script>
+    function capitalizeRegNo() {
+        var regNo = document.getElementById("CarRegNo").value;
+        document.getElementById("CarRegNo").value = regNo.toUpperCase();
+    }
+</script>

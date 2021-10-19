@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="fullScreen backgroundImage">
+</div>
+<div class="bg-text">
+    <center>
+        <h1>DriveWay</h1>
+        <h5 class="font-italic">" We make your drive memorable "</h5>
+        <button type="button" class="btn btn-outline-primary whiteOutline btn-lg " onclick="location.href='@Url.Action("SignIn", "home")';return false;">Sign In</button>
+        <button type="button" class="btn btn-outline-primary whiteOutline btn-lg" onclick="location.href='@Url.Action("SignUp", "home")';return false;">Sign Up</button>
+
+    </center>
+</div>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">

@@ -1,0 +1,12 @@
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\bin\Debug\net5.0\Server.Library.deps.json
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\bin\Debug\net5.0\Server.Library.dll
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\bin\Debug\net5.0\ref\Server.Library.dll
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\bin\Debug\net5.0\Server.Library.pdb
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\Server.Library.csprojAssemblyReference.cache
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\Server.Library.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\Server.Library.AssemblyInfoInputs.cache
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\Server.Library.AssemblyInfo.cs
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\Server.Library.csproj.CoreCompileInputs.cache
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\Server.Library.dll
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\ref\Server.Library.dll
+C:\Users\basil\source\repos\CarRentalPortal\Server.Library\obj\Debug\net5.0\Server.Library.pdb

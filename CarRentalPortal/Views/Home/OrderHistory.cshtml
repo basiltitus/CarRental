@@ -1,0 +1,76 @@
+﻿@model IEnumerable<CarRentalPortal.Models.OrderTable>
+
+@{
+    ViewData["Title"] = "OrderHistory";
+}
+<div>
+    @Html.Partial("_NavBar")
+</div>
+<h1 class="page-heading">Your Order History</h1>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FromDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ToDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExtraDays)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Completed)
+            </th>
+        </tr>
+    </thead>
+    <tbody>@{ 
+        int index = 0;
+        var list = ViewBag.OrderList;
+        foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FromDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ToDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExtraDays)
+            </td>
+            <td>
+                @if (list[index].Completed)
+                {
+                    <button class="btn btn-primary wide-btn" disabled>Completed</button>
+                }
+                @if (!list[index].Completed)
+                {
+                    <button class="btn btn-danger wide-btn" onclick="location.href='@Url.Action("CompleteTrip", "home",new { orderId=list[index].OrderId})';return false;">Pending</button>
+                }
+            </td>
+        </tr>
+            ++index;
+        }
+        }
+    </tbody>
+</table>

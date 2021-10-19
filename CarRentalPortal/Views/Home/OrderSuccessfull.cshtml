@@ -1,0 +1,16 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    @Html.Partial("_NavBar")
+</div>
+<div class="jumbotron text-center fullScreen">
+    <h1 class="display-3">Thank You!</h1>
+    <p class="lead"><strong>Please visit our nearest store</strong> for further instructions on how to complete your car rental.</p>
+    <hr>
+    <p class="lead">
+        <button class="btn btn-primary btn-sm" onclick="location.href='@Url.Action("UserPortal", "home")';return false;" role="button">Back to homepage</button>
+    </p>
+</div>

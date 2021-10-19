@@ -1,0 +1,108 @@
+﻿using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
+using Server.API.Models;
+using System.Data;
+
+namespace Server.API.Operations
+{
+    public class OrderOperation
+    {
+        SqlConnection sqlConnection;
+        string conStr;
+        private IConfiguration Configuration;
+        public OrderOperation(IConfiguration _configuration)
+        {
+            Configuration = _configuration;
+            conStr = this.Configuration.GetConnectionString("CarRentDB");
+            sqlConnection = new SqlConnection(conStr);
+        }
+        public int AddOrder(OrderTable order)
+        {
+            SqlCommand command;
+            command = new SqlCommand("sp_addorder", sqlConnection);
+            command.Parameters.Add("@CarId", SqlDbType.Int).Value = (int) order.CarId;
+            command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)order.UserId;
+            command.Parameters.Add("@FromDate", SqlDbType.Date).Value = order.FromDate; 
+            command.Parameters.Add("@ToDate", SqlDbType.Date).Value = order.ToDate;
+            command.Parameters.Add("@ExtraDays", SqlDbType.Int).Value = order.ExtraDays;
+            command.Parameters.Add("@Total", SqlDbType.Int).Value = order.Total;
+            command.Parameters.Add("@Completed",SqlDbType.Bit).Value=order.Completed;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            int response = Convert.ToInt32(command.ExecuteScalar());
+            sqlConnection.Close();
+            if (response >= 100)
+                return response;
+            else
+                return 0;
+        }
+        public bool completeOrder(int orderId,int extraDays)
+        {
+            
+                SqlCommand command;
+            command = new SqlCommand("sp_completeOrder", sqlConnection);
+            command.Parameters.Add("@OrderId", SqlDbType.Int).Value = orderId;
+            command.Parameters.Add("@ExtraDays", SqlDbType.Int).Value = extraDays;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            int response = command.ExecuteNonQuery();
+            sqlConnection.Close();
+            if (response >= 1)
+                return true;
+            else
+                return false;
+        }
+        public OrderTable getOrderDetails(int orderId)
+        {
+            SqlCommand command;
+            command = new SqlCommand("sp_getorderdetail", sqlConnection);
+            command.Parameters.Add("@OrderId", SqlDbType.Int).Value = (int)orderId;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+            OrderTable order = new OrderTable();
+            while (rdr.Read())
+            {
+                order.OrderId = Convert.ToInt32(rdr["OrderId"]);
+                order.UserId = Convert.ToInt32(rdr["UserId"]);
+                order.CarId = Convert.ToInt32(rdr["CarId"]);
+                order.FromDate = Convert.ToDateTime(rdr["FromDate"].ToString());
+                order.ToDate =Convert.ToDateTime(rdr["ToDate"].ToString());
+                order.Total=Convert.ToInt32(rdr["Total"]);
+                order.ExtraDays= Convert.ToInt32(rdr["ExtraDays"]);
+                order.Completed = Convert.ToBoolean(rdr["Completed"]);
+            }
+            sqlConnection.Close();
+            return order;
+        }
+        public List<OrderTable> getOrderDetailsByUserId(int userId)
+        {
+            List<OrderTable> orderList = new List<OrderTable>();
+            SqlCommand command;
+            command = new SqlCommand("sp_getorderdetailbyuserid", sqlConnection);
+            command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+            while (rdr.Read())
+            {
+            OrderTable order = new OrderTable();
+                order.OrderId = Convert.ToInt32(rdr["OrderId"]);
+                order.UserId = Convert.ToInt32(rdr["UserId"]);
+                order.CarId = Convert.ToInt32(rdr["CarId"]);
+                order.FromDate = Convert.ToDateTime(rdr["FromDate"].ToString());
+                order.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
+                order.Total = Convert.ToInt32(rdr["Total"]);
+                order.ExtraDays = Convert.ToInt32(rdr["ExtraDays"]);
+                order.Completed = Convert.ToBoolean(rdr["Completed"]);
+                orderList.Add(order);
+            }
+            sqlConnection.Close();
+            return orderList;
+        }
+    }
+}

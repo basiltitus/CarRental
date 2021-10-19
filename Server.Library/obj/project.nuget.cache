@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "bgnHgEZid9Q9mhlZfdknC/++o2qLR9TpQwSeNqBa4N8KRDefuXgue6lUhheahAq829DsdfypL327WTcwTHDncg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\basil\\source\\repos\\CarRentalPortal\\Server.Library\\Server.Library.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\basil\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
+    "C:\\Users\\basil\\.nuget\\packages\\microsoft.identitymodel.jsonwebtokens\\6.13.1\\microsoft.identitymodel.jsonwebtokens.6.13.1.nupkg.sha512",
+    "C:\\Users\\basil\\.nuget\\packages\\microsoft.identitymodel.logging\\6.13.1\\microsoft.identitymodel.logging.6.13.1.nupkg.sha512",
+    "C:\\Users\\basil\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.13.1\\microsoft.identitymodel.tokens.6.13.1.nupkg.sha512",
+    "C:\\Users\\basil\\.nuget\\packages\\system.identitymodel.tokens.jwt\\6.13.1\\system.identitymodel.tokens.jwt.6.13.1.nupkg.sha512",
+    "C:\\Users\\basil\\.nuget\\packages\\system.security.cryptography.cng\\4.5.0\\system.security.cryptography.cng.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

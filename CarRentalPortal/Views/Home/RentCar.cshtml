@@ -1,0 +1,94 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model CarRentalPortal.Models.OrderTable
+@{ 
+    var type = ViewBag.CarVarients;
+}
+<div>
+    @Html.Partial("_NavBar")
+</div>
+<div class="container">
+    @if (ViewBag.PendingOrders > 0)
+    {
+        <h3 class="text-danger">You Have @ViewBag.PendingOrders Pending Orders ... Please Click here to complete your ride @Html.ActionLink("OrderHistory", "OrderHistory")</h3>
+    }
+    <h1 class="page-heading">Rent Your Car</h1>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <div class="container rentDiv">
+
+
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    <form asp-action="RentCar" method="post">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.LabelFor(model => model.FromDate, new { @class = "rentLabel" })
+                        <input type="Date" id="fromDatePicker" name="FromDate" onchange="dateSelected()" class="form-control formInput" />
+                        @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
+                        @Html.LabelFor(model => model.ToDate, new { @class = "rentLabel" })
+                        <input type="Date" id="toDatePicker" name="ToDate" onchange="dateSelected()" class="form-control formInput" />
+                        @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
+                        <span id="dateValidationMessage"></span>
+                        <span class= "rentLabel">Car Name</span><br />
+                        <select id="carSelector" class="form-control formInput" onchange="carSelected()" name="CarId">
+                            <option selected value="0">---Select---</option>
+                            @foreach (var item in ViewBag.CarListed)
+                            {
+
+                                <option value="@item.CarId">  @item.CarName</option>
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(model => model.CarId, "", new { @class = "text-danger" })
+
+                        <button type="submit" class="btn btn-primary formSubmit">Rent Now</button>
+                    </form>
+
+                }
+            </div>
+        </div>
+        <div class="container col-4">
+            <div class="summary-div">
+                <center><h3>Summary</h3></center>
+                <span id="summarySpan"><br />"Fill the details to get your estimate!"</span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function carSelected() {
+        var carId = document.getElementById("carSelector").value;
+        let carVarients;
+        fetch("https://localhost:44305/api/Car/carvarient").then(response => response.json())
+            .then((item) => {
+                carVarients = item;
+            });
+        fetch("https://localhost:44305/api/Car/" + carId).then(response => response.json())
+            .then((item) => {
+                console.log(item)
+                var fromDate = new Date(document.getElementById("fromDatePicker").value);
+                var toDate = new Date(document.getElementById("toDatePicker").value);
+                const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*millisecond
+                const diffDays = Math.round(Math.abs((toDate - fromDate) / oneDay));
+                console.log(diffDays);
+                if (fromDate < toDate && carId != 0)
+                    document.getElementById("summarySpan").innerHTML = "<br />Car Name : "+item.carName + "<br/>Car Varient : " + carVarients[item.carType]  + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
+            });
+    }
+    function dateSelected() {
+        var fromDate = new Date(document.getElementById("fromDatePicker").value);
+        var toDate = new Date(document.getElementById("toDatePicker").value);
+        if (fromDate > toDate) {
+            document.getElementById("dateValidationMessage").innerHTML = "TO Date must be higher than From Date";
+            document.getElementById("toDatePicker").value = "";
+        } else {
+            carSelected();
+            document.getElementById("dateValidationMessage").innerHTML = "";
+        }
+
+    }
+</script>
