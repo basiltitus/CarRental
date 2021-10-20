@@ -34,7 +34,7 @@ namespace Server.API.Operations
             return Ok(orderOperation.GetOrderDetails(orderId));
         }
         [HttpGet("ExtraDays")]
-        public IActionResult CompleteOrder(int orderId,int extraDays)
+        public IActionResult CompleteOrder(int orderId, int extraDays)
         {
             return Ok(orderOperation.CompleteOrder(orderId, extraDays));
         }

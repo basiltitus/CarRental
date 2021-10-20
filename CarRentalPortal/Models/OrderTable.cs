@@ -20,7 +20,7 @@ namespace CarRentalPortal.Models
         public CarTable CarDetail { get; set; }
         [DataType(DataType.Date)]
         [Display(Name = "Booking Start Date")]
-        [Required(ErrorMessage ="From Date is required")]
+        [Required(ErrorMessage = "From Date is required")]
         public DateTime FromDate { get; set; }
         [DataType(DataType.Date)]
         [Display(Name = "Booking End Date")]

@@ -6,6 +6,22 @@
 <div>
     <partial name="_NavBar" />
 </div>
-<h1 class="page-heading">Payment Page</h1>
-You Have exceed the rent duration by @ViewBag.ExtraDays , So you have been charged with a fine of Rs. @ViewBag.FineAmount. Please Pay to Continue..<br />
-<button class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("PaymentPage", "home",new {orderId=ViewBag.OrderId,type="fine",total=ViewBag.FineAmount,extraDays=ViewBag.ExtraDays })';return false;">Pay Now</button>
+<h1 class="page-heading">Penalty Page</h1>
+<div class="row">
+    <div class="col-1"></div>
+    <div class="col-7">
+        <div class="rentDiv wideBox">
+            You Have exceed the rent duration by <span class="text-danger">@ViewBag.ExtraDays Days</span>.<br />So you have been charged with a fine of <span class="text-danger">
+                Rs.@ViewBag.FineAmount
+            </span>.<br />Please Pay to Continue..<br />
+            <button class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("PaymentPage", "home",new {orderId=ViewBag.OrderId,type="fine",total=ViewBag.FineAmount,extraDays=ViewBag.ExtraDays })';return false;">Pay Now</button>
+        </div>
+    </div>
+    <div class="col-4"></div>
+</div>
+<div class="row">
+    <div class="col-8"></div>
+    <div class="col-4">
+        <img src="https://image.freepik.com/free-vector/tiny-people-getting-paper-sheet-with-fine-flat-illustration_74855-11107.jpg" class="bottom-right-image height70" />
+    </div>
+</div>

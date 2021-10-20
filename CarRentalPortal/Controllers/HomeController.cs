@@ -74,7 +74,7 @@ namespace CarRentalPortal.Controllers
                     else
                     {
                         ViewBag.ErrorMessage = "Invalid User Credentials";
-                    return View(item);
+                        return View(item);
                     }
                 }
                 else
@@ -94,8 +94,8 @@ namespace CarRentalPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignUp(UserTable item)
         {
-                if (ModelState.IsValid)
-                {
+            if (ModelState.IsValid)
+            {
                 HttpResponseMessage response = await client.PostAsJsonAsync("auth/signup", item);
                 if (response.IsSuccessStatusCode)
                 {
@@ -122,11 +122,11 @@ namespace CarRentalPortal.Controllers
                         ViewBag.ErrorMessage = "User Already Exists!";
                         return View(item);
                     }
-                        
+
                 }
                 return RedirectToAction("Index");
-                }
-                return View(item);
+            }
+            return View(item);
         }
         public IActionResult AdminPortal()
         {
@@ -153,7 +153,7 @@ namespace CarRentalPortal.Controllers
                         return View();
                     }
                 }
-                }
+            }
             ViewBag.SuccessMessage = "";
             return View();
         }
@@ -161,7 +161,7 @@ namespace CarRentalPortal.Controllers
         {
             if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction("UnauthorizedPage");
-                int pendingOrders = 0;
+            int pendingOrders = 0;
             int userId = (int)HttpContext.Session.GetInt32("_userId");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
             HttpResponseMessage response = await client.GetAsync("Order/userId?userId=" + userId);
@@ -186,23 +186,23 @@ namespace CarRentalPortal.Controllers
             if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction("UnauthorizedPage");
 
-            List<CarTable> carList =await RetrieveCarList();
-                return View(carList);
-           
+            List<CarTable> carList = await RetrieveCarList();
+            return View(carList);
+
         }
         public async Task<IActionResult> EditCar(int id)
         {
             if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction("UnauthorizedPage");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-            HttpResponseMessage response = await client.GetAsync("Car/"+id);
+            HttpResponseMessage response = await client.GetAsync("Car/" + id);
             if (response.IsSuccessStatusCode)
             {
                 var stringData = response.Content.ReadAsStringAsync().Result;
                 CarTable carDetails = JsonConvert.DeserializeObject<CarTable>(stringData);
                 return View(carDetails);
             }
-                return View();
+            return View();
         }
         public IActionResult ErrorPage()
         {
@@ -212,7 +212,7 @@ namespace CarRentalPortal.Controllers
         public async Task<IActionResult> EditCar(CarTable car)
         {
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-            HttpResponseMessage response = await client.PostAsJsonAsync("Car/updatecar",car);
+            HttpResponseMessage response = await client.PostAsJsonAsync("Car/updatecar", car);
             if (response.IsSuccessStatusCode)
             {
                 var stringData = response.Content.ReadAsStringAsync().Result;
@@ -224,8 +224,8 @@ namespace CarRentalPortal.Controllers
             }
             return RedirectToAction("ErrorPage");
         }
-       
-        public async Task<IActionResult> DeleteCar(int id )
+
+        public async Task<IActionResult> DeleteCar(int id)
         {
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
@@ -260,19 +260,20 @@ namespace CarRentalPortal.Controllers
                     }
                 });
             }
-                ViewBag.PendingOrders = pendingOrders;
-                ViewBag.CarListed = (List<CarTable>)await RetrieveCarList();
+            ViewBag.PendingOrders = pendingOrders;
+            ViewBag.CarListed = (List<CarTable>)await RetrieveCarList();
             ViewBag.CarVarients = Enum.GetNames(typeof(CarVarient));
             return View();
         }
         [HttpPost]
         public async Task<IActionResult> RentCar(OrderTable order)
         {
-            if (ModelState.IsValid) {
-            order.UserId = (int)HttpContext.Session.GetInt32("_userId");
-            int noOfDays = (int)(order.ToDate - order.FromDate).TotalDays;
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-            HttpResponseMessage response = await client.GetAsync("Car/" + order.CarId);
+            if (ModelState.IsValid)
+            {
+                order.UserId = (int)HttpContext.Session.GetInt32("_userId");
+                int noOfDays = (int)(order.ToDate - order.FromDate).TotalDays;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                HttpResponseMessage response = await client.GetAsync("Car/" + order.CarId);
                 if (response.IsSuccessStatusCode)
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
@@ -298,7 +299,7 @@ namespace CarRentalPortal.Controllers
             }
             return RedirectToAction("ErrorPage");
         }
-        public async Task<IActionResult> PaymentPage(int orderId,string type,int total,int ExtraDays)
+        public async Task<IActionResult> PaymentPage(int orderId, string type, int total, int ExtraDays)
         {
             if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction("UnauthorizedPage");
@@ -316,9 +317,10 @@ namespace CarRentalPortal.Controllers
                     ViewBag.Total = order.Total;
                     return View();
                 }
-            }else if (type == "fine")
+            }
+            else if (type == "fine")
             {
-                HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId+ "&extraDays="+ExtraDays);
+                HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
                 if (response.IsSuccessStatusCode)
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
@@ -368,10 +370,12 @@ namespace CarRentalPortal.Controllers
                 var stringData = response.Content.ReadAsStringAsync().Result;
                 List<OrderTable> orderList = JsonConvert.DeserializeObject<List<OrderTable>>(stringData);
                 orderList.Reverse();
+                if (orderList.Count == 0)
+                    return RedirectToAction("ZeroHistoryPage");
                 ViewBag.OrderList = orderList;
                 return View(orderList);
             }
-                return View();
+            return View();
         }
         public async Task<IActionResult> PaymentHistory()
         {
@@ -384,6 +388,8 @@ namespace CarRentalPortal.Controllers
                 var stringData = response.Content.ReadAsStringAsync().Result;
                 List<PaymentTable> paymentList = JsonConvert.DeserializeObject<List<PaymentTable>>(stringData);
                 paymentList.Reverse();
+                if (paymentList.Count == 0)
+                    return RedirectToAction("ZeroHistoryPage");
                 return View(paymentList);
             }
             return RedirectToAction("ErrorPage");
@@ -393,7 +399,7 @@ namespace CarRentalPortal.Controllers
             if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction("UnauthorizedPage");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-            HttpResponseMessage response = await client.GetAsync("Order/"+orderId);
+            HttpResponseMessage response = await client.GetAsync("Order/" + orderId);
             if (response.IsSuccessStatusCode)
             {
                 var stringData = response.Content.ReadAsStringAsync().Result;
@@ -426,21 +432,25 @@ namespace CarRentalPortal.Controllers
                     }
                 }
             }
-                return View();
+            return View();
         }
-            public IActionResult Logout()
+        public IActionResult Logout()
         {
             HttpContext.Session.SetString("_userType", "");
             HttpContext.Session.SetInt32("_userId", 0);
             HttpContext.Session.SetString("_token", "");
             return RedirectToAction("Index");
         }
-                [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
         public IActionResult UnauthorizedPage()
+        {
+            return View();
+        }
+        public IActionResult ZeroHistoryPage()
         {
             return View();
         }

@@ -20,7 +20,7 @@
                         </p>
                         <form asp-action="SignUp" method="post">
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                           @* @Html.HiddenFor(model => model.UserId)*@
+                            @* @Html.HiddenFor(model => model.UserId)*@
 
                             @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput" } })
                             @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
@@ -33,6 +33,9 @@
                             <span class="text-danger"> @ViewBag.ErrorMessage</span>
                             <div class="d-grid gap-2 d-md-block">
                                 <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Create</button>
+                                Already a user? <button type="button" class="btn btn-link " onclick="location.href='@Url.Action("SignIn", "home")';return false;">
+                                    Click Here
+                                </button>
                             </div>
                         </form>
                     </div>

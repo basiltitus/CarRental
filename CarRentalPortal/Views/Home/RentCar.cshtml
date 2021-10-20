@@ -4,7 +4,7 @@
 @{
 }
 @model CarRentalPortal.Models.OrderTable
-@{ 
+@{
     var type = ViewBag.CarVarients;
 }
 <div>
@@ -13,7 +13,7 @@
 <div class="container">
     @if (ViewBag.PendingOrders > 0)
     {
-        <h3 class="text-danger">You Have @ViewBag.PendingOrders Pending Orders ... Please Click here to complete your ride @Html.ActionLink("OrderHistory", "OrderHistory")</h3>
+        <h4 class="text-danger">You Have @ViewBag.PendingOrders Pending Orders ... Please @Html.ActionLink("click here ", "OrderHistory") to complete your existing ride </h4>
     }
     <h1 class="page-heading">Rent Your Car</h1>
     <div class="row">
@@ -34,7 +34,7 @@
                         <input type="Date" id="toDatePicker" name="ToDate" onchange="dateSelected()" class="form-control formInput" />
                         @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
                         <span id="dateValidationMessage" class="text-danger"></span>
-                        <span class= "rentLabel">Car Name</span><br />
+                        <span class="rentLabel">Car Name</span><br />
                         <select id="carSelector" class="form-control formInput" onchange="carSelected()" name="CarId">
                             <option selected value="0">---Select---</option>
                             @foreach (var item in ViewBag.CarListed)
@@ -76,7 +76,7 @@
                 const diffDays = Math.round(Math.abs((toDate - fromDate) / oneDay));
                 console.log(diffDays);
                 if (fromDate < toDate && carId != 0)
-                    document.getElementById("summarySpan").innerHTML = "<br />Car Name : "+item.carName + "<br/>Car Varient : " + carVarients[item.carType]  + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
+                    document.getElementById("summarySpan").innerHTML = "<br />Car Name : " + item.carName + "<br/>Car Varient : " + carVarients[item.carType] + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
             });
     }
     function dateSelected() {

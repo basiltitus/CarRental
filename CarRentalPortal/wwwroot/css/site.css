@@ -199,13 +199,13 @@ nav{
     width:100vw;
     height:100vh;
 }
-.unauthorizedImg {
+.error-img {
     height: 40%;
     width: 40%;
     margin-left: 25%;
     margin-top: 10%;
 }
-.unauthorizedText {
+.error-text {
     font-size: 36px;
     font-weight: 600;
     margin-top: 23%;
@@ -264,7 +264,7 @@ table {
     width: 85vw;
     margin-left: 7.5vw;
     margin-right: 7.5vw;
-    margin-top: 12vh;
+    margin-top: 7vh;
     border: 1px solid #faae00;
 }
     table th {
@@ -286,6 +286,7 @@ table {
     margin-right:10px;
 }
 .page-heading {
+    margin-top:1%;
     text-align: center;
     font-family: 'Lobster',cursive;
     width:100vw;
@@ -322,3 +323,24 @@ nav {
     font-family: cursive;
     font-weight: 900;
 }
+.wideBox {
+    font-size: 22px;
+    font-family: cursive;
+    padding: 3%;
+}
+.wideBox button{
+    float:right;
+}
+.height70{
+    height:70%;
+}
+.zeroHistory{
+    margin-top:10%
+}
+.zeroHistory img{
+    margin-left:20%
+}
+.zeroHistory .wideBox {
+        margin-top: 10%;
+        padding: 10%;
+    }

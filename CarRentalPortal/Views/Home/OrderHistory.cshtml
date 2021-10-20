@@ -34,43 +34,44 @@
             </th>
         </tr>
     </thead>
-    <tbody>@{ 
-        int index = 0;
-        var list = ViewBag.OrderList;
-        foreach (var item in Model)
-        {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.OrderId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CarDetail.CarName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FromDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ToDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Total)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExtraDays)
-            </td>
-            <td>
-                @if (list[index].Completed)
-                {
-                    <button class="btn btn-primary wide-btn" disabled>Completed</button>
-                }
-                @if (!list[index].Completed)
-                {
-                    <button class="btn btn-danger wide-btn" onclick="location.href='@Url.Action("CompleteTrip", "home",new { orderId=list[index].OrderId})';return false;">Pending</button>
-                }
-            </td>
-        </tr>
-            ++index;
-        }
-        }
-    </tbody>
+    <tbody>
+        @{
+            int index = 0;
+            var list = ViewBag.OrderList;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OrderId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CarDetail.CarName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FromDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ToDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Total)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ExtraDays)
+                    </td>
+                    <td>
+                        @if (list[index].Completed)
+                        {
+                            <button class="btn btn-primary wide-btn" disabled>Completed</button>
+                        }
+                        @if (!list[index].Completed)
+                        {
+                            <button class="btn btn-danger wide-btn" onclick="location.href='@Url.Action("CompleteTrip", "home",new { orderId=list[index].OrderId})';return false;">Pending</button>
+                        }
+                    </td>
+                </tr>
+                ++index;
+            }
+    }
+</tbody>
 </table>

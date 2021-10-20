@@ -27,26 +27,27 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CarName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CarRegNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CarType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ChargePerDay)
-            </td>
-            <td>
-                <button type="button" class="btn btn-primary edit-btn " onclick="location.href='@Url.Action("EditCar", "home",new{id=item.CarId})';return false;">Edit</button>
-                @*@Html.ActionLink("Edit", "EditCar", new {  id=item.CarId  })*@ |
-            <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("DeleteCar", "home",new{id=item.CarId})';return false;">Delete</button>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarRegNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CarType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ChargePerDay)
+                </td>
+                <td>
+                    <button type="button" class="btn btn-primary edit-btn " onclick="location.href='@Url.Action("EditCar", "home",new{id=item.CarId})';return false;">Edit</button>
+                    @*@Html.ActionLink("Edit", "EditCar", new {  id=item.CarId  })*@ |
+                    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("DeleteCar", "home",new{id=item.CarId})';return false;">Delete</button>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

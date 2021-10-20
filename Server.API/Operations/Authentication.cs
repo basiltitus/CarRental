@@ -16,7 +16,7 @@ namespace Server.API.Operations
             Configuration = _configuration;
             conStr = this.Configuration.GetConnectionString("CarRentDB");
             sqlConnection = new SqlConnection(conStr);
-            
+
         }
         public UserProfile SignIn(string userName, string password)
         {
@@ -42,7 +42,7 @@ namespace Server.API.Operations
                 userProfile.userId = 0;
                 return userProfile;
             }
-            else 
+            else
             {
                 if (userName.Contains("admin"))
                 {
@@ -55,8 +55,8 @@ namespace Server.API.Operations
                     userProfile.token = JSONWebToken.GenerateJSONWebToken(userName, "Customer");
                     return userProfile;
                 }
-            } 
             }
+        }
         public UserProfile SignUp(User user)
         {
             SqlCommand commandCheck = new SqlCommand("sp_userexist", sqlConnection);
@@ -67,7 +67,7 @@ namespace Server.API.Operations
             sqlConnection.Close();
 
             UserProfile userProfile = new UserProfile();
-            if (response >0)
+            if (response > 0)
             {
                 userProfile.userId = 0;
                 userProfile.token = "unavailable";
@@ -80,7 +80,7 @@ namespace Server.API.Operations
             commandInsert.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             int userId = Convert.ToInt32(commandInsert.ExecuteScalar());
-            
+
             sqlConnection.Close();
             userProfile.userId = userId;
             if (userId >= 1000)

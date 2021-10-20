@@ -26,7 +26,7 @@ namespace Server.API.Controllers
         public IActionResult Login(UserAuth item)
         {
 
-            return Ok(auth.SignIn(item.UserName,item.Password));
+            return Ok(auth.SignIn(item.UserName, item.Password));
         }
         [HttpPost]
         [Route("signup")]

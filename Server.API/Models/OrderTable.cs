@@ -10,7 +10,7 @@ namespace Server.API.Models
     public class OrderTable
     {
         public int OrderId { get; set; }
-        
+
         public int UserId { get; set; }
         [ForeignKey("CarTable")]
         public int CarId { get; set; }

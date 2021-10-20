@@ -55,11 +55,11 @@ namespace Server.API.Controllers
         }
         [HttpPost]
         [Route("deletecar")]
-        public IActionResult Deletecar([FromBody]  int id)
+        public IActionResult Deletecar([FromBody] int id)
         {
             return Ok(carOperation.DeleteCar(id));
         }
-        
-            
+
+
     }
 }

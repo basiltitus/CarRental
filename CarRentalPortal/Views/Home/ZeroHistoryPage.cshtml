@@ -1,0 +1,19 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div>
+    <partial name="_NavBar" />
+</div>
+<div class="row zeroHistory">
+    <div class="col-6">
+        <img src="https://cdn.dribbble.com/users/1418633/screenshots/6693173/empty-state_4x.png?compress=1&resize=400x300" />
+    </div>
+    <div class="col-6">
+        <div class="wideBox">
+            You haven't made any transactions yet.
+            Rent a car <button type="button" class="btn btn-primary btn-lg " onclick="location.href='@Url.Action("RentCar", "home")';return false;">Click Me</button>
+        </div>
+    </div>
+</div>

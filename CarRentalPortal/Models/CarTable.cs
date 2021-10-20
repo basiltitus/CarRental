@@ -25,6 +25,6 @@ namespace CarRentalPortal.Models
     }
     public enum CarVarient
     {
-        MINI_HATCHBACK ,SMALL_HATCHBACKS,Small_Sedan,Sedans,Executive_Luxury_Cars,MPVs,SUV,Crossovers
+        MINI_HATCHBACK, SMALL_HATCHBACKS, Small_Sedan, Sedans, Executive_Luxury_Cars, MPVs, SUV, Crossovers
     }
 }

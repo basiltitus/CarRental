@@ -35,7 +35,7 @@ namespace Server.API.Operations
             else
                 return false;
         }
-        
+
         public List<CarTable> GetList()
         {
             List<CarTable> carList = new List<CarTable>();
@@ -119,5 +119,5 @@ namespace Server.API.Operations
 
         }
     }
-    }
+}
 
