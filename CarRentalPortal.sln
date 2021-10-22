@@ -13,6 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.API", "Server.API\Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server.Library", "Server.Library\Server.Library.csproj", "{5A2D2A54-8B26-41D1-BE56-5C51CA05E41D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3B24B55-EC23-433B-A10D-BA4CBB2FD7AB}"
+	ProjectSection(SolutionItems) = preProject
+		StoredProcedures.txt = StoredProcedures.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

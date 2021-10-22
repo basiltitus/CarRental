@@ -1,0 +1,100 @@
+
+CREATE PROCEDURE sp_signup        @UserName nvarchar(30),@Password nvarchar(30),@AadharNo nvarchar(30)
+AS
+BEGIN
+Insert into UserTable (UserName,Password,AadharNo) values (@UserName,@Password,@AadharNo);
+SELECT SCOPE_IDENTITY()
+END  
+
+CREATE PROCEDURE sp_login
+@UserName nvarchar(30),@Password nvarchar(30)
+AS
+BEGIN 
+Select UserId From UserTable where UserName=@UserName and Password=@Password  
+END    
+
+
+CREATE PROCEDURE sp_userexist        @UserName nvarchar(30) 
+AS
+BEGIN    
+select count(*) from UserTable where UserName=@UserName 
+END  
+
+CREATE PROCEDURE sp_addcar
+@CarName nvarchar(30),@CarRegNo nvarchar(30), @CarType nvarchar(30),@ChargePerDay int
+AS  
+BEGIN   
+Insert into CarTable (CarName,CarRegNo,CarType,ChargePerDay) values (@CarName,@CarRegNo,@CarType,@ChargePerDay);       
+END    
+
+Create procedure sp_getcarlist 
+AS 
+select * from CarTable 
+Go;  
+
+create procedure sp_getcardetails @CarId int
+as
+begin  
+select * from CarTable where CarId = @CarId
+end
+
+Create procedure  sp_updatecar @CarId int,@CarName nvarchar(30),@CarRegNo nvarchar(30),@CarType int,@ChargePerDay int
+as
+begin
+update CarTable set CarName=@CarName,CarRegNo=@CarRegNo,CarType=@CarType,ChargePerDay=@ChargePerDay where CarId=@CarId
+end
+
+Create procedure  sp_deletecar @CarId int 
+as 
+begin
+delete from CarTable where CarId=@CarId 
+end  
+
+Create procedure sp_getorderdetail @OrderId int 
+AS 
+begin 
+select * from OrderTable where OrderId=@OrderId 
+end;  
+
+Create procedure sp_getorderdetailbyuserid @UserId int 
+AS 
+begin 
+select * from OrderTable where UserId=@UserId 
+end;
+
+Create procedure sp_addorder @CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Completed bit
+AS 
+begin
+insert into OrderTable (CarId,UserId,FromDate,ToDate,ExtraDays,Total,Completed) values (@CarId,@UserId,@FromDate,@ToDate,@ExtraDays,@Total,@Completed); 
+SELECT SCOPE_IDENTITY();
+end;  
+
+Create procedure sp_insertpayment @OrderId int,@UserId int,@Total int 
+AS
+begin 
+insert into PaymentTable (OrderId,UserId,Total) values (@OrderId,@UserId,@Total);
+end;
+
+Create procedure sp_completeOrder @OrderId int,@ExtraDays int
+AS  
+begin
+update OrderTable set ExtraDays=@ExtraDays,Completed=1 where OrderId=@OrderId; 
+end;  
+
+Create procedure sp_getpaymentList @UserId int 
+AS 
+begin 
+select * from PaymentTable where UserId=@UserId 
+end;
+
+Create procedure sp_getpendingorder @UserId int  
+AS 
+begin
+select count(*) from OrderTable where UserId=@UserId and Completed=1 
+end;  
+
+create procedure sp_carjoinorderbyuserid @UserId int  
+as  
+begin 
+select * from CarTable c,OrderTable o where c.CarId=o.CarId and o.UserId=@UserId 
+end
