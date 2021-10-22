@@ -98,3 +98,19 @@ as
 begin 
 select * from CarTable c,OrderTable o where c.CarId=o.CarId and o.UserId=@UserId 
 end
+
+Create UserTable : - 
+
+create table [UserTable] (  [UserId] int IDENTITY(1000,1) NOT NULL ,   [UserName] nvarchar(30)  NOT NULL ,   [Password] nvarchar(30)  NOT NULL ,   [AadharNo] nvarchar(30)  NOT NULL , )ALTER TABLE UserTable ADD CONSTRAINT PK__UserTabl__1788CC4CFF23064C PRIMARY KEY  ([UserId])
+
+Create CarTable :-
+
+create table [CarTable] (  [CarId] int IDENTITY(100,1) NOT NULL ,   [CarName] nvarchar(30)  NOT NULL ,   [CarRegNo] nvarchar(30)  NOT NULL ,   [CarType] int  NOT NULL ,   [ChargePerDay] int  NOT NULL , )ALTER TABLE CarTable ADD CONSTRAINT PK__CarTable__68A0342E17216A40 PRIMARY KEY  ([CarId])
+
+Create OrderTable :-
+
+create table [OrderTable] (  [OrderId] int IDENTITY(100,5) NOT NULL ,   [CarId] int  NOT NULL ,   [UserId] int  NOT NULL ,   [FromDate] date  NULL ,   [ToDate] date  NULL ,   [ExtraDays] int  NULL ,   [Total] int  NULL ,   [Completed] bit  NULL , )ALTER TABLE OrderTable ADD CONSTRAINT PK__OrderTab__C3905BCF6B2B6286 PRIMARY KEY  ([OrderId])
+
+Create PaymentTable :-
+
+create table [PaymentTable] (  [PaymentId] int IDENTITY(10,1) NOT NULL ,   [OrderId] int  NOT NULL ,   [UserId] int  NOT NULL ,   [Total] int  NULL , )ALTER TABLE PaymentTable ADD CONSTRAINT PK__PaymentT__9B556A38AC64F844 PRIMARY KEY  ([PaymentId])
