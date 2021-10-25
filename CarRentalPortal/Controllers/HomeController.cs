@@ -550,7 +550,7 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction("ErrorPage");
             }
         }
-        public async Task<IActionResult> PaymentPagePostAsync(int orderId,int total,string type,int ExtraDays)
+        public async Task<IActionResult> PaymentPagePost(int orderId,int total,string type,int ExtraDays)
         {
             if (type == "order")
             {

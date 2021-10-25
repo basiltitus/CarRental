@@ -66,11 +66,11 @@
                         }
                         @if (list[index].Completed == "pending")
                         {
-                            <button class="btn btn-danger wide-btn" onclick="location.href='@Url.Action("CompleteTrip", "home",new { orderId=list[index].OrderId})';return false;">Pending</button>
+                            <button class="btn btn-success wide-btn" onclick="location.href='@Url.Action("CompleteTrip", "home",new { orderId=list[index].OrderId})';return false;">Return Car</button>
                         }
                         @if (list[index].Completed == "unpaid")
                         {
-                            <button class="btn btn-danger wide-btn" disabled>Payment Failed</button>
+                            <button class="btn btn-danger wide-btn" onclick="location.href='@Url.Action("PaymentPage", "home",new { orderId=list[index].OrderId,type="order",total=0,ExtraDays=0})';return false;">Retry Payment</button>
                         }
                     </td>
                 </tr>
