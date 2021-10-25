@@ -70,7 +70,6 @@ namespace Server.API.Operations
         {
             SqlCommand commandCheck = new SqlCommand("sp_userexist", sqlConnection);
             commandCheck.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = user.UserName;
-            commandCheck.Parameters.Add("@Role", SqlDbType.NVarChar).Value = user.Role;
             commandCheck.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             var response = (int)commandCheck.ExecuteScalar();
@@ -130,6 +129,20 @@ namespace Server.API.Operations
             if (securityIdentity.SecurityCode == "123123")
             {
                 return true;
+            }
+            return false;
+        }
+        public bool CheckUserExists(string userName)
+        {
+            SqlCommand commandCheck = new SqlCommand("sp_userexist", sqlConnection);
+            commandCheck.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = userName;
+            commandCheck.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            var response = (int)commandCheck.ExecuteScalar();
+            sqlConnection.Close();
+            if (response > 0)
+            {
+               return true;
             }
             return false;
         }

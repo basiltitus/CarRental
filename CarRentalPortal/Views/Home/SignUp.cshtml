@@ -21,8 +21,8 @@
                         <form asp-action="SignUp" method="post">
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @* @Html.HiddenFor(model => model.UserId)*@
-
-                            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput" } })
+                            <input type="email" name="UserName"  id="userNameTextBox" onchange="validateEmail()" class="form-control formInput" placeholder = "Email ID" />
+                            @*@Html.EditorFor(model => model.UserName, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput" } })*@
                             @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
 
                             @Html.EditorFor(model => model.Password, new { htmlAttributes = new { placeholder = "Passsword", @class = "form-control formInput" } })
@@ -30,7 +30,7 @@
 
                             @Html.EditorFor(model => model.AadharNumber, new { htmlAttributes = new { placeholder = "Aadhar Number", @class = "form-control formInput" } })
                             @Html.ValidationMessageFor(model => model.AadharNumber, "", new { @class = "text-danger" })
-                            <span class="text-danger"> @ViewBag.ErrorMessage</span>
+                            <span id="errorMessageSpan" class="text-danger"> @ViewBag.ErrorMessage</span>
                             <div class="d-grid gap-2 d-md-block">
                                 <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Create</button>
                                 Already a user? <button type="button" class="btn btn-link " onclick="location.href='@Url.Action("SignIn", "home")';return false;">
@@ -44,3 +44,18 @@
         </div>
     </div>
 }
+<script>
+    function validateEmail() {
+        var email = document.getElementById("userNameTextBox").value;
+        fetch("https://localhost:44305/api/Auth/"+email).then(response => response.json())
+            .then((item) => {
+                if (item) {
+                    document.getElementById("errorMessageSpan").innerHTML = "User Already Exists!";
+                }
+                else {
+                    document.getElementById("errorMessageSpan").innerHTML = ""
+                }
+
+            });
+    }
+</script>

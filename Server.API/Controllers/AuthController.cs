@@ -40,5 +40,10 @@ namespace Server.API.Controllers
         {
             return Ok(auth.CheckSecurityIdentity(securityIdentity));
         }
+        [HttpGet("{username}")]
+        public IActionResult UserExists(string userName)
+        {
+            return Ok(auth.CheckUserExists(userName));
+        }
     }
 }
