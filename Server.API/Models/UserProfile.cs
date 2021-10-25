@@ -10,5 +10,6 @@ namespace Server.API.Models
 
         public string token { get; set; }
         public int userId { get; set; }
+        public string role { get; set; }
     }
 }

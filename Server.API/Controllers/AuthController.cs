@@ -34,5 +34,11 @@ namespace Server.API.Controllers
         {
             return Ok(auth.SignUp(u));
         }
+        [HttpPost]
+        [Route("adminsecuritycheck")]
+        public IActionResult SecurityCheck(SecurityTable securityIdentity)
+        {
+            return Ok(auth.CheckSecurityIdentity(securityIdentity));
+        }
     }
 }

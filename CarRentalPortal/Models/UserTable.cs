@@ -21,5 +21,6 @@ namespace CarRentalPortal.Models
         [StringLength(12, MinimumLength = 12, ErrorMessage = "ID Number will be of 12 charecters length")]
         [RegularExpression("^[0-9]*$", ErrorMessage = "ID card number holds only numbers")]
         public string AadharNumber { get; set; }
+        public string Role { get; set; }
     }
 }

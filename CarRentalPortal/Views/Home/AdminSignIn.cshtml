@@ -1,0 +1,41 @@
+﻿
+@model CarRentalPortal.Models.UserAuth
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="loginScreen">
+        <div class="row row-size">
+            <div class="col-md-6 d-none d-lg-block">
+                <img src='https://c.wallhere.com/photos/ab/d7/1600x900_px_New_York_City_street_taxi_Tilt_Shift_Traffic-545545.jpg!d' id="imgLogin" />
+            </div>
+            <div class="col-md-6 col-sm-12">
+                <div id="loginFormDiv" class="card">
+                    <div id="loginForm" class="card-body">
+                        <h2 class="brandName">
+                            DriveWay Admin Portal
+                        </h2>
+                        <p>
+                            Welcome back! Please login to your accont.
+                        </p>
+                        <form asp-action="SignIn" method="post">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput" } })
+                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { placeholder = "Passsword", @class = "form-control formInput" } })
+                            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                            @ViewBag.ErrorMessage
+                            <div class="d-grid gap-2 d-md-block">
+                                <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Login</button>
+                                New Admin? <button type="button" class="btn btn-link " onclick="location.href='@Url.Action("AdminSignUp", "home")';return false;">
+                                    Click Here
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

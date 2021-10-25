@@ -25,12 +25,18 @@ namespace Server.API.Operations
             command.Parameters.Add("@Password", SqlDbType.NVarChar).Value = password;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
-            var response = command.ExecuteScalar();
-            int userId;
-            if (response != null)
-                userId = (int)response;
-            else
+            SqlDataReader rdr = command.ExecuteReader();
+            int userId=0;
+            string role="";
+            if (!rdr.HasRows)
+            {
                 userId = 0;
+            }
+            while (rdr.Read())
+            {
+                userId = Convert.ToInt32(rdr["UserId"].ToString());
+                role = rdr["Role"].ToString();
+            }
             sqlConnection.Close();
             UserProfile userProfile = new UserProfile
             {
@@ -40,19 +46,22 @@ namespace Server.API.Operations
             {
                 userProfile.token = "unavailable";
                 userProfile.userId = 0;
+                userProfile.role = "customer";
                 return userProfile;
             }
             else
             {
-                if (userName.Contains("admin"))
+                if (role=="admin")
                 {
 
                     userProfile.token = JSONWebToken.GenerateJSONWebToken(userName, "Admin");
+                    userProfile.role = "admin";
                     return userProfile;
                 }
                 else
                 {
                     userProfile.token = JSONWebToken.GenerateJSONWebToken(userName, "Customer");
+                    userProfile.role = "customer";
                     return userProfile;
                 }
             }
@@ -61,6 +70,7 @@ namespace Server.API.Operations
         {
             SqlCommand commandCheck = new SqlCommand("sp_userexist", sqlConnection);
             commandCheck.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = user.UserName;
+            commandCheck.Parameters.Add("@Role", SqlDbType.NVarChar).Value = user.Role;
             commandCheck.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             var response = (int)commandCheck.ExecuteScalar();
@@ -77,17 +87,29 @@ namespace Server.API.Operations
             commandInsert.Parameters.Add("@UserName", SqlDbType.NVarChar).Value = user.UserName;
             commandInsert.Parameters.Add("@Password", SqlDbType.NVarChar).Value = user.Password;
             commandInsert.Parameters.Add("@AadharNo", SqlDbType.NVarChar).Value = user.AadharNumber;
+            commandInsert.Parameters.Add("@Role", SqlDbType.NVarChar).Value = user.Role;
             commandInsert.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
-            int userId = Convert.ToInt32(commandInsert.ExecuteScalar());
-
-            sqlConnection.Close();
+            SqlDataReader rdr = commandInsert.ExecuteReader();
+            int userId = 0;
+            string role = "";
+            if (!rdr.HasRows) {
+                userId = 0;
+                role = "customer";
+            }
+            while (rdr.Read())
+            {
+                userId = Convert.ToInt32(rdr["UserId"].ToString());
+                role = rdr["Role"].ToString();
+            } sqlConnection.Close();
             userProfile.userId = userId;
+            userProfile.role = role;
             if (userId >= 1000)
             {
-                if (user.UserName.Contains("admin"))
+                if (userProfile.role=="admin")
                 {
                     userProfile.token = JSONWebToken.GenerateJSONWebToken(user.UserName, "Admin");
+                    
                     return userProfile;
                 }
                 else
@@ -102,6 +124,14 @@ namespace Server.API.Operations
                 userProfile.token = "unavailable";
                 return userProfile;
             }
+        }
+        public bool CheckSecurityIdentity(SecurityTable securityIdentity)
+        {
+            if (securityIdentity.SecurityCode == "123123")
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -139,3 +139,6 @@ C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Raz
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\UnauthorizedPage.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\CompleteTrip.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\ZeroHistoryPage.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\AdminSecurity.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\AdminSignIn.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\AdminSignUp.cshtml.g.cs

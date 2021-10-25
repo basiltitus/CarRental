@@ -40,13 +40,17 @@ namespace CarRentalPortal.Controllers
         {
             return View();
         }
-        public IActionResult SignIn()
+        public IActionResult AdminSignIn()
         {
-            return View();
+            if (TempData.ContainsKey("AdminAuthorized") && TempData["AdminAuthorized"].ToString() == "authorized")
+                return View();
+            else
+                return RedirectToAction("AdminSecurity", new { pageId = "signin" });
+          
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignIn(UserAuth item)
+        public async Task<IActionResult> AdminSignIn(UserAuth item)
         {
             if (ModelState.IsValid)
             {
@@ -55,21 +59,14 @@ namespace CarRentalPortal.Controllers
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     UserProfile userProfile = JsonConvert.DeserializeObject<UserProfile>(stringData);
-                    if (userProfile.token != "unavailable")
+                    if (userProfile.token != "unavailable"&&userProfile.role=="admin")
                     {
                         HttpContext.Session.SetString("_token", userProfile.token);
-                        if (item.UserName.Contains("admin"))
-                        {
+                        
                             HttpContext.Session.SetString("_userType", "Admin");
                             HttpContext.Session.SetInt32("_userId", userProfile.userId);
                             return RedirectToAction("AdminPortal");
-                        }
-                        else
-                        {
-                            HttpContext.Session.SetString("_userType", "Customer");
-                            HttpContext.Session.SetInt32("_userId", userProfile.userId);
-                            return RedirectToAction("UserPortal");
-                        }
+                      
                     }
                     else
                     {
@@ -85,7 +82,119 @@ namespace CarRentalPortal.Controllers
             else
                 return View(item);
         }
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignIn(UserAuth item)
+        {
+            if (ModelState.IsValid)
+            {
+                HttpResponseMessage response = await client.PostAsJsonAsync("auth/signin", item);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    UserProfile userProfile = JsonConvert.DeserializeObject<UserProfile>(stringData);
+                    if (userProfile.token != "unavailable"&& userProfile.role == "customer")
+                    {
+                        HttpContext.Session.SetString("_token", userProfile.token);
+                        HttpContext.Session.SetString("_userType", "Customer");
+                        HttpContext.Session.SetInt32("_userId", userProfile.userId);
+                        return RedirectToAction("UserPortal");
+                        
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "Invalid User Credentials";
+                        return View(item);
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            else
+                return View(item);
+        }
+        public IActionResult AdminSecurity( string pageID)
+        {
+            TempData["RedirectPage"] = pageID;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> AdminSecurity(SecurityTable securityIdentity)
+        {
+            if (securityIdentity.SecurityCode!="")
+            {
+                HttpResponseMessage response = await client.PostAsJsonAsync("auth/adminsecuritycheck", securityIdentity);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    bool authorized = JsonConvert.DeserializeObject<bool>(stringData);
+                    if (authorized)
+                    {
+                        TempData["AdminAuthorized"] = "authorized";
+                        if (TempData.ContainsKey("RedirectPage") && TempData["RedirectPage"].ToString() == "signin")
+                        {
+                            return RedirectToAction("AdminSignIn");
+                        }
+                        else if(TempData.ContainsKey("RedirectPage") && TempData["RedirectPage"].ToString() == "signup")
+                        {
+                            return RedirectToAction("AdminSignUp");
+                        }
+                        else
+                        {
+                            return RedirectToAction("ErrorPage");
+                        }
+                    }
+                }
+            }
+            ViewBag.ErrorMessage = "Please check your security Passcode";
+                return View();
 
+                }
+        public IActionResult AdminSignUp()
+        {
+            if (TempData.ContainsKey("AdminAuthorized") && TempData["AdminAuthorized"].ToString() == "authorized")
+                return View();
+            else
+                return RedirectToAction("AdminSecurity",new {pageId="signup" });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminSignUp(UserTable item)
+        {
+            if (ModelState.IsValid)
+            {
+                item.Role = "admin";
+                HttpResponseMessage response = await client.PostAsJsonAsync("auth/signup", item);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    UserProfile userProfile = JsonConvert.DeserializeObject<UserProfile>(stringData);
+                    if (userProfile.token != "unavailable")
+                    {
+                        HttpContext.Session.SetString("_token", userProfile.token);
+                        
+                            HttpContext.Session.SetString("_userType", "Admin");
+                            HttpContext.Session.SetInt32("_userId", userProfile.userId);
+                            return RedirectToAction("AdminPortal");
+                        
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "User Already Exists!";
+                        return View(item);
+                    }
+
+                }
+                return RedirectToAction("Index");
+            }
+            return View(item);
+        }
         public IActionResult SignUp()
         {
             return View();
@@ -96,6 +205,7 @@ namespace CarRentalPortal.Controllers
         {
             if (ModelState.IsValid)
             {
+                item.Role = "customer";
                 HttpResponseMessage response = await client.PostAsJsonAsync("auth/signup", item);
                 if (response.IsSuccessStatusCode)
                 {
@@ -104,18 +214,11 @@ namespace CarRentalPortal.Controllers
                     if (userProfile.token != "unavailable")
                     {
                         HttpContext.Session.SetString("_token", userProfile.token);
-                        if (item.UserName.Contains("admin"))
-                        {
-                            HttpContext.Session.SetString("_userType", "Admin");
-                            HttpContext.Session.SetInt32("_userId", userProfile.userId);
-                            return RedirectToAction("AdminPortal");
-                        }
-                        else
-                        {
+                        
                             HttpContext.Session.SetString("_userType", "Customer");
                             HttpContext.Session.SetInt32("_userId", userProfile.userId);
                             return RedirectToAction("UserPortal");
-                        }
+                        
                     }
                     else
                     {

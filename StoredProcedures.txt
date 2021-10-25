@@ -1,17 +1,18 @@
-
-CREATE PROCEDURE sp_signup        @UserName nvarchar(30),@Password nvarchar(30),@AadharNo nvarchar(30)
+CREATE PROCEDURE sp_signup        @UserName nvarchar(30),@Password nvarchar(30),@AadharNo nvarchar(30),@Role nvarchar(30)
 AS
 BEGIN
-Insert into UserTable (UserName,Password,AadharNo) values (@UserName,@Password,@AadharNo);
-SELECT SCOPE_IDENTITY()
+Insert into UserTable (UserName,Password,AadharNo,Role) values (@UserName,@Password,@AadharNo,@Role);
+
+SELECT userid,role from usertable where UserName=@UserName and Password=@Password;
 END  
 
 CREATE PROCEDURE sp_login
 @UserName nvarchar(30),@Password nvarchar(30)
 AS
 BEGIN 
-Select UserId From UserTable where UserName=@UserName and Password=@Password  
+Select UserId,Role From UserTable where UserName=@UserName and Password=@Password  
 END    
+
 
 
 CREATE PROCEDURE sp_userexist        @UserName nvarchar(30) 
