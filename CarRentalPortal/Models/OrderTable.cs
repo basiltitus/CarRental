@@ -31,7 +31,7 @@ namespace CarRentalPortal.Models
         [Display(Name = "Extra Number of Days")]
         public int ExtraDays { get; set; }
         [Display(Name = "Status")]
-        public bool Completed { get; set; }
+        public string Completed { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

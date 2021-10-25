@@ -26,7 +26,7 @@ namespace Server.API.Models
         public int Total { get; set; }
         public int ExtraDays { get; set; }
         [Required]
-        public bool Completed { get; set; }
+        public string Completed { get; set; }
         public OrderTable()
         {
             Cardetail = new CarTable();

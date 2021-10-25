@@ -63,12 +63,12 @@ begin
 select * from OrderTable where UserId=@UserId 
 end;
 
-Create procedure sp_addorder @CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Completed bit
+Create procedure sp_addorder @CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Completed nvarchar(30)
 AS 
 begin
 insert into OrderTable (CarId,UserId,FromDate,ToDate,ExtraDays,Total,Completed) values (@CarId,@UserId,@FromDate,@ToDate,@ExtraDays,@Total,@Completed); 
 SELECT SCOPE_IDENTITY();
-end;  
+end; 
 
 Create procedure sp_insertpayment @OrderId int,@UserId int,@Total int 
 AS
@@ -79,7 +79,13 @@ end;
 Create procedure sp_completeOrder @OrderId int,@ExtraDays int
 AS  
 begin
-update OrderTable set ExtraDays=@ExtraDays,Completed=1 where OrderId=@OrderId; 
+update OrderTable set ExtraDays=@ExtraDays,Completed='completed' where OrderId=@OrderId; 
+end;  
+
+Create procedure sp_makepayment @OrderId int
+AS  
+begin
+update OrderTable set Completed='pending' where OrderId=@OrderId; 
 end;  
 
 Create procedure sp_getpaymentList @UserId int 

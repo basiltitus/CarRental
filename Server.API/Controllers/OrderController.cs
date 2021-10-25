@@ -43,6 +43,11 @@ namespace Server.API.Operations
             }
             catch (Exception) { return StatusCode(500); }
         }
+        [HttpGet("makepayment/{orderId}")]
+        public IActionResult MakePayment(int orderId)
+        {
+            return Ok(orderOperation.MakePayment(orderId));
+        }
         [HttpGet("ExtraDays")]
         public IActionResult CompleteOrder(int orderId, int extraDays)
         {

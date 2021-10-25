@@ -29,7 +29,7 @@ namespace Server.API.Operations
             command.Parameters.Add("@ToDate", SqlDbType.Date).Value = order.ToDate;
             command.Parameters.Add("@ExtraDays", SqlDbType.Int).Value = order.ExtraDays;
             command.Parameters.Add("@Total", SqlDbType.Int).Value = order.Total;
-            command.Parameters.Add("@Completed", SqlDbType.Bit).Value = order.Completed;
+            command.Parameters.Add("@Completed", SqlDbType.NVarChar).Value = order.Completed;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             int response = Convert.ToInt32(command.ExecuteScalar());
@@ -45,6 +45,19 @@ namespace Server.API.Operations
             SqlCommand command = new SqlCommand("sp_completeOrder", sqlConnection);
             command.Parameters.Add("@OrderId", SqlDbType.Int).Value = orderId;
             command.Parameters.Add("@ExtraDays", SqlDbType.Int).Value = extraDays;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            int response = command.ExecuteNonQuery();
+            sqlConnection.Close();
+            if (response >= 1)
+                return true;
+            else
+                return false;
+        }
+        public bool MakePayment(int orderId)
+        {
+            SqlCommand command = new SqlCommand("sp_makepayment", sqlConnection);
+            command.Parameters.Add("@OrderId", SqlDbType.Int).Value = orderId;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             int response = command.ExecuteNonQuery();
@@ -71,7 +84,7 @@ namespace Server.API.Operations
                 order.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
                 order.Total = Convert.ToInt32(rdr["Total"]);
                 order.ExtraDays = Convert.ToInt32(rdr["ExtraDays"]);
-                order.Completed = Convert.ToBoolean(rdr["Completed"]);
+                order.Completed = rdr["Completed"].ToString();
             }
             sqlConnection.Close();
             return order;
@@ -100,7 +113,7 @@ namespace Server.API.Operations
                 order.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
                 order.Total = Convert.ToInt32(rdr["Total"]);
                 order.ExtraDays = Convert.ToInt32(rdr["ExtraDays"]);
-                order.Completed = Convert.ToBoolean(rdr["Completed"]);
+                order.Completed = rdr["Completed"].ToString();
                 orderList.Add(order);
             }
             sqlConnection.Close();

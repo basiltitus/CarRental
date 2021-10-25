@@ -60,13 +60,17 @@
                         @Html.DisplayFor(modelItem => item.ExtraDays)
                     </td>
                     <td>
-                        @if (list[index].Completed)
+                        @if (list[index].Completed == "completed")
                         {
                             <button class="btn btn-primary wide-btn" disabled>Completed</button>
                         }
-                        @if (!list[index].Completed)
+                        @if (list[index].Completed == "pending")
                         {
                             <button class="btn btn-danger wide-btn" onclick="location.href='@Url.Action("CompleteTrip", "home",new { orderId=list[index].OrderId})';return false;">Pending</button>
+                        }
+                        @if (list[index].Completed == "unpaid")
+                        {
+                            <button class="btn btn-danger wide-btn" disabled>Payment Failed</button>
                         }
                     </td>
                 </tr>

@@ -345,24 +345,7 @@ namespace CarRentalPortal.Controllers
             {
                 if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                     return RedirectToAction("UnauthorizedPage");
-                int pendingOrders = 0;
-                int userId = (int)HttpContext.Session.GetInt32("_userId");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.GetAsync("Order/userId?userId=" + userId);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    List<OrderTable> orderList = JsonConvert.DeserializeObject<List<OrderTable>>(stringData);
-                    orderList.ForEach((item) =>
-                    {
-                        if (!item.Completed)
-                        {
-                            ++pendingOrders;
-                        }
-                    });
-                    ViewBag.PendingOrders = pendingOrders;
-                    return View();
-                }
+                
                 return View();
             }
             catch (Exception)
@@ -470,7 +453,7 @@ namespace CarRentalPortal.Controllers
                     List<OrderTable> orderList = JsonConvert.DeserializeObject<List<OrderTable>>(stringData);
                     orderList.ForEach((item) =>
                     {
-                        if (!item.Completed)
+                        if (item.Completed=="pending")
                         {
                             ++pendingOrders;
                         }
@@ -503,7 +486,7 @@ namespace CarRentalPortal.Controllers
                         var stringData = response.Content.ReadAsStringAsync().Result;
                         CarTable carDetails = JsonConvert.DeserializeObject<CarTable>(stringData);
                         order.Total = noOfDays * carDetails.ChargePerDay;
-                        order.Completed = false;
+                        order.Completed = "unpaid";
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
                         HttpResponseMessage orderResponse = await client.PostAsJsonAsync("Order/addorder", order);
                         if (orderResponse.IsSuccessStatusCode)
@@ -545,23 +528,19 @@ namespace CarRentalPortal.Controllers
                         OrderTable order = JsonConvert.DeserializeObject<OrderTable>(stringData);
                         ViewBag.OrderId = order.OrderId;
                         ViewBag.Total = order.Total;
+                        ViewBag.Type = type;
+                        ViewBag.ExtraDays = ExtraDays;
                         return View();
                     }
                 }
                 else if (type == "fine")
                 {
-                    HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var stringData = response.Content.ReadAsStringAsync().Result;
-                        bool updated = JsonConvert.DeserializeObject<bool>(stringData);
-                        if (updated)
-                        {
-                            ViewBag.OrderId = orderId;
+                    ViewBag.Type = type;
+                    ViewBag.ExtraDays = ExtraDays;
+                    ViewBag.OrderId = orderId;
                             ViewBag.Total = total;
                             return View();
-                        }
-                    }
+                      
                 }
                 return RedirectToAction("ErrorPage");
             }
@@ -570,6 +549,37 @@ namespace CarRentalPortal.Controllers
 
                 return RedirectToAction("ErrorPage");
             }
+        }
+        public async Task<IActionResult> PaymentPagePostAsync(int orderId,int total,string type,int ExtraDays)
+        {
+            if (type == "order")
+            {
+                HttpResponseMessage response = await client.GetAsync("order/makepayment/" + orderId);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                    if (updated)
+                    {
+                        return RedirectToAction("OrderSuccessfull", new { orderId = orderId, total = total });
+
+                    }
+                }
+            }
+            else if (type == "fine")
+            {
+                HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                    if (updated)
+                    {
+                        return RedirectToAction("OrderSuccessfull", new { orderId = orderId, total = total });
+                    }
+                }
+            }
+            return RedirectToAction("ErrorPage");
         }
         public async Task<IActionResult> OrderSuccessfull(int orderId, int total)
         {
