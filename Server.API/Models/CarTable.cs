@@ -12,10 +12,13 @@ namespace Server.API.Models
         [Required(ErrorMessage = "Please enter Car Name")]
         public string CarName { get; set; }
         [Required(ErrorMessage = "Please enter Car Registration Number")]
+        [RegularExpression("^[A-Z]{2}\\-[0-9]{2}\\-[A-Z]{1,2}\\-[0-9]{4}$", ErrorMessage = "Registration number must be properly formatted.")]
         public string CarRegNo { get; set; }
         [Required(ErrorMessage = "Please Select Car Type")]
         public CarVarient CarType { get; set; }
         [Required(ErrorMessage = "Please enter Charge per day")]
+
+        [Range(0, 10000, ErrorMessage = "Daily rental must be between {1} and {2}.")]
         public int ChargePerDay { get; set; }
     }
     public enum CarVarient

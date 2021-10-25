@@ -26,23 +26,41 @@ namespace Server.API.Operations
         [Route("addorder")]
         public IActionResult AddOrder(OrderTable order)
         {
-            return Ok(orderOperation.AddOrder(order));
+           
+                try
+                {
+                    return Ok(orderOperation.AddOrder(order));
+                }
+                catch (Exception) { return StatusCode(500); }
+            
         }
         [HttpGet("{orderId}")]
         public IActionResult GetOrderDetails(int orderId)
         {
-            return Ok(orderOperation.GetOrderDetails(orderId));
+            try
+            {
+                return Ok(orderOperation.GetOrderDetails(orderId));
+            }
+            catch (Exception) { return StatusCode(500); }
         }
         [HttpGet("ExtraDays")]
         public IActionResult CompleteOrder(int orderId, int extraDays)
         {
-            return Ok(orderOperation.CompleteOrder(orderId, extraDays));
+            try
+            {
+                return Ok(orderOperation.CompleteOrder(orderId, extraDays));
+            }
+            catch (Exception) { return StatusCode(500); }
         }
         [HttpGet("userId")]
         [ActionName("orderByUserId")]
         public IActionResult GetOrderDetailsByUserId(int userId)
         {
-            return Ok(orderOperation.GetOrderDetailsByUserId(userId));
+            try
+            {
+                return Ok(orderOperation.GetOrderDetailsByUserId(userId));
+            }
+            catch (Exception) { return StatusCode(500); }
         }
     }
 }

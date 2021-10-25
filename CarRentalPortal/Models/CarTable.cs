@@ -20,6 +20,7 @@ namespace CarRentalPortal.Models
         [Display(Name = "Car Type")]
         public CarVarient CarType { get; set; }
         [Required(ErrorMessage = "Please enter Charge per day")]
+        [Range(0, 10000,ErrorMessage = "Daily rental must be between {1} and {2}.")]
         [Display(Name = "Rent Per Day")]
         public int ChargePerDay { get; set; }
     }

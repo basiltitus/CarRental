@@ -27,37 +27,72 @@ namespace Server.API.Controllers
         [Route("adddetails")]
         public IActionResult Post(CarTable car)
         {
-
-            return Ok(carOperation.AddCar(car));
+ try
+                {
+                    try
+                {
+                    return Ok(carOperation.AddCar(car));
+                }
+                catch (Exception) { return StatusCode(500); }
+                }
+                catch (Exception) { return StatusCode(500); }
+           
         }
         [HttpGet]
         [Route("getlist")]
         public IActionResult Get()
         {
-            return Ok(carOperation.GetList());
+           
+                try
+                {
+                    return Ok(carOperation.GetList());
+                }
+                catch (Exception) { return StatusCode(500); }
+            
         }
         [HttpGet("{id}")]
         public IActionResult GetCar(int id)
         {
-            return Ok(carOperation.GetCar(id));
+            
+                try
+                {
+                    return Ok(carOperation.GetCar(id));
+                }
+                catch (Exception) { return StatusCode(500); }
+            
         }
         [HttpGet("carvarient")]
         public IActionResult GetCarVarient()
         {
-            return Ok(carOperation.GetCarVarients());
+            try
+            {
+                return Ok(carOperation.GetCarVarients());
+            }
+            catch (Exception) { return StatusCode(500); }
         }
         [HttpPost]
         [Route("updatecar")]
         public IActionResult UpdateCar(CarTable car)
         {
-            return Ok(carOperation.UpdateCar(car));
+            try
+                {
+                    return Ok(carOperation.UpdateCar(car));
+                }
+                catch (Exception) { return StatusCode(500); }
+           
 
         }
         [HttpPost]
         [Route("deletecar")]
         public IActionResult Deletecar([FromBody] int id)
         {
-            return Ok(carOperation.DeleteCar(id));
+            
+                try
+                {
+                    return Ok(carOperation.DeleteCar(id));
+                }
+                catch (Exception) { return StatusCode(500); }
+            
         }
 
 

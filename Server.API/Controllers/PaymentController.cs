@@ -24,12 +24,28 @@ namespace Server.API.Controllers
         [Route("addPayment")]
         public IActionResult AddPayment(PaymentTable item)
         {
-            return Ok(paymentOperation.AddPayment(item));
+            try
+            {
+                return Ok(paymentOperation.AddPayment(item));
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
         }
         [HttpGet("{userId}")]
         public IActionResult GetPaymentList(int userId)
         {
-            return Ok(paymentOperation.GetPaymentList(userId));
+            try
+            {
+                return Ok(paymentOperation.GetPaymentList(userId));
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
         }
     }
 }
