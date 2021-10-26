@@ -51,9 +51,11 @@
             .then((item) => {
                 if (item) {
                     document.getElementById("errorMessageSpan").innerHTML = "User Already Exists!";
+                    document.getElementById("btn-one").disabled = true;
                 }
                 else {
                     document.getElementById("errorMessageSpan").innerHTML = ""
+                    document.getElementById("btn-one").disabled = false;
                 }
 
             });

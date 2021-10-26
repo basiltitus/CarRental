@@ -118,6 +118,21 @@ namespace Server.API.Operations
                 return false;
 
         }
+        public List<string> GetCarRegNo()
+        {
+            List<string> carRegNoList = new List<string>();
+            SqlCommand command = new SqlCommand("sp_getcarregno", sqlConnection);
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+            while (rdr.Read())
+            {
+                carRegNoList.Add(rdr["CarRegNo"].ToString());
+               
+            }
+            sqlConnection.Close();
+            return carRegNoList;
+        }
     }
 }
 

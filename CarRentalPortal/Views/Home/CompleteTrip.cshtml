@@ -14,7 +14,7 @@
             You Have exceed the rent duration by <span class="text-danger">@ViewBag.ExtraDays Days</span>.<br />So you have been charged with a fine of <span class="text-danger">
                 Rs.@ViewBag.FineAmount
             </span>.<br />Please Pay to Continue..<br />
-            <button class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("PaymentPage", "home",new {orderId=ViewBag.OrderId,type="fine",total=ViewBag.FineAmount,extraDays=ViewBag.ExtraDays })';return false;">Pay Now</button>
+            <button class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("PaymentPage", "home")';return false;">Pay Now</button>
         </div>
     </div>
     <div class="col-4"></div>

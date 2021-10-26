@@ -7,7 +7,12 @@
 <div>
     <partial name="_AdminNavBar" />
 </div>
-
+@if (ViewBag.SuccessMessage == "error")
+{
+    <h6 class="caradded-success text-danger">
+        Some Error Occured
+    </h6>
+}
 <hr />
 <div class="carDetailsDiv container">
     <h3>Update Car Details</h3>
@@ -25,7 +30,8 @@
         </div>
         <div class="form-group">
             <label asp-for="CarRegNo" class="control-label carLabel"></label>
-            <input asp-for="CarRegNo" class="form-control formInput" onchange="capitalizeRegNo()" />
+            <span id="repeatedCarNo" class="text-danger"></span>
+            <input asp-for="CarRegNo" class="form-control formInput" onchange="capitalizeRegNo('@ViewBag.CarRegNo')" />
             <span asp-validation-for="CarRegNo" class="text-danger"></span>
         </div>
         <div class="form-group">
@@ -41,7 +47,7 @@
             <span asp-validation-for="ChargePerDay" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <input type="submit" value="Save" class="btn btn-primary formSubmit" />
+            <input type="submit" id="btn-one" value="Save" class="btn btn-primary formSubmit" />
         </div>
     </form>
 </div>
@@ -54,8 +60,25 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 <script>
-    function capitalizeRegNo() {
+    function capitalizeRegNo(ownNo) {
+        let flag = 0;
         var regNo = document.getElementById("CarRegNo").value;
         document.getElementById("CarRegNo").value = regNo.toUpperCase();
+        fetch("https://localhost:44305/api/Car/getCarRegNo").then(response => response.json())
+            .then((items) => {
+                items.forEach((item) => {
+                    if (item == regNo && regNo != ownNo) {
+                        flag = 1;
+                    }
+                });
+                if (flag == 1) {
+                    document.getElementById("btn-one").disabled = true;
+                    document.getElementById("repeatedCarNo").innerHTML = "Already registered!";
+                }
+                else {
+                    document.getElementById("repeatedCarNo").innerHTML = "";
+                    document.getElementById("btn-one").disabled = false;
+                }
+            });
     }
 </script>

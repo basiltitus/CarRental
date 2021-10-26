@@ -1,6 +1,7 @@
 ﻿using CarRentalPortal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -20,18 +21,18 @@ namespace CarRentalPortal.Controllers
         private readonly HttpClient client;
         public async Task<List<CarTable>> RetrieveCarList()
         {
-           
 
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.GetAsync("Car/getlist");
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    List<CarTable> carList = JsonConvert.DeserializeObject<List<CarTable>>(stringData);
-                    return carList;
-                }
-                return null;
-            
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+            HttpResponseMessage response = await client.GetAsync("Car/getlist");
+            if (response.IsSuccessStatusCode)
+            {
+                var stringData = response.Content.ReadAsStringAsync().Result;
+                List<CarTable> carList = JsonConvert.DeserializeObject<List<CarTable>>(stringData);
+                return carList;
+            }
+            return null;
+
         }
         public HomeController(ILogger<HomeController> logger, HttpClient client)
         {
@@ -49,7 +50,7 @@ namespace CarRentalPortal.Controllers
                 return View();
             else
                 return RedirectToAction("AdminSecurity", new { pageId = "signin" });
-          
+
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -62,14 +63,14 @@ namespace CarRentalPortal.Controllers
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     UserProfile userProfile = JsonConvert.DeserializeObject<UserProfile>(stringData);
-                    if (userProfile.token != "unavailable"&&userProfile.role=="admin")
+                    if (userProfile.token != "unavailable" && userProfile.role == "admin")
                     {
                         HttpContext.Session.SetString("_token", userProfile.token);
-                        
-                            HttpContext.Session.SetString("_userType", "Admin");
-                            HttpContext.Session.SetInt32("_userId", userProfile.userId);
-                            return RedirectToAction("AdminPortal");
-                      
+
+                        HttpContext.Session.SetString("_userType", "Admin");
+                        HttpContext.Session.SetInt32("_userId", userProfile.userId);
+                        return RedirectToAction("AdminPortal");
+
                     }
                     else
                     {
@@ -83,44 +84,10 @@ namespace CarRentalPortal.Controllers
                 }
             }
             else
-                return View(item); try
-            {
-                if (ModelState.IsValid)
-                {
-                    HttpResponseMessage response = await client.PostAsJsonAsync("auth/signin", item);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var stringData = response.Content.ReadAsStringAsync().Result;
-                        UserProfile userProfile = JsonConvert.DeserializeObject<UserProfile>(stringData);
-                        if (userProfile.token != "unavailable" && userProfile.role == "admin")
-                        {
-                            HttpContext.Session.SetString("_token", userProfile.token);
+                return View(item);
 
-                            HttpContext.Session.SetString("_userType", "Admin");
-                            HttpContext.Session.SetInt32("_userId", userProfile.userId);
-                            return RedirectToAction("AdminPortal");
-
-                        }
-                        else
-                        {
-                            ViewBag.ErrorMessage = "Invalid User Credentials";
-                            return View(item);
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("ErrorPage");
-                    }
-                }
-                else
-                    return View(item);
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
         }
+        
         public IActionResult SignIn()
         {
             return View();
@@ -330,7 +297,7 @@ namespace CarRentalPortal.Controllers
                         }
                     }
                 }
-                ViewBag.SuccessMessage = "";
+                ViewBag.SuccessMessage = "error";
                 return View();
             }
             catch (Exception)
@@ -375,6 +342,7 @@ namespace CarRentalPortal.Controllers
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     CarTable carDetails = JsonConvert.DeserializeObject<CarTable>(stringData);
+                    ViewBag.CarRegNo = carDetails.CarRegNo;
                     return View(carDetails);
                 }
                 return View();
@@ -384,10 +352,6 @@ namespace CarRentalPortal.Controllers
 
                 return RedirectToAction("ErrorPage");
             }
-        }
-        public IActionResult ErrorPage()
-        {
-            return View();
         }
         [HttpPost]
         public async Task<IActionResult> EditCar(CarTable car)
@@ -405,13 +369,17 @@ namespace CarRentalPortal.Controllers
                         return RedirectToAction("CarList");
                     }
                 }
-                return RedirectToAction("ErrorPage");
+                return RedirectToAction("EditCar", new { id = car.CarId });
             }
             catch (Exception)
             {
 
                 return RedirectToAction("ErrorPage");
             }
+        }
+        public IActionResult ErrorPage()
+        {
+            return View();
         }
 
         public async Task<IActionResult> DeleteCar(int id)
@@ -485,6 +453,8 @@ namespace CarRentalPortal.Controllers
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
                         CarTable carDetails = JsonConvert.DeserializeObject<CarTable>(stringData);
+                        if (noOfDays == 0)
+                            noOfDays = 1;
                         order.Total = noOfDays * carDetails.ChargePerDay;
                         order.Completed = "unpaid";
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
@@ -495,7 +465,15 @@ namespace CarRentalPortal.Controllers
                             int orderId = JsonConvert.DeserializeObject<int>(orderStringData);
                             if (orderId >= 100)
                             {
-                                return RedirectToAction("PaymentPage", new { orderId = orderId, type = "order", total = 0, ExtraDays = 0 });
+                                PaymentReciept reciept = new PaymentReciept
+                                {
+                                    OrderId =orderId,
+                                    Type="order",
+                                    Total=0,
+                                    ExtraDays=0
+                                };
+                                TempData["PaymentReciept"]= JsonConvert.SerializeObject(reciept);
+                                return RedirectToAction("PaymentPage");
                             }
                         }
                     }
@@ -512,33 +490,36 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction("ErrorPage");
             }
         }
-        public async Task<IActionResult> PaymentPage(int orderId, string type, int total, int ExtraDays)
+        public async Task<IActionResult> PaymentPage()
         {
             try
             {
                 if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                     return RedirectToAction("UnauthorizedPage");
-                if (type == "order")
+                if (!TempData.ContainsKey("PaymentReciept"))
+                    return RedirectToAction("ErrorPage");
+                PaymentReciept reciept= JsonConvert.DeserializeObject<PaymentReciept>((string)TempData["PaymentReciept"]);
+                if (reciept.Type == "order")
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                    HttpResponseMessage response = await client.GetAsync("Order/" + orderId);
+                    HttpResponseMessage response = await client.GetAsync("Order/" +  reciept.OrderId);
                     if (response.IsSuccessStatusCode)
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
                         OrderTable order = JsonConvert.DeserializeObject<OrderTable>(stringData);
                         ViewBag.OrderId = order.OrderId;
                         ViewBag.Total = order.Total;
-                        ViewBag.Type = type;
-                        ViewBag.ExtraDays = ExtraDays;
+                        ViewBag.Type = reciept.Type;
+                        ViewBag.ExtraDays = reciept.ExtraDays;
                         return View();
                     }
                 }
-                else if (type == "fine")
+                else if (reciept.Type == "fine")
                 {
-                    ViewBag.Type = type;
-                    ViewBag.ExtraDays = ExtraDays;
-                    ViewBag.OrderId = orderId;
-                            ViewBag.Total = total;
+                    ViewBag.Type = reciept.Type;
+                    ViewBag.ExtraDays = reciept.ExtraDays;
+                    ViewBag.OrderId = reciept.OrderId;
+                            ViewBag.Total = reciept.Total;
                             return View();
                       
                 }
@@ -552,59 +533,59 @@ namespace CarRentalPortal.Controllers
         }
         public async Task<IActionResult> PaymentPagePost(int orderId,int total,string type,int ExtraDays)
         {
-            if (type == "order")
+            PaymentTable payment = new PaymentTable
             {
-                HttpResponseMessage response = await client.GetAsync("order/makepayment/" + orderId);
-                if (response.IsSuccessStatusCode)
+                OrderId = orderId,
+                UserId = (int)HttpContext.Session.GetInt32("_userId"),
+                Total = total
+            };
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+            HttpResponseMessage paymentResponse = await client.PostAsJsonAsync("Payment/addPayment", payment);
+            if (paymentResponse.IsSuccessStatusCode)
+            {
+                var paymentStringData = paymentResponse.Content.ReadAsStringAsync().Result;
+                bool inserted = JsonConvert.DeserializeObject<bool>(paymentStringData);
+                if (inserted)
                 {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    bool updated = JsonConvert.DeserializeObject<bool>(stringData);
-                    if (updated)
+                    if (type == "order")
                     {
-                        return RedirectToAction("OrderSuccessfull", new { orderId = orderId, total = total });
+                        HttpResponseMessage response = await client.GetAsync("order/makepayment/" + orderId);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var stringData = response.Content.ReadAsStringAsync().Result;
+                            bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                            if (updated)
+                            {
+                                return RedirectToAction("OrderSuccessfull");
 
+                            }
+                        }
                     }
-                }
-            }
-            else if (type == "fine")
-            {
-                HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    bool updated = JsonConvert.DeserializeObject<bool>(stringData);
-                    if (updated)
+                    else if (type == "fine")
                     {
-                        return RedirectToAction("OrderSuccessfull", new { orderId = orderId, total = total });
+                        HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var stringData = response.Content.ReadAsStringAsync().Result;
+                            bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                            if (updated)
+                            {
+                                return RedirectToAction("OrderSuccessfull");
+                            }
+                        }
                     }
                 }
             }
+            
             return RedirectToAction("ErrorPage");
         }
-        public async Task<IActionResult> OrderSuccessfull(int orderId, int total)
+        public async Task<IActionResult> OrderSuccessfull()
         {
             try
             {
                 if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                     return RedirectToAction("UnauthorizedPage");
-                PaymentTable payment = new PaymentTable
-                {
-                    OrderId = orderId,
-                    UserId = (int)HttpContext.Session.GetInt32("_userId"),
-                    Total = total
-                };
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.PostAsJsonAsync("Payment/addPayment", payment);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    bool inserted = JsonConvert.DeserializeObject<bool>(stringData);
-                    if (inserted)
-                    {
-                        return View();
-                    }
-                }
-                return RedirectToAction("ErrorPage");
+                return View();
             }
             catch (Exception)
             {
@@ -689,6 +670,14 @@ namespace CarRentalPortal.Controllers
                             ViewBag.ExtraDays = noOfDays;
                             ViewBag.OrderId = order.OrderId;
                             ViewBag.FineAmount = noOfDays * (car.ChargePerDay * 1.5);
+                            PaymentReciept reciept = new PaymentReciept
+                            {
+                                OrderId = order.OrderId,
+                                Type = "fine",
+                                Total = (int)(noOfDays * (car.ChargePerDay * 1.5)),
+                                ExtraDays = noOfDays
+                            };
+                            TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
                             return View();
                         }
                         else

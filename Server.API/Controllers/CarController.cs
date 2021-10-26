@@ -50,6 +50,11 @@ namespace Server.API.Controllers
                 catch (Exception) { return StatusCode(500); }
             
         }
+        [HttpGet("getCarRegNo")]
+        public IActionResult GetCarRegNo()
+        {
+            return Ok(carOperation.GetCarRegNo());
+        }
         [HttpGet("{id}")]
         public IActionResult GetCar(int id)
         {

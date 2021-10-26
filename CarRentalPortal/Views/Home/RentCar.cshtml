@@ -73,9 +73,11 @@
                 var fromDate = new Date(document.getElementById("fromDatePicker").value);
                 var toDate = new Date(document.getElementById("toDatePicker").value);
                 const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*millisecond
-                const diffDays = Math.round(Math.abs((toDate - fromDate) / oneDay));
+                let diffDays = Math.round(Math.abs((toDate - fromDate) / oneDay));
                 console.log(diffDays);
-                if (fromDate < toDate && carId != 0)
+                if (diffDays == 0)
+                    diffDays = 1;
+                if (fromDate <= toDate && carId != 0)
                     document.getElementById("summarySpan").innerHTML = "<br />Car Name : " + item.carName + "<br/>Car Varient : " + carVarients[item.carType] + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
             });
     }
