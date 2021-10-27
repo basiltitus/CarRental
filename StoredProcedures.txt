@@ -51,10 +51,10 @@ begin
 delete from CarTable where CarId=@CarId 
 end  
 
-Create procedure sp_getorderdetail @OrderId int 
+Create procedure sp_getorderdetail @OrderId int,@UserId int 
 AS 
 begin 
-select * from OrderTable where OrderId=@OrderId 
+select * from OrderTable where OrderId=@OrderId and UserId=@UserId and Completed<>'completed'
 end;  
 
 Create procedure sp_getorderdetailbyuserid @UserId int 
