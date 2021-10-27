@@ -490,6 +490,7 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction("ErrorPage");
             }
         }
+
         public async Task<IActionResult> PaymentPage()
         {
             try
@@ -498,11 +499,13 @@ namespace CarRentalPortal.Controllers
                     return RedirectToAction("UnauthorizedPage");
                 if (!TempData.ContainsKey("PaymentReciept"))
                     return RedirectToAction("ErrorPage");
+                int userId = (int)HttpContext.Session.GetInt32("_userId");
                 PaymentReciept reciept= JsonConvert.DeserializeObject<PaymentReciept>((string)TempData["PaymentReciept"]);
+                TempData.Keep("PaymentReciept");
                 if (reciept.Type == "order")
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                    HttpResponseMessage response = await client.GetAsync("Order/" +  reciept.OrderId);
+                    HttpResponseMessage response = await client.GetAsync("Order/" +  reciept.OrderId+"/"+userId);
                     if (response.IsSuccessStatusCode)
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
@@ -651,12 +654,15 @@ namespace CarRentalPortal.Controllers
             {
                 if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                     return RedirectToAction("UnauthorizedPage");
+                int userId = (int)HttpContext.Session.GetInt32("_userId");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.GetAsync("Order/" + orderId);
+                HttpResponseMessage response = await client.GetAsync("Order/" + orderId+"/"+userId);
                 if (response.IsSuccessStatusCode)
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     OrderTable order = JsonConvert.DeserializeObject<OrderTable>(stringData);
+                    if (order == null)
+                        return RedirectToAction("ErrorPage");
                     DateTime today = DateTime.Today;
                     HttpResponseMessage carResponse = await client.GetAsync("Car/" + order.CarId);
                     if (carResponse.IsSuccessStatusCode)

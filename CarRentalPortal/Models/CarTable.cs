@@ -11,6 +11,7 @@ namespace CarRentalPortal.Models
         public int CarId { get; set; }
         [Required(ErrorMessage = "Please enter Car Name")]
         [Display(Name = "Name of the car")]
+        [StringLength(30, MinimumLength = 2, ErrorMessage = "Car Name must be of maximum 30 charecters long")]
         public string CarName { get; set; }
         [Required(ErrorMessage = "Please enter Car Registration Number")]
         [Display(Name = "Registration Number")]

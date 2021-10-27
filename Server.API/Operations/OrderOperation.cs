@@ -67,14 +67,19 @@ namespace Server.API.Operations
             else
                 return false;
         }
-        public OrderTable GetOrderDetails(int orderId)
+        public OrderTable GetOrderDetails(int orderId,int userId)
         {
             SqlCommand command = new SqlCommand("sp_getorderdetail", sqlConnection);
             command.Parameters.Add("@OrderId", SqlDbType.Int).Value = (int)orderId;
+            command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             SqlDataReader rdr = command.ExecuteReader();
             OrderTable order = new OrderTable();
+            if (!rdr.HasRows)
+            {
+                return null;
+            }
             while (rdr.Read())
             {
                 order.OrderId = Convert.ToInt32(rdr["OrderId"]);

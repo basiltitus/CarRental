@@ -34,12 +34,12 @@ namespace Server.API.Operations
                 catch (Exception) { return StatusCode(500); }
             
         }
-        [HttpGet("{orderId}")]
-        public IActionResult GetOrderDetails(int orderId)
+        [HttpGet("{orderId}/{userId}")]
+        public IActionResult GetOrderDetails(int orderId,int userId)
         {
             try
             {
-                return Ok(orderOperation.GetOrderDetails(orderId));
+                return Ok(orderOperation.GetOrderDetails(orderId,userId));
             }
             catch (Exception) { return StatusCode(500); }
         }

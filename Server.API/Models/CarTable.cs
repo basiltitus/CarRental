@@ -10,6 +10,7 @@ namespace Server.API.Models
     {
         public int CarId { get; set; }
         [Required(ErrorMessage = "Please enter Car Name")]
+        [StringLength(30, MinimumLength = 3, ErrorMessage = "Car Name must be of maximum 30 charecters long")]
         public string CarName { get; set; }
         [Required(ErrorMessage = "Please enter Car Registration Number")]
         [RegularExpression("^[A-Z]{2}\\-[0-9]{2}\\-[A-Z]{1,2}\\-[0-9]{4}$", ErrorMessage = "Registration number must be properly formatted.")]

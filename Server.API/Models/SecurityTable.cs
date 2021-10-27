@@ -9,6 +9,7 @@ namespace Server.API.Models
     public class SecurityTable
     {
         [Required(ErrorMessage = "Please enter your security code")]
+        [StringLength(12, MinimumLength = 3, ErrorMessage = "Invalid security code")]
         public string SecurityCode { get; set; }
     }
 }
