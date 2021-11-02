@@ -23,7 +23,8 @@ namespace Server.API.Operations
         {
             SqlCommand command = new SqlCommand("sp_addcar", sqlConnection);
             command.Parameters.Add("@CarName", SqlDbType.NVarChar).Value = car.CarName;
-            command.Parameters.Add("@CarRegNo", SqlDbType.NVarChar).Value = car.CarRegNo;
+            command.Parameters.Add("@CarTransmission", SqlDbType.NVarChar).Value = (int)car.CarTransmission;
+            command.Parameters.Add("@CarCount", SqlDbType.NVarChar).Value = (int)car.CarCount;
             command.Parameters.Add("@CarType", SqlDbType.Int).Value = (int)car.CarType;
             command.Parameters.Add("@ChargePerDay", SqlDbType.Int).Value = car.ChargePerDay;
             command.CommandType = CommandType.StoredProcedure;
@@ -50,7 +51,8 @@ namespace Server.API.Operations
                 {
                     CarId = Convert.ToInt32(rdr["CarId"]),
                     CarName = rdr["CarName"].ToString(),
-                    CarRegNo = rdr["CarRegNo"].ToString(),
+                    CarTransmission =(CarTransmission)Convert.ToInt32(rdr["CarTransmission"]),
+                    CarCount=Convert.ToInt32(rdr["CarCount"]),
                     CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]),
                     ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"])
                 };
@@ -72,7 +74,8 @@ namespace Server.API.Operations
             {
                 car.CarId = Convert.ToInt32(rdr["CarId"]);
                 car.CarName = rdr["CarName"].ToString();
-                car.CarRegNo = rdr["CarRegNo"].ToString();
+                car.CarTransmission = (CarTransmission)Convert.ToInt32(rdr["CarTransmission"]);
+                car.CarCount = Convert.ToInt32(rdr["CarCount"]);
                 car.CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]);
                 car.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
             }
@@ -86,7 +89,8 @@ namespace Server.API.Operations
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.Add("@CarId", SqlDbType.Int).Value = car.CarId;
             command.Parameters.Add("@CarName", SqlDbType.NVarChar).Value = car.CarName;
-            command.Parameters.Add("@CarRegNo", SqlDbType.NVarChar).Value = car.CarRegNo;
+            command.Parameters.Add("@CarTransmission", SqlDbType.NVarChar).Value = (int)car.CarTransmission;
+            command.Parameters.Add("@CarCount", SqlDbType.NVarChar).Value = (int)car.CarCount;
             command.Parameters.Add("@CarType", SqlDbType.Int).Value = car.CarType;
             command.Parameters.Add("@ChargePerDay", SqlDbType.Int).Value = car.ChargePerDay;
             sqlConnection.Open();
@@ -118,21 +122,7 @@ namespace Server.API.Operations
                 return false;
 
         }
-        public List<string> GetCarRegNo()
-        {
-            List<string> carRegNoList = new List<string>();
-            SqlCommand command = new SqlCommand("sp_getcarregno", sqlConnection);
-            command.CommandType = CommandType.StoredProcedure;
-            sqlConnection.Open();
-            SqlDataReader rdr = command.ExecuteReader();
-            while (rdr.Read())
-            {
-                carRegNoList.Add(rdr["CarRegNo"].ToString());
-               
-            }
-            sqlConnection.Close();
-            return carRegNoList;
-        }
+       
     }
 }
 

@@ -31,12 +31,13 @@
             @Html.EditorFor(model => model.CarName, new { htmlAttributes = new { placeholder = "Name of the car", @class = "form-control formInput" } })
             @Html.ValidationMessageFor(model => model.CarName, "", new { @class = "text-danger" })
 
-            @Html.LabelFor(model => model.CarRegNo, new { @class = "carLabel" }) 
-            <span id="repeatedCarNo" class="text-danger"></span>
-            <input type="text" name="CarRegNo" id="CarRegNo" class="form-control formInput spacedInput" placeholder="Registration number of the car" onchange="capitalizeRegNo()" />
+            @Html.LabelFor(model => model.CarTransmission, new { @class = "carLabel" })
+            @Html.DropDownListFor(m => m.CarTransmission,
+             new SelectList(Enum.GetValues(typeof(CarTransmission))),
+             "Select Car Transmission", new { @class = "form-control formInput" })
             @*@Html.EditorFor(model => model.CarRegNo, new { htmlAttributes = new { placeholder = "Registration number of the car", @class = "form-control formInput" } })*@
-            @Html.ValidationMessageFor(model => model.CarRegNo, "", new { @class = "text-danger" })
-            
+            @Html.ValidationMessageFor(model => model.CarTransmission, "", new { @class = "text-danger" })
+
             @Html.LabelFor(model => model.CarType, new { @class = "carLabel" })
             <br />
             @Html.DropDownListFor(m => m.CarType,
@@ -48,6 +49,10 @@
             @Html.EditorFor(model => model.ChargePerDay, new { htmlAttributes = new { placeholder = "Charge Per Day", @class = "form-control formInput" } })
             @Html.ValidationMessageFor(model => model.ChargePerDay, "", new { @class = "text-danger" })
 
+            @Html.LabelFor(model => model.CarCount, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.CarCount, new { htmlAttributes = new { placeholder = "Count of cars", @class = "form-control formInput" } })
+            @Html.ValidationMessageFor(model => model.CarCount, "", new { @class = "text-danger" })
+
             <div class="d-grid gap-2 d-md-block">
                 <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Add Car</button>
             </div>
@@ -55,27 +60,5 @@
     </div>
 
 }
-<script>
-    function capitalizeRegNo() {
-        var regNo = document.getElementById("CarRegNo").value;
-        var flag = 0;
-        document.getElementById("CarRegNo").value = regNo.toUpperCase();
-        fetch("https://localhost:44305/api/Car/getCarRegNo").then(response => response.json())
-            .then((items) => {
-                items.forEach((item) => {
-                    console.log(item);
-                    if (item == regNo) {
-                        flag = 1;
-                    }
-                });
-                if (flag == 1) {
-                    document.getElementById("btn-one").disabled = true;
-                    document.getElementById("repeatedCarNo").innerHTML = "Already registered!";
-                }
-                else {
-                    document.getElementById("repeatedCarNo").innerHTML = "";
-                    document.getElementById("btn-one").disabled = false;
-                }
-            });
-    }
-</script>
+
+

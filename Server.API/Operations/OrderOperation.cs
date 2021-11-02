@@ -111,7 +111,8 @@ namespace Server.API.Operations
                     CarId = Convert.ToInt32(rdr["CarId"])
                 };
                 order.Cardetail.CarName = Convert.ToString(rdr["CarName"]);
-                order.Cardetail.CarRegNo = Convert.ToString(rdr["CarRegNo"]);
+                order.Cardetail.CarTransmission = (CarTransmission) Convert.ToInt32(rdr["CarRegNo"]);
+                order.Cardetail.CarCount = Convert.ToInt32(rdr["CarCount"]);
                 order.Cardetail.CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]);
                 order.Cardetail.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
                 order.FromDate = Convert.ToDateTime(rdr["FromDate"].ToString());

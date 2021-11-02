@@ -13,10 +13,12 @@ namespace CarRentalPortal.Models
         [Display(Name = "Name of the car")]
         [StringLength(30, MinimumLength = 2, ErrorMessage = "Car Name must be of maximum 30 charecters long")]
         public string CarName { get; set; }
-        [Required(ErrorMessage = "Please enter Car Registration Number")]
-        [Display(Name = "Registration Number")]
-        [RegularExpression("^[A-Z]{2}\\-[0-9]{2}\\-[A-Z]{1,2}\\-[0-9]{4}$", ErrorMessage = "Registration number must be properly formatted.")]
-        public string CarRegNo { get; set; }
+        [Required(ErrorMessage = "Transmission type required")]
+        [Display(Name ="Transmission Type")]
+        public CarTransmission CarTransmission { get; set; }
+        [Required(ErrorMessage = "Add Car Count")]
+        [Display(Name ="Count")]
+        public int CarCount { get; set; }
         [Required(ErrorMessage = "Please Select Car Type")]
         [Display(Name = "Car Type")]
         public CarVarient CarType { get; set; }
@@ -28,5 +30,9 @@ namespace CarRentalPortal.Models
     public enum CarVarient
     {
         MINI_HATCHBACK, SMALL_HATCHBACKS, Small_Sedan, Sedans, Executive_Luxury_Cars, MPVs, SUV, Crossovers
+    }
+    public enum CarTransmission
+    {
+        Manual, Automatic
     }
 }

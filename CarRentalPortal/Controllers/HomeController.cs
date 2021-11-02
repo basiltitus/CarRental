@@ -342,7 +342,6 @@ namespace CarRentalPortal.Controllers
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     CarTable carDetails = JsonConvert.DeserializeObject<CarTable>(stringData);
-                    ViewBag.CarRegNo = carDetails.CarRegNo;
                     return View(carDetails);
                 }
                 return View();

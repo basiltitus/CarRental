@@ -130,7 +130,6 @@ C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\bin\Debug\net5.0\run
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Shared\_AdminNavBar.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\CarList.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\EditCar.cshtml.g.cs
-C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\DeleteCar.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\RentCar.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\PaymentPage.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\OrderSuccessfull.cshtml.g.cs

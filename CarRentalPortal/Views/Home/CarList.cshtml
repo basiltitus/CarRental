@@ -15,7 +15,7 @@
                 @Html.DisplayNameFor(model => model.CarName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CarRegNo)
+                @Html.DisplayNameFor(model => model.CarTransmission)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CarType)
@@ -23,31 +23,37 @@
             <th>
                 @Html.DisplayNameFor(model => model.ChargePerDay)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CarCount)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CarName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CarRegNo)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CarType)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ChargePerDay)
-                </td>
-                <td>
-                    <button type="button" class="btn btn-primary edit-btn " onclick="location.href='@Url.Action("EditCar", "home",new{id=item.CarId})';return false;">Edit</button>
-                    @*@Html.ActionLink("Edit", "EditCar", new {  id=item.CarId  })*@ |
-                    <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("DeleteCar", "home",new{id=item.CarId})';return false;">Delete</button>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarTransmission)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ChargePerDay)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CarCount)
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary edit-btn " onclick="location.href='@Url.Action("EditCar", "home",new{id=item.CarId})';return false;">Edit</button>
+                @*@Html.ActionLink("Edit", "EditCar", new {  id=item.CarId  })*@ |
+                <button type="button" class="btn btn-danger" onclick="location.href='@Url.Action("DeleteCar", "home",new{id=item.CarId})';return false;">Delete</button>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
