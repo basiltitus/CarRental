@@ -33,6 +33,7 @@
     ".NETCoreApp,Version=v5.0": {
       "CarRentalPortal/1.0.0": {
         "dependencies": {
+          "FontAwesome": "4.7.0",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "5.0.2",
           "Ocelot": "17.0.0",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
@@ -337,6 +338,7 @@
           "lib/net5.0/FluentValidation.dll": {}
         }
       },
+      "FontAwesome/4.7.0": {},
       "Humanizer.Core/2.2.0": {
         "dependencies": {
           "NETStandard.Library": "1.6.1"
@@ -3382,6 +3384,13 @@
       "sha512": "sha512-C44l6Ih+YwpED/TsXfl6LIq6Z4wLXahstnr6T70uUg1Hs7/bLBKKAo9Nl0sLhVjDE8TA+fF+O3IM4nDrwabcSQ==",
       "path": "fluentvalidation/9.3.0",
       "hashPath": "fluentvalidation.9.3.0.nupkg.sha512"
+    },
+    "FontAwesome/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-n4H/brfszElyoZ4kmGh8E75uqvLzLvFr3h2PFVdPH1LwUmWIpeqdaW2pcC4oZAhg7sESyObh0IZpAI8COCNeUg==",
+      "path": "fontawesome/4.7.0",
+      "hashPath": "fontawesome.4.7.0.nupkg.sha512"
     },
     "Humanizer.Core/2.2.0": {
       "type": "package",

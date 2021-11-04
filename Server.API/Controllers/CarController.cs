@@ -62,6 +62,11 @@ namespace Server.API.Controllers
                 catch (Exception) { return StatusCode(500); }
             
         }
+        [HttpGet("getlist/{transmission}/{varient}")]
+        public IActionResult GetCar(int transmission,int varient)
+        {
+            return Ok(carOperation.GetCar(transmission, varient));
+        }
         [HttpGet("carvarient")]
         public IActionResult GetCarVarient()
         {

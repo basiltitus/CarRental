@@ -22,6 +22,9 @@ namespace Server.API.Operations
         }
         public int AddOrder(OrderTable order)
         {
+            string[] res= this.GetCarAvailability(order.FromDate, order.ToDate, order.CarId);
+            if (res[0] != "available")
+                return 0;
             SqlCommand command = new SqlCommand("sp_addorder", sqlConnection);
             command.Parameters.Add("@CarId", SqlDbType.Int).Value = (int)order.CarId;
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)order.UserId;
@@ -111,7 +114,7 @@ namespace Server.API.Operations
                     CarId = Convert.ToInt32(rdr["CarId"])
                 };
                 order.Cardetail.CarName = Convert.ToString(rdr["CarName"]);
-                order.Cardetail.CarTransmission = (CarTransmission) Convert.ToInt32(rdr["CarRegNo"]);
+                order.Cardetail.CarTransmission = (CarTransmission) Convert.ToInt32(rdr["CarTransmission"]);
                 order.Cardetail.CarCount = Convert.ToInt32(rdr["CarCount"]);
                 order.Cardetail.CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]);
                 order.Cardetail.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
@@ -124,6 +127,21 @@ namespace Server.API.Operations
             }
             sqlConnection.Close();
             return orderList;
+        }
+        public string[] GetCarAvailability(DateTime FromDate,DateTime ToDate,int CarId)
+        {
+            SqlCommand command = new SqlCommand("sp_checkcaravailable", sqlConnection);
+            command.Parameters.Add("@CarId", SqlDbType.Int).Value = (int)CarId;
+            command.Parameters.Add("@FromDate", SqlDbType.Date).Value = FromDate;
+            command.Parameters.Add("@ToDate", SqlDbType.Date).Value = ToDate;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            string response= (string)command.ExecuteScalar();
+            sqlConnection.Close();
+            string[] res = {"Asd"};
+            res[0] = response;
+            return res;
+                
         }
     }
 }

@@ -306,7 +306,7 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction("ErrorPage");
             }
         }
-        public async Task<IActionResult> UserPortal()
+        public  IActionResult UserPortal()
         {
             try
             {
@@ -614,7 +614,7 @@ namespace CarRentalPortal.Controllers
                     ViewBag.OrderList = orderList;
                     return View(orderList);
                 }
-                return View();
+                return RedirectToAction("ErrorPage");
             }
             catch (Exception)
             {

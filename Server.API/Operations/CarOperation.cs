@@ -82,6 +82,29 @@ namespace Server.API.Operations
             sqlConnection.Close();
             return car;
         }
+        public List<CarTable> GetCar(int transmission,int varient)
+        {
+            List<CarTable> CarList = new List<CarTable>();
+            SqlCommand command = new SqlCommand("sp_getcarbytransmissionvarient", sqlConnection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.Add("@CarTransmission", SqlDbType.Int).Value = transmission;
+            command.Parameters.Add("@CarType", SqlDbType.Int).Value = varient;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+            while (rdr.Read())
+            {
+            CarTable car = new CarTable();
+                car.CarId = Convert.ToInt32(rdr["CarId"]);
+                car.CarName = rdr["CarName"].ToString();
+                car.CarTransmission = (CarTransmission)Convert.ToInt32(rdr["CarTransmission"]);
+                car.CarCount = Convert.ToInt32(rdr["CarCount"]);
+                car.CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]);
+                car.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
+                CarList.Add(car);
+            }
+            sqlConnection.Close();
+            return CarList;
+        }
         public bool UpdateCar(CarTable car)
         {
 

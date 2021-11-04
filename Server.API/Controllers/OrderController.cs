@@ -67,5 +67,11 @@ namespace Server.API.Operations
             }
             catch (Exception) { return StatusCode(500); }
         }
+        [AllowAnonymous]
+        [HttpGet("caravailability/fromdate={FromDate}&todate={ToDate}/{CarId}")]
+        public IActionResult GetCarAvailability(DateTime FromDate,DateTime ToDate,int CarId)
+        {
+            return Ok(orderOperation.GetCarAvailability(FromDate, ToDate, CarId));
+        }
     }
 }

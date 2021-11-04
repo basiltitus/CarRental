@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "zaRbTGuRz3LKtPGIOX+e3N+7kg/oo1702whLCF8CWgz0ktfG7CSRpGVEwc+qIbC8ADxV2bCDEnoXDLdctlh+sA==",
+  "dgSpecHash": "FJwIkrjQbQmXg9xh2T1RkSkLClLizUjIkNs8Ia7j6c7o9iG1ihrovXpc/7ojsn6ut3qgQs2Q1fd5UpyoOF7u9w==",
   "success": true,
   "projectFilePath": "C:\\Users\\basil\\source\\repos\\CarRentalPortal\\CarRentalPortal\\CarRentalPortal.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\basil\\.nuget\\packages\\fluentvalidation\\9.3.0\\fluentvalidation.9.3.0.nupkg.sha512",
+    "C:\\Users\\basil\\.nuget\\packages\\fontawesome\\4.7.0\\fontawesome.4.7.0.nupkg.sha512",
     "C:\\Users\\basil\\.nuget\\packages\\humanizer.core\\2.2.0\\humanizer.core.2.2.0.nupkg.sha512",
     "C:\\Users\\basil\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\basil\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\5.0.0\\microsoft.aspnetcore.jsonpatch.5.0.0.nupkg.sha512",

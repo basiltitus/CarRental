@@ -25,28 +25,78 @@
                 @using (Html.BeginForm())
                 {
                     @Html.AntiForgeryToken()
-                    <form asp-action="RentCar" method="post">
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        @Html.LabelFor(model => model.FromDate, new { @class = "rentLabel" })
-                        <input type="Date" id="fromDatePicker" name="FromDate" onchange="dateSelected()" class="form-control formInput" />
-                        @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
-                        @Html.LabelFor(model => model.ToDate, new { @class = "rentLabel" })
-                        <input type="Date" id="toDatePicker" name="ToDate" onchange="dateSelected()" class="form-control formInput" />
-                        @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
-                        <span id="dateValidationMessage" class="text-danger"></span>
-                        <span class="rentLabel">Car Name</span><br />
-                        <select id="carSelector" class="form-control formInput" onchange="carSelected()" name="CarId">
-                            <option selected value="0">---Select---</option>
-                            @foreach (var item in ViewBag.CarListed)
-                            {
+                <form asp-action="RentCar" method="post" id="msform">
+                    <ul id="progressbar">
+                        <li class="active" id="account"><strong></strong></li>
+                        <li id="personal"><strong></strong></li>
+                        <li id="payment"><strong></strong></li>
+                        <li id="confirm"><strong></strong></li>
+                    </ul>
+                    <fieldset>
+                        <div class="form-card">
+                            <h2 class="fs-title">Select Dates</h2>
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            @Html.LabelFor(model => model.FromDate, new { @class = "rentLabel" })
+                            <input type="Date" id="fromDatePicker" name="FromDate" onchange="dateSelected()" class="form-control formInput" />
+                            @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
+                            @Html.LabelFor(model => model.ToDate, new { @class = "rentLabel" })
+                            <input type="Date" id="toDatePicker" name="ToDate" onchange="dateSelected()" class="form-control formInput" />
+                            @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
+                            <span id="dateValidationMessage" class="text-danger"></span>
+                        </div>
+                        <input type="button" name="next" class="next action-button" value="Next Step" />
+                    </fieldset>
+                    <fieldset class="hiddenfield">
+                        <div class="form-card">
+                            <h2 class="fs-title">Select Transmission</h2>
+                            <select id="transmissionSelector" class="form-control formInput">
+                                <option value="0">Manual</option>
+                                <option value="1">Automatic</option>
+                            </select>
+                        </div>
+                        <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                        <input type="button" name="next" class="next action-button" value="Next Step" />
+                    </fieldset>
+                    <fieldset class="hiddenfield">
+                        <div class="form-card">
+                            <h2 class="fs-title">Select Varient</h2>
+                            <select id="varientSelector" class="form-control formInput">
+                                @{ 
+                                    int i = 0;
+                                foreach (var item in ViewBag.CarVarients)
+                                    {
 
-                                <option value="@item.CarId">  @item.CarName</option>
-                            }
-                        </select>
-                        @Html.ValidationMessageFor(model => model.CarId, "", new { @class = "text-danger" })
+                                    <option value="@i">  @item</option>
+                                   ++i;
+                                            } 
+                                        }
+                            </select>
 
-                        <button type="submit" class="btn btn-primary formSubmit">Rent Now</button>
-                    </form>
+                        </div>
+                        <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                        <input type="button" id="varientNext" class="next action-button" value="Next Step" />
+                    </fieldset>
+                    <fieldset class="hiddenfield">
+                        <div class="form-card">
+                            <h2 class="fs-title">Select Car</h2>
+                            <span class="rentLabel">Car Name</span><br />
+                            <select id="carSelector" class="form-control formInput" onchange="carSelected()" name="CarId">
+                                <option selected value="0">---Select---</option>
+                                @* @foreach (var item in ViewBag.CarListed)
+                {
+
+                    <option value="@item.CarId">  @item.CarName</option>
+                }*@
+                            </select>
+                            @Html.ValidationMessageFor(model => model.CarId, "", new { @class = "text-danger" })
+
+                        </div>
+                                <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                                <button type="submit" id="rentBtn" disabled class="next action-button">Rent Now</button>
+                           
+                    </fieldset>
+                    
+                </form>
 
                 }
             </div>
@@ -59,17 +109,37 @@
         </div>
     </div>
 </div>
-<script>
+
+<script type="text/javascript">
+
     function carSelected() {
         var carId = document.getElementById("carSelector").value;
-        let carVarients;
+        var fromDate = document.getElementById("fromDatePicker").value;
+        var toDate = document.getElementById("toDatePicker").value;
+    console.log(carId+" "+fromDate+" "+toDate);
+   if(carId==0||fromDate==""||toDate=="")
+    {
+    document.getElementById("summarySpan").innerHTML ="Fill the details to get your estimate!";
+    document.getElementById("rentBtn").disabled=true;
+    return;
+    }
+    document.getElementById("rentBtn").disabled=false;
+       let carVarients;
         fetch("https://localhost:44305/api/Car/carvarient").then(response => response.json())
             .then((item) => {
                 carVarients = item;
             });
+        fetch("https://localhost:44305/api/Order/caravailability/fromdate=" + fromDate + "&todate=" + toDate + "/" + carId + "")
+    .then(response => response.json())
+            .then((item) => {
+                console.log(item);
+                document.getElementById("summarySpan").innerHTML = item[0];
+                if (item == "available")
+                {
+           
         fetch("https://localhost:44305/api/Car/" + carId).then(response => response.json())
             .then((item) => {
-                console.log(item)
+                
                 var fromDate = new Date(document.getElementById("fromDatePicker").value);
                 var toDate = new Date(document.getElementById("toDatePicker").value);
                 const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*millisecond
@@ -79,6 +149,9 @@
                     diffDays = 1;
                 if (fromDate <= toDate && carId != 0)
                     document.getElementById("summarySpan").innerHTML = "<br />Car Name : " + item.carName + "<br/>Car Varient : " + carVarients[item.carType] + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
+            });}
+    else
+    document.getElementById("rentBtn").disabled=true;
             });
     }
     function dateSelected() {
@@ -87,10 +160,12 @@
         if (fromDate > toDate) {
             document.getElementById("dateValidationMessage").innerHTML = "TO Date must be higher than From Date";
             document.getElementById("toDatePicker").value = "";
+
         } else {
             carSelected();
             document.getElementById("dateValidationMessage").innerHTML = "";
         }
 
-    }
+    }    
 </script>
+<script src="~/js/RentalPage.js" asp-append-version="true"></script>

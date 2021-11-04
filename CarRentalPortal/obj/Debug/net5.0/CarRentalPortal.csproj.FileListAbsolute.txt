@@ -141,3 +141,4 @@ C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Raz
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\AdminSecurity.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\AdminSignIn.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\AdminSignUp.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\bin\Debug\net5.0\libman.json
