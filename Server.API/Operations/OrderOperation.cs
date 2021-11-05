@@ -138,7 +138,7 @@ namespace Server.API.Operations
             sqlConnection.Open();
             string response= (string)command.ExecuteScalar();
             sqlConnection.Close();
-            string[] res = {"Asd"};
+            string[] res = {"res"};
             res[0] = response;
             return res;
                 

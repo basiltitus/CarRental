@@ -106,3 +106,27 @@ begin
 select * from CarTable c,OrderTable o where c.CarId=o.CarId and o.UserId=@UserId 
 end
 
+Create procedure sp_checkcaravailable @CarId int,@FromDate date,@ToDate date
+as
+begin
+declare @tempvar int;
+select @tempvar=count(*) from OrderTable where completed<>'completed' and CarId=@CarId and ((@FromDate between FromDate and ToDate) or(@ToDate between FromDate and ToDate) or(FromDate between @FromDate and @ToDate )or(ToDate between @FromDate and @ToDate))
+if(@tempvar=0)
+select 'available'
+else
+begin
+Declare @carcount int
+select @carcount=CarCount from Cartable where CarId=@CarId
+if(@carcount>@tempvar)
+select 'available'
+else
+begin
+Declare @lastdate Date;
+SELECT TOP 1 @lastdate=ToDate
+FROM OrderTable
+WHERE ToDate > @FromDate and CarId=@CarId and Completed<>'completed'
+ORDER BY ToDate
+select Concat(' ',DATEADD(day,1,@lastdate))
+end
+end
+end

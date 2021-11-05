@@ -133,7 +133,6 @@
     .then(response => response.json())
             .then((item) => {
                 console.log(item);
-                document.getElementById("summarySpan").innerHTML = item[0];
                 if (item == "available")
                 {
            
@@ -148,17 +147,24 @@
                 if (diffDays == 0)
                     diffDays = 1;
                 if (fromDate <= toDate && carId != 0)
-                    document.getElementById("summarySpan").innerHTML = "<br />Car Name : " + item.carName + "<br/>Car Varient : " + carVarients[item.carType] + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
-            });}
-    else
+                    {
+    $( "#summarySpan" ).removeClass( "text-danger" );
+    document.getElementById("summarySpan").innerHTML = "<br />Car Name : " + item.carName + "<br/>Car Varient : " + carVarients[item.carType] + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
+    }        
+    });}
+    else{
+    	
+    $( "#summarySpan" ).addClass( "text-danger" );
+     document.getElementById("summarySpan").innerHTML = "Selected car is unavailable for the slected dates <br/>Please try a date on or after"+item[0]+" or choose another car";
     document.getElementById("rentBtn").disabled=true;
+    }
             });
     }
     function dateSelected() {
         var fromDate = new Date(document.getElementById("fromDatePicker").value);
         var toDate = new Date(document.getElementById("toDatePicker").value);
         if (fromDate > toDate) {
-            document.getElementById("dateValidationMessage").innerHTML = "TO Date must be higher than From Date";
+            document.getElementById("dateValidationMessage").innerHTML = "To Date must be higher than From Date";
             document.getElementById("toDatePicker").value = "";
 
         } else {
