@@ -113,6 +113,7 @@
 <script type="text/javascript">
 
     function carSelected() {
+    const transmission=["Manual","Automatic"]
         var carId = document.getElementById("carSelector").value;
         var fromDate = document.getElementById("fromDatePicker").value;
         var toDate = document.getElementById("toDatePicker").value;
@@ -149,7 +150,7 @@
                 if (fromDate <= toDate && carId != 0)
                     {
     $( "#summarySpan" ).removeClass( "text-danger" );
-    document.getElementById("summarySpan").innerHTML = "<br />Car Name : " + item.carName + "<br/>Car Varient : " + carVarients[item.carType] + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
+    document.getElementById("summarySpan").innerHTML = "<br />Car Name : " + item.carName + "<br/>Transmission : " + transmission[item.carTransmission] + "<br/>Car Varient : " + carVarients[item.carType] + "<br />Charge For a day : " + item.chargePerDay + "<br/> Total Cost  : " + (diffDays * item.chargePerDay);
     }        
     });}
     else{
