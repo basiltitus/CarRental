@@ -19,16 +19,16 @@ namespace CarRentalPortal.Models
         public int CarId { get; set; }
         public CarTable CarDetail { get; set; }
         [DataType(DataType.Date)]
-        [Display(Name = "Booking Start Date")]
+        [Display(Name = "Start Date")]
         [Required(ErrorMessage = "From Date is required")]
         public DateTime FromDate { get; set; }
         [DataType(DataType.Date)]
-        [Display(Name = "Booking End Date")]
+        [Display(Name = "End Date")]
         [Required(ErrorMessage = "From Date is required")]
         public DateTime ToDate { get; set; }
         [Display(Name = "Total Charge")]
         public int Total { get; set; }
-        [Display(Name = "Extra Number of Days")]
+        [Display(Name = "Extra Days")]
         public int ExtraDays { get; set; }
         [Display(Name = "Status")]
         public string Completed { get; set; }

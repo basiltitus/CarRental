@@ -468,29 +468,31 @@ select.list-dt {
         font-size: 12px;
         width: 25%;
         float: left;
+        text-align: center;
         position: relative
     }
 
     #progressbar #account:before {
         font-family: FontAwesome;
-        content: "\f783"
+        font-size: 32px;
+        content: "\f073"
     }
 
     #progressbar #personal:before {
         font-family: FontAwesome;
-        font-size: 42px;
-        content: "\f3fd"
+        font-size: 32px;
+        content: "\f085"
     }
 
     #progressbar #payment:before {
         font-family: FontAwesome;
-        font-size: 42px;
-        content: "\f63c"
+        font-size: 32px;
+        content: "\f0c0"
     }
 
     #progressbar #confirm:before {
         font-family: FontAwesome;
-        font-size: 42px;
+        font-size: 32px;
         content: "\f11e"
     }
 
