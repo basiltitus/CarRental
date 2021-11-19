@@ -24,30 +24,64 @@ namespace Server.API.Controllers
             carOperation = new CarOperation(Configuration);
         }
         [HttpPost]
-        [Route("adddetails")]
-        public IActionResult Post(CarTable car)
+        [Route("addcardetails")]
+        public IActionResult Post(Car car)
         {
- try
-                {
-                    try
-                {
+            try
+            {
                     return Ok(carOperation.AddCar(car));
-                }
-                catch (Exception) { return StatusCode(500); }
-                }
-                catch (Exception) { return StatusCode(500); }
-           
+             }
+            catch (Exception e) { return StatusCode(500); }
+
         }
-        [HttpGet]
-        [Route("getlist")]
-        public IActionResult Get()
+        [HttpGet("checkregnoexists/{regno}")]
+        public IActionResult CheckRegNoExists(string regno) {
+            try
+            {
+                return Ok(carOperation.CheckRegNoExists(regno));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpPost]
+        [Route("addmodeldetails")]
+        public IActionResult Post(CarModel car)
         {
-           
                 try
                 {
-                    return Ok(carOperation.GetList());
+                    return Ok(carOperation.AddCarModel(car));
                 }
-                catch (Exception) { return StatusCode(500); }
+                catch (Exception) { return StatusCode(500); 
+                }
+           
+        }
+        [HttpGet("getcarlist")]
+        public IActionResult GetCarList()
+        {
+            try
+            {
+                return Ok(carOperation.GetCarList());
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpGet]
+        [Route("getmodellist")]
+        public IActionResult Get()
+        {
+
+            try
+            {
+                return Ok(carOperation.GetList());
+            }
+            catch (Exception e) {
+                return StatusCode(500); }
+
             
         }
      
@@ -59,7 +93,7 @@ namespace Server.API.Controllers
                 {
                     return Ok(carOperation.GetCar(id));
                 }
-                catch (Exception) { return StatusCode(500); }
+                catch (Exception e) { return StatusCode(500); }
             
         }
         [HttpGet("getlist/{transmission}/{varient}")]
@@ -77,19 +111,19 @@ namespace Server.API.Controllers
             catch (Exception) { return StatusCode(500); }
         }
         [HttpPost]
-        [Route("updatecar")]
-        public IActionResult UpdateCar(CarTable car)
+        [Route("updatecarmodel")]
+        public IActionResult UpdateCar(CarModel car)
         {
             try
                 {
                     return Ok(carOperation.UpdateCar(car));
                 }
-                catch (Exception) { return StatusCode(500); }
+                catch (Exception e) { return StatusCode(500); }
            
 
         }
         [HttpPost]
-        [Route("deletecar")]
+        [Route("deletecarmodel")]
         public IActionResult Deletecar([FromBody] int id)
         {
             
@@ -97,7 +131,7 @@ namespace Server.API.Controllers
                 {
                     return Ok(carOperation.DeleteCar(id));
                 }
-                catch (Exception) { return StatusCode(500); }
+                catch (Exception e) { return StatusCode(500); }
             
         }
 

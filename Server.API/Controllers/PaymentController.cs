@@ -22,7 +22,7 @@ namespace Server.API.Controllers
         }
         [HttpPost]
         [Route("addPayment")]
-        public IActionResult AddPayment(PaymentTable item)
+        public IActionResult AddPayment(Payment item)
         {
             try
             {

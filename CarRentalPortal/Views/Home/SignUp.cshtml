@@ -1,5 +1,5 @@
 ﻿
-@model CarRentalPortal.Models.UserTable
+@model CarRentalPortal.Models.User
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -21,15 +21,20 @@
                         <form asp-action="SignUp" method="post">
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                             @* @Html.HiddenFor(model => model.UserId)*@
-                            <input type="email" name="UserName"  id="userNameTextBox" onchange="validateEmail()" class="form-control formInput" placeholder = "Email ID" />
+                            <input type="text" name="Name" class="form-control formInput" placeholder="Name" />
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            <input type="email" name="EmailId" id="userNameTextBox" onchange="validateEmail()" class="form-control formInput" placeholder="Email ID" />
                             @*@Html.EditorFor(model => model.UserName, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput" } })*@
-                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
                             @Html.EditorFor(model => model.Password, new { htmlAttributes = new { placeholder = "Passsword", @class = "form-control formInput" } })
                             @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-
-                            @Html.EditorFor(model => model.AadharNumber, new { htmlAttributes = new { placeholder = "Aadhar Number", @class = "form-control formInput" } })
-                            @Html.ValidationMessageFor(model => model.AadharNumber, "", new { @class = "text-danger" })
+                            <input type="Date" id="DOBPicker" name="DOB" class="form-control formInput" placeholder="Date Of Birth" />
+                            @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
+                            <input type="text" name="PhoneNumber" class="form-control formInput" placeholder="Phone Number" />
+                            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.LicenseNumber, new { htmlAttributes = new { placeholder = "Aadhar Number", @class = "form-control formInput" } })
+                            @Html.ValidationMessageFor(model => model.LicenseNumber, "", new { @class = "text-danger" })
                             <span id="errorMessageSpan" class="text-danger"> @ViewBag.ErrorMessage</span>
                             <div class="d-grid gap-2 d-md-block">
                                 <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Create</button>

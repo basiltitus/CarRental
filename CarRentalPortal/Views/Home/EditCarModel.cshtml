@@ -1,4 +1,4 @@
-﻿@model CarRentalPortal.Models.CarTable
+﻿@model CarRentalPortal.Models.CarModel
 
 @{
     ViewData["Title"] = "EditCar";
@@ -19,9 +19,9 @@
     <form asp-action="EditCar">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group invisible">
-            <label asp-for="CarId" class="control-label carLabel"></label>
-            <input asp-for="CarId" class="form-control formInput" />
-            <span asp-validation-for="CarId" class="text-danger"></span>
+            <label asp-for="CarModelId" class="control-label carLabel"></label>
+            <input asp-for="CarModelId" class="form-control formInput" />
+            <span asp-validation-for="CarModelId" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label asp-for="CarName" class="control-label carLabel"></label>
@@ -42,16 +42,14 @@
          "Select Car Type", new { @class = "form-control formInput" })
             <span asp-validation-for="CarType" class="text-danger"></span>
         </div>
-        <div class="form-group">
-            <label asp-for="ChargePerDay" class="control-label carLabel"></label>
-            <input asp-for="ChargePerDay" class="form-control formInput" />
-            <span asp-validation-for="ChargePerDay" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="CarCount" class="control-label carLabel"></label>
-            <input asp-for="CarCount" class="form-control formInput" />
-            <span asp-validation-for="CarCount" class="text-danger"></span>
-        </div>
+        @Html.LabelFor(model => model.SeatCount, new { @class = "carLabel" })
+        @Html.EditorFor(model => model.SeatCount, new { htmlAttributes = new { placeholder = "Seat Count", @class = "form-control formInput", @type = "number" } })
+        @Html.ValidationMessageFor(model => model.SeatCount, "", new { @class = "text-danger" })
+
+        @Html.LabelFor(model => model.ChargePerDay, new { @class = "carLabel" })
+        @Html.EditorFor(model => model.ChargePerDay, new { htmlAttributes = new { placeholder = "Charge Per Day", @class = "form-control formInput", @type = "number" } })
+        @Html.ValidationMessageFor(model => model.ChargePerDay, "", new { @class = "text-danger" })
+        <br />
         <div class="form-group">
             <input type="submit" id="btn-one" value="Save" class="btn btn-primary formSubmit" />
         </div>

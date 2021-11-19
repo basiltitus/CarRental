@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Server.API.Models
 {
-    public class OrderTable
+    public class Order
     {
         public int OrderId { get; set; }
         [Required]
@@ -15,7 +15,7 @@ namespace Server.API.Models
         [ForeignKey("CarTable")]
         [Required]
         public int CarId { get; set; }
-        public CarTable Cardetail { get; set; }
+        public CarModel Cardetail { get; set; }
         [Required]
         [DataType(DataType.Date)]
         public DateTime FromDate { get; set; }
@@ -27,9 +27,9 @@ namespace Server.API.Models
         public int ExtraDays { get; set; }
         [Required]
         public string Completed { get; set; }
-        public OrderTable()
+        public Order()
         {
-            Cardetail = new CarTable();
+            Cardetail = new CarModel();
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

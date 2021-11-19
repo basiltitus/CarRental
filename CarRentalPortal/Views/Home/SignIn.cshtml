@@ -20,8 +20,8 @@
                         <form asp-action="SignIn" method="post">
                             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-                            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput" } })
-                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput" } })
+                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
                             @Html.EditorFor(model => model.Password, new { htmlAttributes = new { placeholder = "Passsword", @class = "form-control formInput" } })
                             @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })

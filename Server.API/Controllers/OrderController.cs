@@ -24,7 +24,7 @@ namespace Server.API.Operations
         }
         [HttpPost]
         [Route("addorder")]
-        public IActionResult AddOrder(OrderTable order)
+        public IActionResult AddOrder(Order order)
         {
            
                 try

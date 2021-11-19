@@ -36,7 +36,8 @@ namespace CarRentalPortal
             client.DefaultRequestHeaders.Accept.Add(contentType);
             services.AddSingleton<HttpClient>(client);
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(15);//You can set Time   
+                options.IdleTimeout = TimeSpan.FromMinutes(300);//You can set Time   
+                options.Cookie.HttpOnly = true;
             });
         }
 

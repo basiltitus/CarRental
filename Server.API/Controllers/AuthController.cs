@@ -28,9 +28,9 @@ namespace Server.API.Controllers
 
             try
             {
-                return Ok(auth.SignIn(item.UserName, item.Password));
+                return Ok(auth.SignIn(item.EmailId, item.Password));
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 return StatusCode(500);
@@ -44,7 +44,7 @@ namespace Server.API.Controllers
             {
                 return Ok(auth.SignUp(u));
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 return StatusCode(500);
@@ -64,14 +64,41 @@ namespace Server.API.Controllers
                 return StatusCode(500);
             }
         }
-        [HttpGet("{username}")]
-        public IActionResult UserExists(string userName)
+        [HttpGet("getuser/{userid}")]
+        public IActionResult GetUser(int userid)
         {
             try
             {
-                return Ok(auth.CheckUserExists(userName));
+                return Ok(auth.GetUser(userid));
             }
             catch (Exception)
+            {
+
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpGet("{emailId}")]
+        public IActionResult UserExists(string emailId)
+        {
+            try
+            {
+                return Ok(auth.CheckUserExists(emailId));
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
+        [HttpPut]
+        public IActionResult Put(User user)
+        {
+            try
+            {
+                auth.updateUser(user);
+                return Ok();
+            }
+            catch (Exception e)
             {
 
                 return StatusCode(500);

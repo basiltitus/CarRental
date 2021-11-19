@@ -1,54 +1,57 @@
-CREATE PROCEDURE sp_signup        @UserName nvarchar(30),@Password nvarchar(30),@AadharNo nvarchar(30),@Role nvarchar(30)
+CREATE PROCEDURE sp_signup        @Name nvarchar(30),@EmailId nvarchar(30),@Password nvarchar(30),@LicenseNumber nvarchar(30),@Role nvarchar(30),@DOB date,@PhoneNumber nvarchar(30),@ImgUrl nvarchar(30)
 AS
 BEGIN
-Insert into UserTable (UserName,Password,AadharNo,Role) values (@UserName,@Password,@AadharNo,@Role);
+Insert into UserProfile (Name,EmailId,Password,LicenseNumber,Role,DOB,PhoneNumber,ImgUrl) values (@Name,@EmailId,@Password,@LicenseNumber,@Role,@DOB,@PhoneNumber,@ImgUrl);
 
-SELECT userid,role from usertable where UserName=@UserName and Password=@Password;
+SELECT userid,role from userprofile where EmailId=@EmailId and Password=@Password;
 END  
 
 CREATE PROCEDURE sp_login
-@UserName nvarchar(30),@Password nvarchar(30)
+@EmailId nvarchar(30),@Password nvarchar(30)
 AS
 BEGIN 
-Select UserId,Role From UserTable where UserName=@UserName and Password=@Password  
+Select UserId,Role From userProfile where EmailId=@EmailId and Password=@Password  
 END    
 
 
 
-CREATE PROCEDURE sp_userexist        @UserName nvarchar(30) 
+CREATE PROCEDURE sp_userexist        @EmailId nvarchar(30) 
 AS
 BEGIN    
-select count(*) from UserTable where UserName=@UserName 
+select count(*) from UserProfile where EmailId=@EmailId 
 END  
 
-CREATE PROCEDURE sp_addcar
-@CarName nvarchar(30),@CarRegNo nvarchar(30), @CarType nvarchar(30),@ChargePerDay int
+
+CREATE PROCEDURE sp_addcarmodel
+@CarName nvarchar(30),@CarType nvarchar(30),@CarTransmission nvarchar(30),@SeatCount int,@ChargePerDay int,@UserId int,@CreatedOn date
 AS  
 BEGIN   
-Insert into CarTable (CarName,CarRegNo,CarType,ChargePerDay) values (@CarName,@CarRegNo,@CarType,@ChargePerDay);       
-END    
+Insert into CarModel (CarName,CarType,CarTransmission,ChargePerDay,SeatCount,UserId,CreatedOn) values (@CarName,@CarType,@CarTransmission,@SeatCount,@ChargePerDay,@UserId,@CreatedOn);       
+END   
 
-Create procedure sp_getcarlist 
+Create procedure sp_getcarModellist 
 AS 
-select * from CarTable 
+select * from CarModel 
 Go;  
 
-create procedure sp_getcardetails @CarId int
+
+create procedure sp_getcardModeletails @CarModelId int
 as
 begin  
-select * from CarTable where CarId = @CarId
+select * from CarModel where CarModelId = @CarModelId
 end
 
-Create procedure  sp_updatecar @CarId int,@CarName nvarchar(30),@CarRegNo nvarchar(30),@CarType int,@ChargePerDay int
+
+Create procedure  sp_updatecarmodel @CarModelId int,@CarName nvarchar(30),@CarType nvarchar(30),@CarTransmission nvarchar(30),@SeatCount int,@ChargePerDay int
 as
 begin
-update CarTable set CarName=@CarName,CarRegNo=@CarRegNo,CarType=@CarType,ChargePerDay=@ChargePerDay where CarId=@CarId
+update CarModelTable set CarName=@CarName,CarType=@CarType,CarTransmission=@CarTransmission,SeatCount=@SeatCount,ChargePerDay=@ChargePerDay where CarModelId=@CarModelId
 end
 
-Create procedure  sp_deletecar @CarId int 
+Create procedure  sp_deletecarmodel @CarModelId int 
 as 
 begin
-delete from CarTable where CarId=@CarId 
+delete from CarTable where CarModelId=@CarModelId 
 end  
 
 Create procedure sp_getorderdetail @OrderId int,@UserId int 
@@ -124,9 +127,22 @@ begin
 Declare @lastdate Date;
 SELECT TOP 1 @lastdate=ToDate
 FROM OrderTable
-WHERE ToDate > @FromDate and CarId=@CarId and Completed<>'completed'
+WHERE ToDate >= @FromDate and CarId=@CarId and Completed<>'completed'
 ORDER BY ToDate
 select Concat(' ',DATEADD(day,1,@lastdate))
 end
 end
+end
+
+
+create procedure sp_getuserdetails @UserId int
+as
+begin
+select * from userprofile where UserId=@UserId
+end
+
+create procedure sp_addcar @RegNo nvarchar(30),@Colour nvarchar(30),@ImgUrl nvarchar(max),@CarModelId int,@ChargePerDay int,@UserId int,@CreatedOn date
+as
+begin
+insert into car (RegNo,Colour,ImgUrl,CarModelId,UserId,CreatedOn) values (@RegNo,@Colour,@ImgUrl,@CarModelId,@UserId,@CreatedOn);
 end

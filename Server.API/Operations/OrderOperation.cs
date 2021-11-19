@@ -20,7 +20,7 @@ namespace Server.API.Operations
             conStr = Configuration.GetConnectionString("CarRentDB");
             sqlConnection = new SqlConnection(conStr);
         }
-        public int AddOrder(OrderTable order)
+        public int AddOrder(Order order)
         {
             string[] res= this.GetCarAvailability(order.FromDate, order.ToDate, order.CarId);
             if (res[0] != "available")
@@ -70,7 +70,7 @@ namespace Server.API.Operations
             else
                 return false;
         }
-        public OrderTable GetOrderDetails(int orderId,int userId)
+        public Order GetOrderDetails(int orderId,int userId)
         {
             SqlCommand command = new SqlCommand("sp_getorderdetail", sqlConnection);
             command.Parameters.Add("@OrderId", SqlDbType.Int).Value = (int)orderId;
@@ -78,7 +78,7 @@ namespace Server.API.Operations
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             SqlDataReader rdr = command.ExecuteReader();
-            OrderTable order = new OrderTable();
+            Order order = new Order();
             if (!rdr.HasRows)
             {
                 return null;
@@ -97,9 +97,9 @@ namespace Server.API.Operations
             sqlConnection.Close();
             return order;
         }
-        public List<OrderTable> GetOrderDetailsByUserId(int userId)
+        public List<Order> GetOrderDetailsByUserId(int userId)
         {
-            List<OrderTable> orderList = new List<OrderTable>();
+            List<Order> orderList = new List<Order>();
             SqlCommand command = new SqlCommand("sp_carjoinorderbyuserid", sqlConnection);
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
             command.CommandType = CommandType.StoredProcedure;
@@ -107,17 +107,15 @@ namespace Server.API.Operations
             SqlDataReader rdr = command.ExecuteReader();
             while (rdr.Read())
             {
-                OrderTable order = new OrderTable
+                Order order = new Order
                 {
                     OrderId = Convert.ToInt32(rdr["OrderId"]),
                     UserId = Convert.ToInt32(rdr["UserId"]),
-                    CarId = Convert.ToInt32(rdr["CarId"])
+                    CarId = Convert.ToInt32(rdr["CarModelId"])
                 };
                 order.Cardetail.CarName = Convert.ToString(rdr["CarName"]);
                 order.Cardetail.CarTransmission = (CarTransmission) Convert.ToInt32(rdr["CarTransmission"]);
-                order.Cardetail.CarCount = Convert.ToInt32(rdr["CarCount"]);
                 order.Cardetail.CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]);
-                order.Cardetail.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
                 order.FromDate = Convert.ToDateTime(rdr["FromDate"].ToString());
                 order.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
                 order.Total = Convert.ToInt32(rdr["Total"]);

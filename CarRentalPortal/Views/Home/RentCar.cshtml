@@ -3,7 +3,7 @@
 *@
 @{
 }
-@model CarRentalPortal.Models.OrderTable
+@model CarRentalPortal.Models.Order
 @{
     var type = ViewBag.CarVarients;
 }
@@ -113,7 +113,7 @@
 <script type="text/javascript">
 
     function carSelected() {
-    const transmission=["Manual","Automatic"]
+    const transmission=["Manual","Automatic"]  
         var carId = document.getElementById("carSelector").value;
         var fromDate = document.getElementById("fromDatePicker").value;
         var toDate = document.getElementById("toDatePicker").value;

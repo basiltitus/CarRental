@@ -20,7 +20,7 @@ namespace Server.API.Operations
             conStr = this.Configuration.GetConnectionString("CarRentDB");
             sqlConnection = new SqlConnection(conStr);
         }
-        public bool AddPayment(PaymentTable payment)
+        public bool AddPayment(Payment payment)
         {
             SqlCommand command = new SqlCommand("sp_insertpayment", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
@@ -35,9 +35,9 @@ namespace Server.API.Operations
             else
                 return false;
         }
-        public List<PaymentTable> GetPaymentList(int userId)
+        public List<Payment> GetPaymentList(int userId)
         {
-            List<PaymentTable> paymentList = new List<PaymentTable>();
+            List<Payment> paymentList = new List<Payment>();
             SqlCommand command = new SqlCommand("sp_getpaymentList", sqlConnection);
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
             command.CommandType = CommandType.StoredProcedure;
@@ -45,7 +45,7 @@ namespace Server.API.Operations
             SqlDataReader rdr = command.ExecuteReader();
             while (rdr.Read())
             {
-                PaymentTable payment = new PaymentTable
+                Payment payment = new Payment
                 {
                     OrderId = Convert.ToInt32(rdr["OrderId"]),
                     UserId = Convert.ToInt32(rdr["UserId"]),

@@ -1,0 +1,80 @@
+﻿<div>
+    <partial name="_AdminNavBar" />
+</div>
+@model CarRentalPortal.Models.CarModel
+    <div class="row p-4">
+        <div class="col-4 text-center offset-4">
+            <h3>Add Car Model</h3>
+        </div>
+        <div class="col-3 text-right">
+            <a asp-action="CarModelList" asp-controller="home" class="btn btn-primary">Back to list</a>
+        </div>
+    </div>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="carDetailsDiv container">
+        <form asp-action="AdminPortal" method="post">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.LabelFor(model => model.CarName, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.CarName, new { htmlAttributes = new { placeholder = "Name of the car", @class = "form-control formInput" } })
+            @Html.ValidationMessageFor(model => model.CarName, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.CarTransmission, new { @class = "carLabel" })
+            @Html.DropDownListFor(m => m.CarTransmission,
+             new SelectList(Enum.GetValues(typeof(CarTransmission))),
+             "Select Car Transmission", new { @class = "form-control formInput" })
+            @*@Html.EditorFor(model => model.CarRegNo, new { htmlAttributes = new { placeholder = "Registration number of the car", @class = "form-control formInput" } })*@
+            @Html.ValidationMessageFor(model => model.CarTransmission, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.CarType, new { @class = "carLabel" })
+            <br />
+            @Html.DropDownListFor(m => m.CarType,
+             new SelectList(Enum.GetValues(typeof(CarVarient))),
+             "Select Car Type", new { @class = "form-control formInput" })
+            @Html.ValidationMessageFor(model => model.CarType, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.SeatCount, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.SeatCount, new { htmlAttributes = new { placeholder = "Seat Count", @class = "form-control formInput", @type = "number" } })
+            @Html.ValidationMessageFor(model => model.SeatCount, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.ChargePerDay, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.ChargePerDay, new { htmlAttributes = new { placeholder = "Charge Per Day", @class = "form-control formInput", @type = "number" } })
+            @Html.ValidationMessageFor(model => model.ChargePerDay, "", new { @class = "text-danger" })
+            <br />
+
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Add Car</button>
+            </div>
+        </form>
+    </div>
+
+}
+<script type="text/javascript">
+    function checkMessage() {
+
+            if ('@ViewBag.SuccessMessage' == "Added") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Successfully added car model',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            } else if ('@ViewBag.SuccessMessage'== "error") {
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Something happened',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+
+        }
+    }
+    $(document).ready(function () {
+            checkMessage();
+
+   });
+</script>
+

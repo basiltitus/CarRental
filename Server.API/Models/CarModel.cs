@@ -1,27 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Server.API.Models
 {
-    public class CarTable
+    public class CarModel
     {
-        public int CarId { get; set; }
+        public int CarModelId { get; set; }
         [Required(ErrorMessage = "Please enter Car Name")]
         [StringLength(30, MinimumLength = 3, ErrorMessage = "Car Name must be of maximum 30 charecters long")]
         public string CarName { get; set; }
         [Required(ErrorMessage = "Transmission type required")]
         public CarTransmission CarTransmission { get; set; }
-        [Required(ErrorMessage ="Add Car Count")]
-        public int CarCount { get; set; }
+
         [Required(ErrorMessage = "Please Select Car Type")]
         public CarVarient CarType { get; set; }
+        [Required(ErrorMessage = "Please enter No of seats")]
+        public int SeatCount { get; set; }
         [Required(ErrorMessage = "Please enter Charge per day")]
-
-        [Range(0, 10000, ErrorMessage = "Daily rental must be between {1} and {2}.")]
         public int ChargePerDay { get; set; }
+        [ForeignKey("User")]
+        [Required]
+        public int UserId { get; set; }
+
+        public User UserDetails { get; set; }
+        [Required]
+        public DateTime CreatedOn { get; set; }
+        public CarModel()
+        {
+            UserDetails = new User();
+        }
+
     }
     public enum CarVarient
     {
