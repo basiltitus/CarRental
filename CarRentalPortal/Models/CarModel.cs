@@ -32,13 +32,8 @@ namespace CarRentalPortal.Models
         [ForeignKey("User")]
         public int UserId { get; set; }
 
-        public User UserDetails { get; set; }
         public DateTime CreatedOn { get; set; }
-        public CarModel()
-        {
-            UserDetails = new User();
-        }
-
+       
     }
     public enum CarVarient
     {

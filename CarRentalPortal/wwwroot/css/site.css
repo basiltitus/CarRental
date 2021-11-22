@@ -553,7 +553,14 @@ select.list-dt {
     display:none;
 }
 .list-img {
-    width: 200px;
-    height:200px;
+    width: 100px;
+    height:100px;
     border-radius:50%;
+}
+.scrollable {
+    overflow-y: scroll;
+    height: 490px;
+}
+.sidePanel{
+    background:grey;
 }

@@ -1,10 +1,11 @@
 ﻿@model Car
+
 <div>
     <partial name="_AdminNavBar" />
 </div>
 <div class="row p-4">
     <div class="col-4 text-center offset-4">
-        <h3>Add Car </h3>
+        <h3>Edit Car </h3>
     </div>
     <div class="col-3 text-right">
         <a asp-action="CarList" asp-controller="home" class="btn btn-primary">Back to list</a>
@@ -17,16 +18,19 @@
 {
     @Html.AntiForgeryToken()
     <div class="carDetailsDiv container">
-        <form asp-action="CreateCar" method="post">
+        <form asp-action="EditCar" method="post">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-            <select asp-for="CarModelId" class="form-control formInput">
+            @*<select asp-for="CarModelId" class="form-control formInput" >
                 @foreach (var item in ViewBag.ModelList)
                 {
                     <option value="@item.CarModelId">@item.CarName @item.CarTransmission @item.CarType</option>
                 }
-            </select>
-
+            </select>*@
+            <div class="form-group invisible">
+                <label asp-for="CarId" class="control-label carLabel"></label>
+                @Html.EditorFor(model => model.CarId)
+            </div>
             @Html.LabelFor(model => model.RegNo, new { @class = "carLabel" })
             <input type="text" asp-for="RegNo" id="regNoInput" class="form-control formInput" placeholder="Registration Number of the car" onchange="RegNoChange()" />
             @Html.ValidationMessageFor(model => model.RegNo, "", new { @class = "text-danger" })
@@ -38,7 +42,7 @@
             @Html.LabelFor(model => model.ImgUrl, new { @class = "carLabel" })
             @Html.EditorFor(model => model.ImgUrl, new { htmlAttributes = new { placeholder = "Image URL", @class = "form-control formInput", @type = "url" } })
             @Html.ValidationMessageFor(model => model.ImgUrl, "", new { @class = "text-danger" })
-            <input type="submit" class="btn btn-primary" id="submitBtn" value="Add Car" />
+            <input type="submit" class="btn btn-primary" id="submitBtn" value="Edit Car" />
         </form>
     </div>
 }
@@ -58,30 +62,6 @@
                 }
             });
     }
-    function checkMessage() {
-
-            if ('@ViewBag.SuccessMessage' == "Added") {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Successfully added car model',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-            } else if ('@ViewBag.SuccessMessage'== "error") {
-                Swal.fire({
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Something happened',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
-
-        }
-    }
-    $(document).ready(function () {
-            checkMessage();
-
-   });
+   
 </script>
 

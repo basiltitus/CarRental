@@ -145,3 +145,6 @@ C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\bin\Debug\net5.0\run
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\CarRentalPortal.Views.pdb
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\CarRentalPortal.csproj.CopyComplete
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\CarRentalPortal.genruntimeconfig.cache
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\ViewCarModel.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\ViewCar.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\EditCar.cshtml.g.cs

@@ -45,14 +45,16 @@ end
 Create procedure  sp_updatecarmodel @CarModelId int,@CarName nvarchar(30),@CarType nvarchar(30),@CarTransmission nvarchar(30),@SeatCount int,@ChargePerDay int
 as
 begin
-update CarModelTable set CarName=@CarName,CarType=@CarType,CarTransmission=@CarTransmission,SeatCount=@SeatCount,ChargePerDay=@ChargePerDay where CarModelId=@CarModelId
+update CarModel set CarName=@CarName,CarType=@CarType,CarTransmission=@CarTransmission,SeatCount=@SeatCount,ChargePerDay=@ChargePerDay where CarModelId=@CarModelId
 end
 
 Create procedure  sp_deletecarmodel @CarModelId int 
 as 
 begin
-delete from CarTable where CarModelId=@CarModelId 
+delete from CarModel where CarModelId=@CarModelId 
+delete from car where carModelId=@CarModelId
 end  
+
 
 Create procedure sp_getorderdetail @OrderId int,@UserId int 
 AS 

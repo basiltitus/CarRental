@@ -1,0 +1,39 @@
+﻿@model CarRentalPortal.Models.ViewModels.CarModelListVM
+
+    <div>
+        <partial name="_AdminNavBar" />
+    </div>
+    <div class="row p-4">
+        <div class="col-4 text-center offset-4">
+            <h3>View Car Model</h3>
+        </div>
+        <div class="col-3 text-right">
+            <a asp-action="CarModelList" asp-controller="home" class="btn btn-primary">Back to list</a>
+        </div>
+    </div>
+
+    <div class="carDetailsDiv container">
+        @Html.LabelFor(model => model.CarName, new { @class = "carLabel" })
+        @Html.DisplayFor(model => model.CarName)
+
+        @Html.LabelFor(model => model.CarTransmission, new { @class = "carLabel" })
+        @Html.DisplayFor(model => model.CarTransmission)
+
+        @Html.LabelFor(model => model.CarType, new { @class = "carLabel" })
+        @Html.DisplayFor(model => model.CarType)
+
+        @Html.LabelFor(model => model.SeatCount, new { @class = "carLabel" })
+        @Html.DisplayFor(model => model.SeatCount)
+
+        @Html.LabelFor(model => model.ChargePerDay, new { @class = "carLabel" })
+        @Html.DisplayFor(model => model.ChargePerDay)
+
+        @Html.LabelFor(model => model.CreatedOn, new { @class = "carLabel" })
+        @Html.DisplayFor(model => model.CreatedOn)
+
+        <span class="carLabel">Created By</span>
+        @Html.DisplayFor(model => model.UserDetails.Name)
+
+        @Html.LabelFor(model => model.CarName, new { @class = "carLabel" })
+        @Html.DisplayFor(model => model.CarName)
+    </div>

@@ -1,42 +1,77 @@
 ﻿@model CarRentalPortal.Models.User
 @using Microsoft.AspNetCore.Http;
+@if (Context.Session.GetString("_userType") == "admin")
+{
+    <div>
+        <partial name="_AdminNavBar" />
+    </div>
+}
+else
+{
+    <div>
+        <partial name="_NavBar" />
+    </div>
+}
 <div class="container backgroundDiv">
-    <h3 class="text-primary">Edit Profile</h3>
-    <form method="post" class="p-3 border" asp-action="UserProfile">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @* @Html.HiddenFor(model => model.UserId)*@
-        @if (Context.Session.GetString("_avatarUrl") != "0")
-        {
-            <img id="imgAvatar" src="@Context.Session.GetString("_avatarUrl")" alt="Avatar" class="avatar">
-        }
-        else
-        {
-            <img id="imgAvatar" src="https://www.dcrc.co/wp-content/uploads/2019/04/blank-head-profile-pic-for-a-man.jpg" alt="Avatar" class="avatar">
-        }
-        <input type="hidden" asp-for="UserId" />
-        <input type="hidden" asp-for="Password" />
-        <input type="hidden" asp-for="Role" />
-        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { placeholder = "Name", @class = "form-control formInput" } })
-        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-
-        @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput", @readonly = "readonly" } })
-        @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
-
-        @Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control formInput", @readonly = "readonly" } })
-
-        @Html.EditorFor(model => model.ImgUrl, new { htmlAttributes = new { placeholder = "Profile picture URL", @type = "url", @class = "form-control formInput", id = "imgUrlInput", onchange = "ImgAdded()" } })
-        @Html.ValidationMessageFor(model => model.ImgUrl, "", new { @class = "text-danger" })
-
-        @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { placeholder = "Phone Number", @class = "form-control formInput", @type = "number" } })
-        @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-
-        @Html.EditorFor(model => model.LicenseNumber, new { htmlAttributes = new { placeholder = "License Number", @class = "form-control formInput" } })
-        @Html.ValidationMessageFor(model => model.LicenseNumber, "", new { @class = "text-danger" })
-        <span id="errorMessageSpan" class="text-danger"> @ViewBag.ErrorMessage</span>
-        <div class="d-grid gap-2 d-md-block">
-            <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Update Profile</button>
+    <div class="row p-4">
+        <div class="col-4 text-center offset-4">
+            <h3>Edit Profile</h3>
         </div>
-    </form>
+        <div class="col-3 text-right">
+            @if (Context.Session.GetString("_userType") == "admin")
+            {
+                <a asp-action="AdminPortal" asp-controller="home" class="btn btn-primary">Back to Home</a>
+            }
+            else
+            {
+                <a asp-action="UserPortal" asp-controller="home" class="btn btn-primary">Back to Home</a>
+            }
+        </div>
+    </div>
+    <div class="carDetailsDiv container">
+       
+        <form method="post" asp-action="UserProfile">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @* @Html.HiddenFor(model => model.UserId)*@
+            @if (Context.Session.GetString("_avatarUrl") != "0")
+            {
+                <img id="imgAvatar" src="@Context.Session.GetString("_avatarUrl")" alt="Avatar" class="avatar">
+            }
+            else
+            {
+                <img id="imgAvatar" src="https://www.dcrc.co/wp-content/uploads/2019/04/blank-head-profile-pic-for-a-man.jpg" alt="Avatar" class="avatar">
+            }
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="Password" />
+            <input type="hidden" asp-for="Role" />
+            @Html.LabelFor(model => model.Name, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { placeholder = "Name", @class = "form-control formInput" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.EmailId, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { placeholder = "Email ID", @class = "form-control formInput", @readonly = "readonly" } })
+            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.DOB, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.DOB, new { htmlAttributes = new { @class = "form-control formInput", @readonly = "readonly" } })
+
+            @Html.LabelFor(model => model.ImgUrl, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.ImgUrl, new { htmlAttributes = new { placeholder = "Profile picture URL", @type = "url", @class = "form-control formInput", id = "imgUrlInput", onchange = "ImgAdded()" } })
+            @Html.ValidationMessageFor(model => model.ImgUrl, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.PhoneNumber, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { placeholder = "Phone Number", @class = "form-control formInput", @type = "number" } })
+            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+
+            @Html.LabelFor(model => model.LicenseNumber, new { @class = "carLabel" })
+            @Html.EditorFor(model => model.LicenseNumber, new { htmlAttributes = new { placeholder = "License Number", @class = "form-control formInput" } })
+            @Html.ValidationMessageFor(model => model.LicenseNumber, "", new { @class = "text-danger" })
+            <span id="errorMessageSpan" class="text-danger"> @ViewBag.ErrorMessage</span>
+            <div class="d-grid gap-2 d-md-block">
+                <button class="btn btn-primary formSubmit" type="submit" id="btn-one">Update Profile</button>
+            </div>
+        </form>
+    </div>
 </div>
 <script type="text/javascript">
     function ImgAdded() {
