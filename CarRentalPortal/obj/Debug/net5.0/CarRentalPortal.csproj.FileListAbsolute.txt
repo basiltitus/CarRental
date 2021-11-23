@@ -148,3 +148,8 @@ C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Car
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\ViewCarModel.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\ViewCar.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\EditCar.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\DateSelector.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\UserCarList.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\ConfirmPage.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\ReceiptPage.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\RequestDetail.cshtml.g.cs

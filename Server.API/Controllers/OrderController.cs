@@ -26,22 +26,33 @@ namespace Server.API.Operations
         [Route("addorder")]
         public IActionResult AddOrder(Order order)
         {
-           
-                try
-                {
-                    return Ok(orderOperation.AddOrder(order));
-                }
-                catch (Exception) { return StatusCode(500); }
-            
+
+            try
+            {
+                return Ok(orderOperation.AddOrder(order));
+            }
+            catch (Exception e) { return StatusCode(500); }
+
         }
         [HttpGet("{orderId}/{userId}")]
-        public IActionResult GetOrderDetails(int orderId,int userId)
+        [AllowAnonymous]
+        public IActionResult GetOrderDetails(int orderId, int userId)
         {
             try
             {
-                return Ok(orderOperation.GetOrderDetails(orderId,userId));
+                return Ok(orderOperation.GetOrderDetails(orderId, userId));
             }
-            catch (Exception) { return StatusCode(500); }
+            catch (Exception e) { return StatusCode(500); }
+        }
+
+        [HttpGet("getreceipt/{orderId}/{userId}")]
+        public IActionResult GetReciept(int orderId, int userId)
+        {
+            try
+            {
+                return Ok(orderOperation.GetReciept(orderId, userId));
+            }
+            catch (Exception e) { return StatusCode(500); }
         }
         [HttpGet("makepayment/{orderId}")]
         public IActionResult MakePayment(int orderId)
@@ -65,13 +76,45 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.GetOrderDetailsByUserId(userId));
             }
-            catch (Exception) { return StatusCode(500); }
+            catch (Exception e) { return StatusCode(500); }
+        }
+        [HttpGet("requestreturn/{id}")]
+        public IActionResult RequestReturn(int id)
+        {
+            try
+            {
+                return Ok(orderOperation.RequestReturn(id));
+            }
+            catch (Exception e) { return StatusCode(500); }
+        }
+        [AllowAnonymous]
+        [HttpGet("getadminrequests")]
+        public IActionResult GetAdminRequests()
+        {
+            try
+            {
+                return Ok(orderOperation.GetAdminRequests());
+            }
+            catch (Exception e) { return StatusCode(500); }
         }
         [AllowAnonymous]
         [HttpGet("caravailability/fromdate={FromDate}&todate={ToDate}/{CarId}")]
-        public IActionResult GetCarAvailability(DateTime FromDate,DateTime ToDate,int CarId)
+        public IActionResult GetCarAvailability(DateTime FromDate, DateTime ToDate, int CarId)
         {
             return Ok(orderOperation.GetCarAvailability(FromDate, ToDate, CarId));
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("updateorder")]
+        public IActionResult UpdateOrder(Order order)
+        {
+            try
+            {
+                return Ok(orderOperation.UpdateOrder(order));
+            }
+            catch (Exception e) {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

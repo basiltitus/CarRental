@@ -39,7 +39,11 @@ namespace CarRentalPortal.Models
         public int ExtraDays { get; set; }
 
         [Display(Name = "Status")]
-        public string Completed { get; set; }
+        public string Status { get; set; }
+        [Display(Name ="Fine Amount")]
+        public int FineAmount { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime OrderDate { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

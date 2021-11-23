@@ -1,0 +1,45 @@
+﻿@model CarRentalPortal.Models.ViewModels.DateSelectorVM
+<div>
+    <partial name="_NavBar" />
+</div>
+<div class="fullScreen backgroundImage">
+</div><div class="bg-text">
+    <center>
+        <div class="border border-primary">
+            <form action="DateSelector" method="post">
+                <h2 class="text-primary">Select Dates</h2>
+                <div class="row maxWidth">
+                    <div class="col-5 offset-1">
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.LabelFor(model => model.FromDate, new { @class = "rentLabel" })
+                        <input type="Date" id="fromDatePicker" name="FromDate" onchange="dateSelected()" class="form-control formInput" />
+                        @Html.ValidationMessageFor(model => model.FromDate, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-5">
+                        @Html.LabelFor(model => model.ToDate, new { @class = "rentLabel" })
+                        <input type="Date" id="toDatePicker" name="ToDate" onchange="dateSelected()" class="form-control formInput" />
+                        @Html.ValidationMessageFor(model => model.ToDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <span id="dateValidationMessage" class=" row text-danger"></span>
+                <input type="submit" class="action-button" value="Next Step" />
+            </form>
+        </div>
+    </center>
+</div>
+
+<script type="text/javascript">
+    function dateSelected() {
+        var fromDate = new Date(document.getElementById("fromDatePicker").value);
+        var toDate = new Date(document.getElementById("toDatePicker").value);
+        if (fromDate > toDate) {
+            document.getElementById("dateValidationMessage").innerHTML = "To Date must be higher than From Date";
+            document.getElementById("toDatePicker").value = "";
+
+        } else {
+            carSelected();
+            document.getElementById("dateValidationMessage").innerHTML = "";
+        }
+
+    }
+</script>

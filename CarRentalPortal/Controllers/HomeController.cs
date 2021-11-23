@@ -287,770 +287,1092 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction("ErrorPage");
             }
         }
-        public IActionResult AdminPortal()
+        public async Task<IActionResult> AdminPortalAsync()
         {
             if (HttpContext.Session.GetString("_userType") == "Admin")
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                HttpResponseMessage response = await client.GetAsync("Order/getadminrequests");
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    List<AdminRequestVM> requests = JsonConvert.DeserializeObject<List<AdminRequestVM>>(stringData);
+
+                    return View(requests);
+                }
+
                 return View();
+            }
             else
                 return RedirectToAction("UnauthorizedPage");
         }
-        public IActionResult CreateCarModel()
+        public async Task<IActionResult> RequestDetailAsync(int id)
         {
             if (HttpContext.Session.GetString("_userType") == "Admin")
+            {
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                HttpResponseMessage response = await client.GetAsync("Order/getadminrequests");
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    List<AdminRequestVM> requests = JsonConvert.DeserializeObject<List<AdminRequestVM>>(stringData);
+                    AdminRequestVM request = requests.Where(x => x.OrderId == id).SingleOrDefault();
+                    ViewBag.ImgUrl = request.ImgUrl;
+                    ViewBag.TodaysDate = DateTime.Now.Day + "/" + DateTime.Now.Month + "/" + DateTime.Now.Year;
+                    ViewBag.ToDate = request.ToDate;
+                    return View(request);
+                }
+
                 return View();
+            }
             else
                 return RedirectToAction("UnauthorizedPage");
         }
-        [HttpPost]
-        public async Task<IActionResult> CreateCarModel(CarModel cardetails)
+        public async Task<IActionResult> RequestApprovedAsync(string returndate, int fineamount, int orderid, int userid, int carmodelid)
         {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    cardetails.UserId = (int)HttpContext.Session.GetInt32("_userId");
-                    cardetails.CreatedOn = DateTime.Now;
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                    HttpResponseMessage response = await client.PostAsJsonAsync("Car/addmodeldetails", cardetails);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var stringData = response.Content.ReadAsStringAsync().Result;
-                        bool carAdded = JsonConvert.DeserializeObject<Boolean>(stringData);
-                        if (carAdded)
-                        {
-                            ViewBag.SuccessMessage = "Added";
-                            ModelState.Clear();
-                            return View();
-                        }
-                    }
-                }
-                ViewBag.SuccessMessage = "error";
-                return View();
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public async Task<IActionResult> ViewCarModel(int id)
-        {
-            try
-            {
-
-                HttpResponseMessage response = await client.GetAsync("Car/getcarmodel/" + id);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    CarModelListVM carModel = JsonConvert.DeserializeObject<CarModelListVM>(stringData);
-                    return View(carModel);
-                }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("ServerError");
-            }
-        }
-        public async Task<IActionResult> ViewCar(int id)
-        {
-            try
-            {
-
-                HttpResponseMessage response = await client.GetAsync("Car/getcarjoined/" + id);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    CarListVM car = JsonConvert.DeserializeObject<CarListVM>(stringData);
-                    ViewBag.ImgUrl = car.ImgUrl;
-                    return View(car);
-                }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("ServerError");
-            }
-        }
-        public IActionResult UserPortal()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
-                    return RedirectToAction("UnauthorizedPage");
-
-                return View();
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public async Task<IActionResult> UserProfile()
-        {
-            try
-            {
-                int userId = (int)HttpContext.Session.GetInt32("_userId");
-                HttpResponseMessage response = await client.GetAsync("auth/getuser/" + userId);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    User user = JsonConvert.DeserializeObject<User>(stringData);
-                    return View(user);
-                }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("ServerError");
-            }
-
-        }
-        [HttpPost]
-        public async Task<IActionResult> UserProfileAsync(User user)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    if (user.ImgUrl == null)
-                        HttpContext.Session.SetString("_avatarUrl", "0");
-                    else
-                        HttpContext.Session.SetString("_avatarUrl", user.ImgUrl);
-                    HttpResponseMessage response = await client.PutAsJsonAsync("auth", user);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        HttpContext.Session.SetString("_userName", user.Name);
-                        if (HttpContext.Session.GetString("_userType") == "Admin")
-                            return RedirectToAction("AdminPortal");
-                        else
-                            return RedirectToAction("UserPortal");
-                    }
-                    return RedirectToAction("ErrorPage");
-                }
-                return View(user);
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-        public async Task<IActionResult> CarModelList()
-        {
-            if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
-                return RedirectToAction("UnauthorizedPage");
-
-            List<CarModel> carModelList = await RetrieveCarModelList();
-            return View(carModelList);
-
-        }
-
-        public async Task<IActionResult> CarListAsync(string transmission, int model, string varient, string sortby, string sortorder)
-        {
-            if (transmission == null)
-                ViewBag.Transmission = "all";
-            else
-                ViewBag.Transmission = transmission;
-            ViewBag.Model = model;
-            if (transmission == null)
-                ViewBag.Varient = "all";
-            else
-                ViewBag.Varient = varient;
-            if (sortby == null)
-                ViewBag.SortBy = "created";
-            else
-                ViewBag.SortBy = sortby;
-            if (sortorder == null)
-                ViewBag.SortOrder = "ascending";
-            else
-                ViewBag.SortOrder = sortorder;
-            List<CarModel> carModelList = (List<CarModel>)await RetrieveCarModelList();
-            ViewBag.ModelList = carModelList;
-            List<string> carVarients = (List<string>)await RetrieveCarVarients();
-            ViewBag.VarientList = carVarients;
-            HttpResponseMessage response = await client.GetAsync("car/getcarlist");
+            HttpResponseMessage response = await client.GetAsync("order/" + orderid + "/" + userid);
             if (response.IsSuccessStatusCode)
             {
                 var stringData = response.Content.ReadAsStringAsync().Result;
-                List<CarListVM> carList = JsonConvert.DeserializeObject<List<CarListVM>>(stringData);
-                switch (transmission)
+                Order order = JsonConvert.DeserializeObject<Order>(stringData);
+                DateTime returnedDate = DateTime.Parse(returndate);
+                int noOfDays = (int)(returnedDate - order.ToDate).TotalDays;
+                if (noOfDays <= 0)
                 {
-                    case "all":
-                        carList = carList;
-                        break;
-                    case "manual":
-                        carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)0).ToList();
-                        break;
-                    case "automatic":
-                        carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)1).ToList();
-                        break;
-                    default:
-                        carList = carList;
-                        break;
+                    order.ExtraDays = 0;
+                    order.FineAmount = fineamount;
+                    order.Status = "accepted";
                 }
-                if (model != 0)
+                else
                 {
-                    carList = carList.Where(x => x.CarModelDetails.CarModelId == model).ToList();
+
+                    HttpResponseMessage carResponse = await client.GetAsync("car/getcarmodel/" + carmodelid);
+                    if (carResponse.IsSuccessStatusCode)
+                    {
+                        var carStringData = carResponse.Content.ReadAsStringAsync().Result;
+                        CarModel car = JsonConvert.DeserializeObject<CarModel>(carStringData);
+                        order.FineAmount = (int)(fineamount + (noOfDays * (car.ChargePerDay * 1.5)));
+                    }
+                    order.ExtraDays = noOfDays;
+                    order.Status = "accepted";
                 }
-                if (varient != "all" && varient != null)
+                HttpResponseMessage updateResponse = await client.PostAsJsonAsync("order/updateorder", order);
+                if (updateResponse.IsSuccessStatusCode)
                 {
-                    carList = carList.Where(x => x.CarModelDetails.CarType.ToString() == varient).ToList();
+                    var updateStringData = updateResponse.Content.ReadAsStringAsync().Result;
+                    bool updated = JsonConvert.DeserializeObject<bool>(updateStringData);
+                    if (updated)
+                    {
+                        return RedirectToAction("AdminPortal");
+                    }
                 }
-                switch (sortby)
-                {
-                    case "created":
-                        carList = carList.OrderBy(x => x.CreatedOn).ToList();
-                        break;
-                    case "charge":
-                        carList = carList.OrderBy(x => x.CarModelDetails.ChargePerDay).ToList();
-                        break;
-                    case "seat":
-                        carList = carList.OrderBy(x => x.CarModelDetails.SeatCount).ToList();
-                        break;
-                    default:
-                        carList = carList.OrderBy(x => x.CreatedOn).ToList();
-                        break;
-                }
-                switch (sortorder)
-                {
-                    case "ascending":
-                        carList = carList;
-                        break;
-                    case "descending":
-                        carList.Reverse();
-                        break;
-                    default:
-                        carList = carList;
-                        break;
-                }
-                return View(carList);
             }
-            return View();
-        }
-        public async Task<IActionResult> CreateCarAsync()
-        {
-            List<CarModel> carModelList = (List<CarModel>)await RetrieveCarModelList();
-            ViewBag.ModelList = carModelList;
-            return View();
-        }
-        [HttpPost]
-        public async Task<IActionResult> CreateCar(Car car)
-        {
-            try
+                return RedirectToAction(nameof(ErrorPage));
+            }
+            public IActionResult RequestRejected(int orderid)
             {
-                if (ModelState.IsValid)
+                return View();
+            }
+            public IActionResult CreateCarModel()
+            {
+                if (HttpContext.Session.GetString("_userType") == "Admin")
+                    return View();
+                else
+                    return RedirectToAction("UnauthorizedPage");
+            }
+            [HttpPost]
+            public async Task<IActionResult> CreateCarModel(CarModel cardetails)
+            {
+                try
                 {
-                    car.UserId = (int)HttpContext.Session.GetInt32("_userId");
-                    car.CreatedOn = DateTime.Now;
-                    HttpResponseMessage response = await client.PostAsJsonAsync("car/addcardetails", car);
+                    if (ModelState.IsValid)
+                    {
+                        cardetails.UserId = (int)HttpContext.Session.GetInt32("_userId");
+                        cardetails.CreatedOn = DateTime.Now;
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                        HttpResponseMessage response = await client.PostAsJsonAsync("Car/addmodeldetails", cardetails);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var stringData = response.Content.ReadAsStringAsync().Result;
+                            bool carAdded = JsonConvert.DeserializeObject<Boolean>(stringData);
+                            if (carAdded)
+                            {
+                                ViewBag.SuccessMessage = "Added";
+                                ModelState.Clear();
+                                return View();
+                            }
+                        }
+                    }
+                    ViewBag.SuccessMessage = "error";
+                    return View();
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            public async Task<IActionResult> ViewCarModel(int id)
+            {
+                try
+                {
+
+                    HttpResponseMessage response = await client.GetAsync("Car/getcarmodel/" + id);
                     if (response.IsSuccessStatusCode)
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
-                        bool carAdded = JsonConvert.DeserializeObject<bool>(stringData);
-                        if (carAdded)
-                        {
-                            ViewBag.SuccessMessage = "Added";
-                            ModelState.Clear();
-                            ViewBag.ModelList = (List<CarModel>)await RetrieveCarModelList();
-
-                            return View();
-                        }
+                        CarModelListVM carModel = JsonConvert.DeserializeObject<CarModelListVM>(stringData);
+                        return View(carModel);
                     }
+                    return RedirectToAction("ErrorPage");
                 }
-                ViewBag.SuccessMessage = "error";
+                catch (Exception)
+                {
+                    return RedirectToAction("ServerError");
+                }
+            }
+            public async Task<IActionResult> ViewCar(int id)
+            {
+                try
+                {
+
+                    HttpResponseMessage response = await client.GetAsync("Car/getcarjoined/" + id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        CarListVM car = JsonConvert.DeserializeObject<CarListVM>(stringData);
+                        ViewBag.ImgUrl = car.ImgUrl;
+                        return View(car);
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("ServerError");
+                }
+            }
+            public IActionResult UserPortal()
+            {
+                try
+                {
+                    if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+
+                    return View();
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            public async Task<IActionResult> UserProfile()
+            {
+                try
+                {
+                    int userId = (int)HttpContext.Session.GetInt32("_userId");
+                    HttpResponseMessage response = await client.GetAsync("auth/getuser/" + userId);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        User user = JsonConvert.DeserializeObject<User>(stringData);
+                        return View(user);
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("ServerError");
+                }
+
+            }
+            [HttpPost]
+            public async Task<IActionResult> UserProfileAsync(User user)
+            {
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        if (user.ImgUrl == null)
+                            HttpContext.Session.SetString("_avatarUrl", "0");
+                        else
+                            HttpContext.Session.SetString("_avatarUrl", user.ImgUrl);
+                        HttpResponseMessage response = await client.PutAsJsonAsync("auth", user);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            HttpContext.Session.SetString("_userName", user.Name);
+                            if (HttpContext.Session.GetString("_userType") == "Admin")
+                                return RedirectToAction("AdminPortal");
+                            else
+                                return RedirectToAction("UserPortal");
+                        }
+                        return RedirectToAction("ErrorPage");
+                    }
+                    return View(user);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            public async Task<IActionResult> CarModelList()
+            {
+                if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
+                    return RedirectToAction("UnauthorizedPage");
+
+                List<CarModel> carModelList = await RetrieveCarModelList();
+                return View(carModelList);
+
+            }
+
+            public async Task<IActionResult> CarListAsync(string transmission, int model, string varient, string sortby, string sortorder)
+            {
+                if (transmission == null)
+                    ViewBag.Transmission = "all";
+                else
+                    ViewBag.Transmission = transmission;
+                ViewBag.Model = model;
+                if (transmission == null)
+                    ViewBag.Varient = "all";
+                else
+                    ViewBag.Varient = varient;
+                if (sortby == null)
+                    ViewBag.SortBy = "created";
+                else
+                    ViewBag.SortBy = sortby;
+                if (sortorder == null)
+                    ViewBag.SortOrder = "ascending";
+                else
+                    ViewBag.SortOrder = sortorder;
                 List<CarModel> carModelList = (List<CarModel>)await RetrieveCarModelList();
                 ViewBag.ModelList = carModelList;
-                return RedirectToAction("CreateCar");
-            }
-            catch (Exception)
-            {
-                return RedirectToAction("ServerError");
-            }
-        }
-        public async Task<IActionResult> EditCarAsync(int id)
-        {
-            try
-            {
-
-
-                HttpResponseMessage response = await client.GetAsync("Car/getcar/" + id);
+                List<string> carVarients = (List<string>)await RetrieveCarVarients();
+                ViewBag.VarientList = carVarients;
+                HttpResponseMessage response = await client.GetAsync("car/getcarlist");
                 if (response.IsSuccessStatusCode)
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
-                    Car car = JsonConvert.DeserializeObject<Car>(stringData);
-                    ViewBag.ImgUrl = car.ImgUrl;
-                    return View(car);
+                    List<CarListVM> carList = JsonConvert.DeserializeObject<List<CarListVM>>(stringData);
+                    switch (transmission)
+                    {
+                        case "all":
+                            carList = carList;
+                            break;
+                        case "manual":
+                            carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)0).ToList();
+                            break;
+                        case "automatic":
+                            carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)1).ToList();
+                            break;
+                        default:
+                            carList = carList;
+                            break;
+                    }
+                    if (model != 0)
+                    {
+                        carList = carList.Where(x => x.CarModelDetails.CarModelId == model).ToList();
+                    }
+                    if (varient != "all" && varient != null)
+                    {
+                        carList = carList.Where(x => x.CarModelDetails.CarType.ToString() == varient).ToList();
+                    }
+                    switch (sortby)
+                    {
+                        case "created":
+                            carList = carList.OrderBy(x => x.CreatedOn).ToList();
+                            break;
+                        case "charge":
+                            carList = carList.OrderBy(x => x.CarModelDetails.ChargePerDay).ToList();
+                            break;
+                        case "seat":
+                            carList = carList.OrderBy(x => x.CarModelDetails.SeatCount).ToList();
+                            break;
+                        default:
+                            carList = carList.OrderBy(x => x.CreatedOn).ToList();
+                            break;
+                    }
+                    switch (sortorder)
+                    {
+                        case "ascending":
+                            carList = carList;
+                            break;
+                        case "descending":
+                            carList.Reverse();
+                            break;
+                        default:
+                            carList = carList;
+                            break;
+                    }
+                    return View(carList);
                 }
-
-                return RedirectToAction("ErrorPage");
+                return View();
             }
-            catch (Exception)
+            public async Task<IActionResult> CreateCarAsync()
             {
-                return RedirectToAction("ServerError");
+                List<CarModel> carModelList = (List<CarModel>)await RetrieveCarModelList();
+                ViewBag.ModelList = carModelList;
+                return View();
             }
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditCarAsync(Car car)
-        {
-            try
+            [HttpPost]
+            public async Task<IActionResult> CreateCar(Car car)
             {
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        car.UserId = (int)HttpContext.Session.GetInt32("_userId");
+                        car.CreatedOn = DateTime.Now;
+                        HttpResponseMessage response = await client.PostAsJsonAsync("car/addcardetails", car);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var stringData = response.Content.ReadAsStringAsync().Result;
+                            bool carAdded = JsonConvert.DeserializeObject<bool>(stringData);
+                            if (carAdded)
+                            {
+                                ViewBag.SuccessMessage = "Added";
+                                ModelState.Clear();
+                                ViewBag.ModelList = (List<CarModel>)await RetrieveCarModelList();
 
-                if (ModelState.IsValid)
+                                return View();
+                            }
+                        }
+                    }
+                    ViewBag.SuccessMessage = "error";
+                    List<CarModel> carModelList = (List<CarModel>)await RetrieveCarModelList();
+                    ViewBag.ModelList = carModelList;
+                    return RedirectToAction("CreateCar");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("ServerError");
+                }
+            }
+            public async Task<IActionResult> EditCarAsync(int id)
+            {
+                try
+                {
+
+
+                    HttpResponseMessage response = await client.GetAsync("Car/getcar/" + id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        Car car = JsonConvert.DeserializeObject<Car>(stringData);
+                        ViewBag.ImgUrl = car.ImgUrl;
+                        if (car.UserId == HttpContext.Session.GetInt32("_userId"))
+                            return View(car);
+                        return RedirectToAction(nameof(UnauthorizedPage));
+                    }
+
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("ServerError");
+                }
+            }
+            [HttpPost]
+            public async Task<IActionResult> EditCarAsync(Car car)
+            {
+                try
+                {
+
+                    if (ModelState.IsValid)
+                    {
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                        HttpResponseMessage response = await client.PostAsJsonAsync("Car/updatecar", car);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var stringData = response.Content.ReadAsStringAsync().Result;
+                            bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                            if (updated)
+                            {
+                                return RedirectToAction("CarList");
+                            }
+                        }
+                    }
+                    return RedirectToAction("EditCar", new { id = car.CarId });
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+
+            public async Task<IActionResult> DeleteCar(int id)
+            {
+                try
                 {
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                    HttpResponseMessage response = await client.PostAsJsonAsync("Car/updatecar", car);
+                    HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecar", id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        bool deleted = JsonConvert.DeserializeObject<bool>(stringData);
+                        if (deleted)
+                            return RedirectToAction("CarList");
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            public async Task<IActionResult> EditCarModel(int id)
+            {
+                try
+                {
+                    if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                    HttpResponseMessage response = await client.GetAsync("car/getcarmodel/" + id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        CarModel carDetails = JsonConvert.DeserializeObject<CarModel>(stringData);
+                        if (carDetails.UserId == HttpContext.Session.GetInt32("_userId"))
+                            return View(carDetails);
+                        return RedirectToAction("UnauthorizedPage");
+                    }
+                    return View();
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            [HttpPost]
+            public async Task<IActionResult> EditCarModel(CarModel car)
+            {
+                try
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                    HttpResponseMessage response = await client.PostAsJsonAsync("Car/updatecarmodel", car);
                     if (response.IsSuccessStatusCode)
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
                         bool updated = JsonConvert.DeserializeObject<bool>(stringData);
                         if (updated)
                         {
-                            return RedirectToAction("CarList");
+                            return RedirectToAction("CarModelList");
                         }
-                    } 
+                    }
+                    return RedirectToAction("EditCarModel", new { id = car.CarModelId });
                 }
-                return RedirectToAction("EditCar", new { id = car.CarId });
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-
-        public async Task<IActionResult> DeleteCar(int id)
-        {
-            try
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecar", id);
-                if (response.IsSuccessStatusCode)
+                catch (Exception)
                 {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    bool deleted = JsonConvert.DeserializeObject<bool>(stringData);
-                    if (deleted)
-                        return RedirectToAction("CarList");
+
+                    return RedirectToAction("ErrorPage");
                 }
-                return RedirectToAction("ErrorPage");
             }
-            catch (Exception)
+            public IActionResult ErrorPage()
+            {
+                return View();
+            }
+
+            public async Task<IActionResult> DeleteCarModel(int id)
             {
 
-                return RedirectToAction("ErrorPage");
+                try
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                    HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecarmodel", id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        bool deleted = JsonConvert.DeserializeObject<bool>(stringData);
+                        if (deleted)
+                            return RedirectToAction("CarModelList");
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
             }
-        }
-        public async Task<IActionResult> EditCarModel(int id)
-        {
-            try
+            [HttpPost]
+            public async Task<IActionResult> DeleteCarModelSelected([FromBody] int[] selectedId)
             {
-                if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
+                foreach (var item in selectedId)
+                {
+                    HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecarmodel", item);
+
+                }
+                return Json("All the customers deleted successfully!");
+            }
+            [HttpPost]
+            public async Task<IActionResult> DeleteCarSelected([FromBody] int[] selectedId)
+            {
+                foreach (var item in selectedId)
+                {
+                    HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecar", item);
+
+                }
+                return Json("All the customers deleted successfully!");
+            }
+            public IActionResult DateSelector()
+            {
+                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
                     return RedirectToAction("UnauthorizedPage");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.GetAsync("car/getcarmodel/" + id);
+                return View();
+            }
+            [HttpPost]
+            public IActionResult DateSelector(DateSelectorVM dates)
+            {
+                if (ModelState.IsValid)
+                {
+                    TempData["FromDate"] = dates.FromDate;
+                    TempData["ToDate"] = dates.ToDate;
+                    return RedirectToAction("UserCarList", new { fromDate = dates.FromDate, toDate = dates.ToDate });
+                }
+                return View(dates);
+            }
+            public async Task<IActionResult> UserCarListAsync(DateTime fromDate, DateTime toDate, string transmission, int model, string varient, string sortby, string sortorder)
+            {
+                if (fromDate == null || toDate == null)
+                {
+                    return RedirectToAction("DateSelector");
+                }
+                ViewBag.FromDate = fromDate;
+                ViewBag.ToDate = toDate;
+                if (transmission == null)
+                    ViewBag.Transmission = "all";
+                else
+                    ViewBag.Transmission = transmission;
+                ViewBag.Model = model;
+                if (transmission == null)
+                    ViewBag.Varient = "all";
+                else
+                    ViewBag.Varient = varient;
+                if (sortby == null)
+                    ViewBag.SortBy = "created";
+                else
+                    ViewBag.SortBy = sortby;
+                if (sortorder == null)
+                    ViewBag.SortOrder = "ascending";
+                else
+                    ViewBag.SortOrder = sortorder;
+                List<CarModel> carModelList = (List<CarModel>)await RetrieveCarModelList();
+                ViewBag.ModelList = carModelList;
+                List<string> carVarients = (List<string>)await RetrieveCarVarients();
+                ViewBag.VarientList = carVarients;
+                HttpResponseMessage response = await client.GetAsync("car/getcarlist");
                 if (response.IsSuccessStatusCode)
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
-                    CarModel carDetails = JsonConvert.DeserializeObject<CarModel>(stringData);
-                    return View(carDetails);
+                    List<CarListVM> carList = JsonConvert.DeserializeObject<List<CarListVM>>(stringData);
+                    switch (transmission)
+                    {
+                        case "all":
+                            carList = carList;
+                            break;
+                        case "manual":
+                            carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)0).ToList();
+                            break;
+                        case "automatic":
+                            carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)1).ToList();
+                            break;
+                        default:
+                            carList = carList;
+                            break;
+                    }
+                    if (model != 0)
+                    {
+                        carList = carList.Where(x => x.CarModelDetails.CarModelId == model).ToList();
+                    }
+                    if (varient != "all" && varient != null)
+                    {
+                        carList = carList.Where(x => x.CarModelDetails.CarType.ToString() == varient).ToList();
+                    }
+                    switch (sortby)
+                    {
+                        case "created":
+                            carList = carList.OrderBy(x => x.CreatedOn).ToList();
+                            break;
+                        case "charge":
+                            carList = carList.OrderBy(x => x.CarModelDetails.ChargePerDay).ToList();
+                            break;
+                        case "seat":
+                            carList = carList.OrderBy(x => x.CarModelDetails.SeatCount).ToList();
+                            break;
+                        default:
+                            carList = carList.OrderBy(x => x.CreatedOn).ToList();
+                            break;
+                    }
+                    switch (sortorder)
+                    {
+                        case "ascending":
+                            carList = carList;
+                            break;
+                        case "descending":
+                            carList.Reverse();
+                            break;
+                        default:
+                            carList = carList;
+                            break;
+                    }
+                    return View(carList);
                 }
                 return View();
             }
-            catch (Exception)
+
+            public async Task<IActionResult> ConfirmPageAsync(int id)
             {
+                DateTime FromDate = new DateTime(), ToDate = new DateTime();
+                if (TempData.ContainsKey("FromDate"))
+                    FromDate = Convert.ToDateTime(TempData["FromDate"]);
+                if (TempData.ContainsKey("ToDate"))
+                    ToDate = Convert.ToDateTime(TempData["ToDate"]);
+                ViewBag.FromDate = FromDate;
+                ViewBag.ToDate = ToDate;
+                TempData.Keep("FromDate");
+                TempData.Keep("ToDate");
+                int noOfDays = (int)(ToDate - FromDate).TotalDays;
+                ViewBag.NoOfDays = noOfDays;
+                ViewBag.CarId = id;
+                try
+                {
+
+                    HttpResponseMessage response = await client.GetAsync("Car/getcarjoined/" + id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        CarListVM car = JsonConvert.DeserializeObject<CarListVM>(stringData);
+                        ViewBag.ImgUrl = car.ImgUrl;
+                        ViewBag.Total = car.CarModelDetails.ChargePerDay * noOfDays;
+                        return View(car);
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("ServerError");
+                }
+                return View();
+            }
+
+            public async Task<IActionResult> ConfirmPageYesAsync(int id)
+            {
+                Order order = new Order();
+                order.CarId = id;
+                order.UserId = (int)HttpContext.Session.GetInt32("_userId");
+                DateTime FromDate = new DateTime(), ToDate = new DateTime();
+                if (TempData.ContainsKey("FromDate"))
+                    FromDate = Convert.ToDateTime(TempData["FromDate"]);
+                if (TempData.ContainsKey("ToDate"))
+                    ToDate = Convert.ToDateTime(TempData["ToDate"]);
+                order.FromDate = FromDate;
+                order.ToDate = ToDate;
+                order.ExtraDays = 0;
+                int noOfDays = (int)(ToDate - FromDate).TotalDays;
+                HttpResponseMessage response = await client.GetAsync("Car/getcarjoined/" + id);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    CarListVM car = JsonConvert.DeserializeObject<CarListVM>(stringData);
+                    order.Total = car.CarModelDetails.ChargePerDay * noOfDays;
+                    order.FineAmount = 0;
+                    order.Status = "unpaid";
+                    order.OrderDate = DateTime.Now;
+                }
+                HttpResponseMessage orderResponse = await client.PostAsJsonAsync("Order/addorder", order);
+                if (orderResponse.IsSuccessStatusCode)
+                {
+                    var orderStringData = orderResponse.Content.ReadAsStringAsync().Result;
+                    int orderId = JsonConvert.DeserializeObject<int>(orderStringData);
+                    if (orderId >= 100)
+                    {
+
+                        PaymentReciept reciept = new PaymentReciept
+                        {
+                            OrderId = orderId,
+                            Type = "order",
+                            Total = 0,
+                            ExtraDays = 0
+                        };
+                        TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
+                        return RedirectToAction("PaymentPage");
+                    }
+                }
+                return View();
+            }
+            public async Task<IActionResult> RentCar()
+            {
+                try
+                {
+                    if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+                    int pendingOrders = 0;
+                    int userId = (int)HttpContext.Session.GetInt32("_userId");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                    HttpResponseMessage response = await client.GetAsync("Order/userId?userId=" + userId);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        List<Order> orderList = JsonConvert.DeserializeObject<List<Order>>(stringData);
+                        orderList.ForEach((item) =>
+                        {
+                            if (item.Status == "pending")
+                            {
+                                ++pendingOrders;
+                            }
+                        });
+                    }
+                    ViewBag.PendingOrders = pendingOrders;
+                    ViewBag.CarListed = (List<CarModel>)await RetrieveCarModelList();
+                    ViewBag.CarVarients = Enum.GetNames(typeof(CarVarient));
+                    return View();
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            [HttpPost]
+            public async Task<IActionResult> RentCar(Order order)
+            {
+                try
+                {
+                    if (ModelState.IsValid)
+                    {
+                        order.UserId = (int)HttpContext.Session.GetInt32("_userId");
+                        int noOfDays = (int)(order.ToDate - order.FromDate).TotalDays;
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                        HttpResponseMessage response = await client.GetAsync("Car/" + order.CarId);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var stringData = response.Content.ReadAsStringAsync().Result;
+                            CarModel carDetails = JsonConvert.DeserializeObject<CarModel>(stringData);
+                            if (noOfDays == 0)
+                                noOfDays = 1;
+                            order.Total = noOfDays * carDetails.ChargePerDay;
+                            order.Status = "unpaid";
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                            HttpResponseMessage orderResponse = await client.PostAsJsonAsync("Order/addorder", order);
+                            if (orderResponse.IsSuccessStatusCode)
+                            {
+                                var orderStringData = orderResponse.Content.ReadAsStringAsync().Result;
+                                int orderId = JsonConvert.DeserializeObject<int>(orderStringData);
+                                if (orderId >= 100)
+                                {
+                                    PaymentReciept reciept = new PaymentReciept
+                                    {
+                                        OrderId = orderId,
+                                        Type = "order",
+                                        Total = 0,
+                                        ExtraDays = 0
+                                    };
+                                    TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
+                                    return RedirectToAction("PaymentPage");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("RentCar");
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+
+            public async Task<IActionResult> PaymentPage()
+            {
+                try
+                {
+                    if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+                    if (!TempData.ContainsKey("PaymentReciept"))
+                        return RedirectToAction("ErrorPage");
+                    int userId = (int)HttpContext.Session.GetInt32("_userId");
+                    PaymentReciept reciept = JsonConvert.DeserializeObject<PaymentReciept>((string)TempData["PaymentReciept"]);
+                    TempData.Keep("PaymentReciept");
+                    if (reciept.Type == "order")
+                    {
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                        HttpResponseMessage response = await client.GetAsync("Order/" + reciept.OrderId + "/" + userId);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var stringData = response.Content.ReadAsStringAsync().Result;
+                            Order order = JsonConvert.DeserializeObject<Order>(stringData);
+                            ViewBag.OrderId = order.OrderId;
+                            ViewBag.Total = order.Total;
+                            ViewBag.Type = reciept.Type;
+                            ViewBag.ExtraDays = reciept.ExtraDays;
+                            return View();
+                        }
+                    }
+                    else if (reciept.Type == "fine")
+                    {
+                        ViewBag.Type = reciept.Type;
+                        ViewBag.ExtraDays = reciept.ExtraDays;
+                        ViewBag.OrderId = reciept.OrderId;
+                        ViewBag.Total = reciept.Total;
+                        return View();
+
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            public async Task<IActionResult> PaymentPagePost(int orderId, int total, string type, int ExtraDays)
+            {
+                Payment payment = new Payment
+                {
+                    OrderId = orderId,
+                    UserId = (int)HttpContext.Session.GetInt32("_userId"),
+                    Total = total
+                };
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                HttpResponseMessage paymentResponse = await client.PostAsJsonAsync("Payment/addPayment", payment);
+                if (paymentResponse.IsSuccessStatusCode)
+                {
+                    var paymentStringData = paymentResponse.Content.ReadAsStringAsync().Result;
+                    bool inserted = JsonConvert.DeserializeObject<bool>(paymentStringData);
+                    if (inserted)
+                    {
+                        if (type == "order")
+                        {
+                            HttpResponseMessage response = await client.GetAsync("order/makepayment/" + orderId);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                var stringData = response.Content.ReadAsStringAsync().Result;
+                                bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                                if (updated)
+                                {
+                                    return RedirectToAction("OrderSuccessfull", new { id = orderId });
+
+                                }
+                            }
+                        }
+                        else if (type == "fine")
+                        {
+                            HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                var stringData = response.Content.ReadAsStringAsync().Result;
+                                bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                                if (updated)
+                                {
+                                    return RedirectToAction("OrderSuccessfull", new { id = orderId });
+                                }
+                            }
+                        }
+                    }
+                }
 
                 return RedirectToAction("ErrorPage");
             }
-        }
-        [HttpPost]
-        public async Task<IActionResult> EditCarModel(CarModel car)
-        {
-            try
+            public async Task<IActionResult> ReceiptPageAsync(int id)
             {
+                int userId = (int)HttpContext.Session.GetInt32("_userId");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.PostAsJsonAsync("Car/updatecarmodel", car);
+                HttpResponseMessage response = await client.GetAsync("Order/getreceipt/" + id + "/" + userId);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    ReceiptVM receipt = JsonConvert.DeserializeObject<ReceiptVM>(stringData);
+                    ViewBag.ImgUrl = receipt.ImgUrl;
+                    return View(receipt);
+                }
+                return RedirectToAction(nameof(ErrorPage));
+            }
+            public async Task<IActionResult> OrderSuccessfull(int id)
+            {
+                try
+                {
+                    if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+                    ViewBag.OrderId = id;
+                    return View();
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            public async Task<IActionResult> OrderHistory(string sortby, string sortorder)
+            {
+                try
+                {
+                    if (sortby == null)
+                        ViewBag.SortBy = "orderdate";
+                    else
+                        ViewBag.SortBy = sortby;
+                    if (sortorder == null)
+                        ViewBag.SortOrder = "ascending";
+                    else
+                        ViewBag.SortOrder = sortorder;
+                    if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+                    int userId = (int)HttpContext.Session.GetInt32("_userId");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                    HttpResponseMessage response = await client.GetAsync("Order/userId?userId=" + userId);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        List<OrderHistoryVM> orderList = JsonConvert.DeserializeObject<List<OrderHistoryVM>>(stringData);
+                        orderList = orderList.Where(x => x.Status != "unpaid").ToList();
+                        switch (sortby)
+                        {
+                            case "orderdate":
+                                orderList = orderList.OrderBy(x => x.OrderDate).ToList();
+                                break;
+                            case "total":
+                                orderList = orderList.OrderBy(x => x.Total).ToList();
+                                break;
+                            default:
+                                orderList = orderList.OrderBy(x => x.OrderDate).ToList();
+                                break;
+                        }
+                        if (sortorder == "descending")
+                        {
+                            orderList.Reverse();
+                        }
+                        if (orderList.Count == 0)
+                            return RedirectToAction("ZeroHistoryPage");
+                        ViewBag.OrderList = orderList;
+                        return View(orderList);
+                    }
+                    return RedirectToAction("ErrorPage");
+                }
+                catch (Exception)
+                {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            public async Task<IActionResult> RequestReturn(int id)
+            {
+                HttpResponseMessage response = await client.GetAsync("Order/requestreturn/" + id);
                 if (response.IsSuccessStatusCode)
                 {
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     bool updated = JsonConvert.DeserializeObject<bool>(stringData);
                     if (updated)
-                    {
-                        return RedirectToAction("CarModelList");
-                    }
+                        return RedirectToAction(nameof(OrderHistory));
+                    else
+                        return RedirectToAction(nameof(ErrorPage));
                 }
-                return RedirectToAction("EditCarModel", new { id = car.CarModelId });
+                return RedirectToAction(nameof(ErrorPage));
             }
-            catch (Exception)
+            public async Task<IActionResult> PaymentHistory()
             {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public IActionResult ErrorPage()
-        {
-            return View();
-        }
-
-        public async Task<IActionResult> DeleteCarModel(int id)
-        {
-
-            try
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecarmodel", id);
-                if (response.IsSuccessStatusCode)
+                try
                 {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    bool deleted = JsonConvert.DeserializeObject<bool>(stringData);
-                    if (deleted)
-                        return RedirectToAction("CarModelList");
-                }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> DeleteCarModelSelected([FromBody] int[] selectedId)
-        {
-            foreach (var item in selectedId)
-            {
-                HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecarmodel", item);
-
-            }
-            return Json("All the customers deleted successfully!");
-        }
-        [HttpPost]
-        public async Task<IActionResult> DeleteCarSelected([FromBody] int[] selectedId)
-        {
-            foreach (var item in selectedId)
-            {
-                HttpResponseMessage response = await client.PostAsJsonAsync("Car/deletecar", item);
-
-            }
-            return Json("All the customers deleted successfully!");
-        }
-        public async Task<IActionResult> RentCar()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
-                    return RedirectToAction("UnauthorizedPage");
-                int pendingOrders = 0;
-                int userId = (int)HttpContext.Session.GetInt32("_userId");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.GetAsync("Order/userId?userId=" + userId);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    List<Order> orderList = JsonConvert.DeserializeObject<List<Order>>(stringData);
-                    orderList.ForEach((item) =>
-                    {
-                        if (item.Completed == "pending")
-                        {
-                            ++pendingOrders;
-                        }
-                    });
-                }
-                ViewBag.PendingOrders = pendingOrders;
-                ViewBag.CarListed = (List<CarModel>)await RetrieveCarModelList();
-                ViewBag.CarVarients = Enum.GetNames(typeof(CarVarient));
-                return View();
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        [HttpPost]
-        public async Task<IActionResult> RentCar(Order order)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    order.UserId = (int)HttpContext.Session.GetInt32("_userId");
-                    int noOfDays = (int)(order.ToDate - order.FromDate).TotalDays;
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                    HttpResponseMessage response = await client.GetAsync("Car/" + order.CarId);
+                    if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+                    int userId = (int)HttpContext.Session.GetInt32("_userId");
+                    HttpResponseMessage response = await client.GetAsync("Payment/" + userId);
                     if (response.IsSuccessStatusCode)
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
-                        CarModel carDetails = JsonConvert.DeserializeObject<CarModel>(stringData);
-                        if (noOfDays == 0)
-                            noOfDays = 1;
-                        order.Total = noOfDays * carDetails.ChargePerDay;
-                        order.Completed = "unpaid";
-                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                        HttpResponseMessage orderResponse = await client.PostAsJsonAsync("Order/addorder", order);
-                        if (orderResponse.IsSuccessStatusCode)
-                        {
-                            var orderStringData = orderResponse.Content.ReadAsStringAsync().Result;
-                            int orderId = JsonConvert.DeserializeObject<int>(orderStringData);
-                            if (orderId >= 100)
-                            {
-                                PaymentReciept reciept = new PaymentReciept
-                                {
-                                    OrderId = orderId,
-                                    Type = "order",
-                                    Total = 0,
-                                    ExtraDays = 0
-                                };
-                                TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
-                                return RedirectToAction("PaymentPage");
-                            }
-                        }
+                        List<Payment> paymentList = JsonConvert.DeserializeObject<List<Payment>>(stringData);
+                        paymentList.Reverse();
+                        if (paymentList.Count == 0)
+                            return RedirectToAction("ZeroHistoryPage");
+                        return View(paymentList);
                     }
-                }
-                else
-                {
-                    return RedirectToAction("RentCar");
-                }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-
-        public async Task<IActionResult> PaymentPage()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
-                    return RedirectToAction("UnauthorizedPage");
-                if (!TempData.ContainsKey("PaymentReciept"))
                     return RedirectToAction("ErrorPage");
-                int userId = (int)HttpContext.Session.GetInt32("_userId");
-                PaymentReciept reciept = JsonConvert.DeserializeObject<PaymentReciept>((string)TempData["PaymentReciept"]);
-                TempData.Keep("PaymentReciept");
-                if (reciept.Type == "order")
+                }
+                catch (Exception)
                 {
+
+                    return RedirectToAction("ErrorPage");
+                }
+            }
+            public async Task<IActionResult> CompleteTrip(int orderId)
+            {
+                try
+                {
+                    if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+                    int userId = (int)HttpContext.Session.GetInt32("_userId");
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                    HttpResponseMessage response = await client.GetAsync("Order/" + reciept.OrderId + "/" + userId);
+                    HttpResponseMessage response = await client.GetAsync("Order/" + orderId + "/" + userId);
                     if (response.IsSuccessStatusCode)
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
                         Order order = JsonConvert.DeserializeObject<Order>(stringData);
-                        ViewBag.OrderId = order.OrderId;
-                        ViewBag.Total = order.Total;
-                        ViewBag.Type = reciept.Type;
-                        ViewBag.ExtraDays = reciept.ExtraDays;
-                        return View();
+                        if (order == null)
+                            return RedirectToAction("ErrorPage");
+                        DateTime today = DateTime.Today;
+                        HttpResponseMessage carResponse = await client.GetAsync("Car/" + order.CarId);
+                        if (carResponse.IsSuccessStatusCode)
+                        {
+                            var carStringData = carResponse.Content.ReadAsStringAsync().Result;
+                            CarModel car = JsonConvert.DeserializeObject<CarModel>(carStringData);
+                            int noOfDays;
+                            if (order.ToDate < today)
+                            {
+                                noOfDays = (int)(today - order.ToDate).TotalDays;
+                                ViewBag.ExtraDays = noOfDays;
+                                ViewBag.OrderId = order.OrderId;
+                                ViewBag.FineAmount = noOfDays * (car.ChargePerDay * 1.5);
+                                PaymentReciept reciept = new PaymentReciept
+                                {
+                                    OrderId = order.OrderId,
+                                    Type = "fine",
+                                    Total = (int)(noOfDays * (car.ChargePerDay * 1.5)),
+                                    ExtraDays = noOfDays
+                                };
+                                TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
+                                return View();
+                            }
+                            else
+                            {
+                                HttpResponseMessage updateResponse = await client.GetAsync("Order/ExtraDays?orderId=" + order.OrderId + "&extraDays=0");
+                                if (updateResponse.IsSuccessStatusCode)
+                                {
+                                    var updateStringData = updateResponse.Content.ReadAsStringAsync().Result;
+                                    bool updated = JsonConvert.DeserializeObject<bool>(updateStringData);
+                                    if (updated)
+                                        return RedirectToAction("UserPortal");
+                                }
+                            }
+                        }
                     }
-                }
-                else if (reciept.Type == "fine")
-                {
-                    ViewBag.Type = reciept.Type;
-                    ViewBag.ExtraDays = reciept.ExtraDays;
-                    ViewBag.OrderId = reciept.OrderId;
-                    ViewBag.Total = reciept.Total;
                     return View();
-
                 }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public async Task<IActionResult> PaymentPagePost(int orderId, int total, string type, int ExtraDays)
-        {
-            Payment payment = new Payment
-            {
-                OrderId = orderId,
-                UserId = (int)HttpContext.Session.GetInt32("_userId"),
-                Total = total
-            };
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-            HttpResponseMessage paymentResponse = await client.PostAsJsonAsync("Payment/addPayment", payment);
-            if (paymentResponse.IsSuccessStatusCode)
-            {
-                var paymentStringData = paymentResponse.Content.ReadAsStringAsync().Result;
-                bool inserted = JsonConvert.DeserializeObject<bool>(paymentStringData);
-                if (inserted)
+                catch (Exception)
                 {
-                    if (type == "order")
-                    {
-                        HttpResponseMessage response = await client.GetAsync("order/makepayment/" + orderId);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var stringData = response.Content.ReadAsStringAsync().Result;
-                            bool updated = JsonConvert.DeserializeObject<bool>(stringData);
-                            if (updated)
-                            {
-                                return RedirectToAction("OrderSuccessfull");
 
-                            }
-                        }
-                    }
-                    else if (type == "fine")
-                    {
-                        HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var stringData = response.Content.ReadAsStringAsync().Result;
-                            bool updated = JsonConvert.DeserializeObject<bool>(stringData);
-                            if (updated)
-                            {
-                                return RedirectToAction("OrderSuccessfull");
-                            }
-                        }
-                    }
+                    return RedirectToAction("ErrorPage");
                 }
             }
-
-            return RedirectToAction("ErrorPage");
-        }
-        public async Task<IActionResult> OrderSuccessfull()
-        {
-            try
+            public IActionResult Logout()
             {
-                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
-                    return RedirectToAction("UnauthorizedPage");
+                HttpContext.Session.SetString("_userType", "");
+                HttpContext.Session.SetInt32("_userId", 0);
+                HttpContext.Session.SetString("_token", "");
+                return RedirectToAction("Index");
+            }
+
+            public IActionResult UnauthorizedPage()
+            {
                 return View();
             }
-            catch (Exception)
+            public IActionResult ZeroHistoryPage()
             {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public async Task<IActionResult> OrderHistory()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
-                    return RedirectToAction("UnauthorizedPage");
-                int userId = (int)HttpContext.Session.GetInt32("_userId");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.GetAsync("Order/userId?userId=" + userId);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    List<Order> orderList = JsonConvert.DeserializeObject<List<Order>>(stringData);
-                    orderList.Reverse();
-                    if (orderList.Count == 0)
-                        return RedirectToAction("ZeroHistoryPage");
-                    ViewBag.OrderList = orderList;
-                    return View(orderList);
-                }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public async Task<IActionResult> PaymentHistory()
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
-                    return RedirectToAction("UnauthorizedPage");
-                int userId = (int)HttpContext.Session.GetInt32("_userId");
-                HttpResponseMessage response = await client.GetAsync("Payment/" + userId);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    List<Payment> paymentList = JsonConvert.DeserializeObject<List<Payment>>(stringData);
-                    paymentList.Reverse();
-                    if (paymentList.Count == 0)
-                        return RedirectToAction("ZeroHistoryPage");
-                    return View(paymentList);
-                }
-                return RedirectToAction("ErrorPage");
-            }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public async Task<IActionResult> CompleteTrip(int orderId)
-        {
-            try
-            {
-                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "")
-                    return RedirectToAction("UnauthorizedPage");
-                int userId = (int)HttpContext.Session.GetInt32("_userId");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
-                HttpResponseMessage response = await client.GetAsync("Order/" + orderId + "/" + userId);
-                if (response.IsSuccessStatusCode)
-                {
-                    var stringData = response.Content.ReadAsStringAsync().Result;
-                    Order order = JsonConvert.DeserializeObject<Order>(stringData);
-                    if (order == null)
-                        return RedirectToAction("ErrorPage");
-                    DateTime today = DateTime.Today;
-                    HttpResponseMessage carResponse = await client.GetAsync("Car/" + order.CarId);
-                    if (carResponse.IsSuccessStatusCode)
-                    {
-                        var carStringData = carResponse.Content.ReadAsStringAsync().Result;
-                        CarModel car = JsonConvert.DeserializeObject<CarModel>(carStringData);
-                        int noOfDays;
-                        if (order.ToDate < today)
-                        {
-                            noOfDays = (int)(today - order.ToDate).TotalDays;
-                            ViewBag.ExtraDays = noOfDays;
-                            ViewBag.OrderId = order.OrderId;
-                            ViewBag.FineAmount = noOfDays * (car.ChargePerDay * 1.5);
-                            PaymentReciept reciept = new PaymentReciept
-                            {
-                                OrderId = order.OrderId,
-                                Type = "fine",
-                                Total = (int)(noOfDays * (car.ChargePerDay * 1.5)),
-                                ExtraDays = noOfDays
-                            };
-                            TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
-                            return View();
-                        }
-                        else
-                        {
-                            HttpResponseMessage updateResponse = await client.GetAsync("Order/ExtraDays?orderId=" + order.OrderId + "&extraDays=0");
-                            if (updateResponse.IsSuccessStatusCode)
-                            {
-                                var updateStringData = updateResponse.Content.ReadAsStringAsync().Result;
-                                bool updated = JsonConvert.DeserializeObject<bool>(updateStringData);
-                                if (updated)
-                                    return RedirectToAction("UserPortal");
-                            }
-                        }
-                    }
-                }
                 return View();
             }
-            catch (Exception)
-            {
-
-                return RedirectToAction("ErrorPage");
-            }
-        }
-        public IActionResult Logout()
-        {
-            HttpContext.Session.SetString("_userType", "");
-            HttpContext.Session.SetInt32("_userId", 0);
-            HttpContext.Session.SetString("_token", "");
-            return RedirectToAction("Index");
-        }
-
-        public IActionResult UnauthorizedPage()
-        {
-            return View();
-        }
-        public IActionResult ZeroHistoryPage()
-        {
-            return View();
         }
     }
-}

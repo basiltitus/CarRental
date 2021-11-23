@@ -6,6 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Server.API.Models;
 using System.Data;
+using Server.API.Models.ViewModels;
+using CarTransmission = Server.API.Models.ViewModels.CarTransmission;
+using CarVarient = Server.API.Models.ViewModels.CarVarient;
 
 namespace Server.API.Operations
 {
@@ -22,9 +25,9 @@ namespace Server.API.Operations
         }
         public int AddOrder(Order order)
         {
-            string[] res= this.GetCarAvailability(order.FromDate, order.ToDate, order.CarId);
+           /* string[] res= this.GetCarAvailability(order.FromDate, order.ToDate, order.CarId);
             if (res[0] != "available")
-                return 0;
+                return 0;*/
             SqlCommand command = new SqlCommand("sp_addorder", sqlConnection);
             command.Parameters.Add("@CarId", SqlDbType.Int).Value = (int)order.CarId;
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)order.UserId;
@@ -32,7 +35,9 @@ namespace Server.API.Operations
             command.Parameters.Add("@ToDate", SqlDbType.Date).Value = order.ToDate;
             command.Parameters.Add("@ExtraDays", SqlDbType.Int).Value = order.ExtraDays;
             command.Parameters.Add("@Total", SqlDbType.Int).Value = order.Total;
-            command.Parameters.Add("@Completed", SqlDbType.NVarChar).Value = order.Completed;
+            command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = order.Status;
+            command.Parameters.Add("@FineAmount", SqlDbType.Int).Value = order.FineAmount;
+            command.Parameters.Add("@OrderDate", SqlDbType.Date).Value = order.OrderDate;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             int response = Convert.ToInt32(command.ExecuteScalar());
@@ -92,35 +97,77 @@ namespace Server.API.Operations
                 order.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
                 order.Total = Convert.ToInt32(rdr["Total"]);
                 order.ExtraDays = Convert.ToInt32(rdr["ExtraDays"]);
-                order.Completed = rdr["Completed"].ToString();
+                order.Status = rdr["Status"].ToString();
+                order.FineAmount = Convert.ToInt32(rdr["FineAmount"]);
+                order.OrderDate = Convert.ToDateTime(rdr["OrderDate"].ToString());
             }
             sqlConnection.Close();
             return order;
         }
-        public List<Order> GetOrderDetailsByUserId(int userId)
+        public ReceiptVM GetReciept(int orderId,int userId)
         {
-            List<Order> orderList = new List<Order>();
-            SqlCommand command = new SqlCommand("sp_carjoinorderbyuserid", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_getorderdetailjoined", sqlConnection);
+            command.Parameters.Add("@OrderId", SqlDbType.Int).Value = (int)orderId;
+            command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+            ReceiptVM receipt= new ReceiptVM();
+            if (!rdr.HasRows)
+            {
+                return null;
+            }
+            while (rdr.Read())
+            {
+                receipt.UserId = Convert.ToInt32(rdr["UserId"]);
+                receipt.Name = rdr["Name"].ToString();
+                receipt.DOB = Convert.ToDateTime(rdr["DOB"].ToString());
+                receipt.PhoneNumber = rdr["PhoneNumber"].ToString();
+                receipt.LicenseNumber = rdr["LicenseNumber"].ToString();
+                receipt.CarId = Convert.ToInt32(rdr["CarId"]);
+                receipt.RegNo = rdr["RegNo"].ToString();
+                receipt.Colour = rdr["Colour"].ToString();
+                receipt.ImgUrl = rdr["ImgUrl"].ToString();
+                receipt.CarModelId = Convert.ToInt32(rdr["CarModelId"]);
+                receipt.CarName = rdr["CarName"].ToString();
+                receipt.CarTransmission = (CarTransmission)Enum.Parse(typeof(CarTransmission), rdr["CarTransmission"].ToString());
+                receipt.CarType = (CarVarient)Enum.Parse(typeof(CarVarient), rdr["CarType"].ToString());
+                receipt.SeatCount = Convert.ToInt32(rdr["SeatCount"]);
+                receipt.OrderId = Convert.ToInt32(rdr["OrderId"]);
+                receipt.FromDate = Convert.ToDateTime(rdr["FromDate"].ToString());
+                receipt.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
+                receipt.Total = Convert.ToInt32(rdr["Total"]);
+                receipt.Status = rdr["Status"].ToString();
+                receipt.FineAmount = Convert.ToInt32(rdr["FineAmount"]);
+                receipt.ExtraDays = Convert.ToInt32(rdr["ExtraDays"]);
+                receipt.PaymentId = Convert.ToInt32(rdr["PaymentId"]);
+                receipt.OrderDate = Convert.ToDateTime(rdr["OrderDate"].ToString());
+            }
+            sqlConnection.Close();
+            return receipt;
+        }
+        public List<OrderHistoryVM> GetOrderDetailsByUserId(int userId)
+        {
+            List<OrderHistoryVM> orderList = new List<OrderHistoryVM>();
+            SqlCommand command = new SqlCommand("sp_getorderforuseridjoined", sqlConnection);
             command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)userId;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             SqlDataReader rdr = command.ExecuteReader();
             while (rdr.Read())
             {
-                Order order = new Order
-                {
-                    OrderId = Convert.ToInt32(rdr["OrderId"]),
-                    UserId = Convert.ToInt32(rdr["UserId"]),
-                    CarId = Convert.ToInt32(rdr["CarModelId"])
-                };
-                order.Cardetail.CarName = Convert.ToString(rdr["CarName"]);
-                order.Cardetail.CarTransmission = (CarTransmission) Convert.ToInt32(rdr["CarTransmission"]);
-                order.Cardetail.CarType = (CarVarient)Convert.ToInt32(rdr["CarType"]);
-                order.FromDate = Convert.ToDateTime(rdr["FromDate"].ToString());
-                order.ToDate = Convert.ToDateTime(rdr["ToDate"].ToString());
+                OrderHistoryVM order = new OrderHistoryVM();
+
+                order.OrderId = Convert.ToInt32(rdr["OrderId"]);
+                    order.CarModelId = Convert.ToInt32(rdr["CarModelId"]);
+                order.CarId = Convert.ToInt32(rdr["CarId"]);
+                order.OrderDate = Convert.ToDateTime(rdr["OrderDate"]);
+                order.Status = rdr["status"].ToString();
+                order.FromDate = Convert.ToDateTime(rdr["FromDate"]);
+                order.ToDate = Convert.ToDateTime(rdr["ToDate"]);
+                order.CarName = rdr["CarName"].ToString();
+                order.ImgUrl = rdr["ImgUrl"].ToString();
                 order.Total = Convert.ToInt32(rdr["Total"]);
-                order.ExtraDays = Convert.ToInt32(rdr["ExtraDays"]);
-                order.Completed = rdr["Completed"].ToString();
                 orderList.Add(order);
             }
             sqlConnection.Close();
@@ -140,6 +187,71 @@ namespace Server.API.Operations
             res[0] = response;
             return res;
                 
+        }
+
+        public bool RequestReturn(int id)
+        {
+            SqlCommand command = new SqlCommand("sp_requestreturn", sqlConnection);
+            command.Parameters.Add("@OrderId", SqlDbType.Int).Value = id;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            int response = command.ExecuteNonQuery();
+            sqlConnection.Close();
+            if (response >= 1)
+                return true;
+            else
+                return false;
+        }
+        public List<AdminRequestVM> GetAdminRequests()
+        {
+            List<AdminRequestVM> orderList = new List<AdminRequestVM>();
+            SqlCommand command = new SqlCommand("sp_getadminrequests", sqlConnection);
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+            while (rdr.Read())
+            {
+                AdminRequestVM order = new AdminRequestVM();
+
+                order.OrderId = Convert.ToInt32(rdr["OrderId"]);
+                order.CarModelId = Convert.ToInt32(rdr["CarModelId"]);
+                order.CarId = Convert.ToInt32(rdr["CarId"]);
+                order.UserId = Convert.ToInt32(rdr["UserId"]);
+                order.OrderDate = Convert.ToDateTime(rdr["OrderDate"]);
+                order.FromDate = Convert.ToDateTime(rdr["FromDate"]);
+                order.ToDate = Convert.ToDateTime(rdr["ToDate"]);
+                order.CarName = rdr["CarName"].ToString();
+                order.ImgUrl = rdr["ImgUrl"].ToString();
+                order.Colour=rdr["Colour"].ToString();
+                order.RegNo = rdr["RegNo"].ToString();
+                order.Name = rdr["Name"].ToString();
+                order.PhoneNumber = rdr["PhoneNumber"].ToString();
+                orderList.Add(order);
+            }
+            sqlConnection.Close();
+            return orderList;
+        }
+        public bool UpdateOrder(Order order)
+        {
+            SqlCommand command = new SqlCommand("sp_updateorder", sqlConnection);
+            command.Parameters.Add("@OrderId", SqlDbType.Int).Value = (int)order.OrderId;
+            command.Parameters.Add("@CarId", SqlDbType.Int).Value = (int)order.CarId;
+            command.Parameters.Add("@UserId", SqlDbType.Int).Value = (int)order.UserId;
+            command.Parameters.Add("@FromDate", SqlDbType.Date).Value = order.FromDate;
+            command.Parameters.Add("@ToDate", SqlDbType.Date).Value = order.ToDate;
+            command.Parameters.Add("@ExtraDays", SqlDbType.Int).Value = order.ExtraDays;
+            command.Parameters.Add("@Total", SqlDbType.Int).Value = order.Total;
+            command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = order.Status;
+            command.Parameters.Add("@FineAmount", SqlDbType.Int).Value = order.FineAmount;
+            command.Parameters.Add("@OrderDate", SqlDbType.Date).Value = order.OrderDate;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            int response = command.ExecuteNonQuery();
+            sqlConnection.Close();
+            if (response >= 1)
+                return true;
+            else
+                return false;
         }
     }
 }

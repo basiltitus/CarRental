@@ -12,5 +12,6 @@
     <hr>
     <p class="lead">
         <button class="btn btn-primary btn-sm" onclick="location.href='@Url.Action("UserPortal", "home")';return false;" role="button">Back to homepage</button>
+        <a asp-action="ReceiptPage" asp-controller="home" asp-route-id="@ViewBag.OrderId" class="btn">View Receipt</a>
     </p>
 </div>

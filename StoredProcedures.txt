@@ -68,10 +68,10 @@ begin
 select * from OrderTable where UserId=@UserId 
 end;
 
-Create procedure sp_addorder @CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Completed nvarchar(30)
+Create procedure sp_addorder @CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Status nvarchar(30),@OrderDate Date,@FineAmount int
 AS 
 begin
-insert into OrderTable (CarId,UserId,FromDate,ToDate,ExtraDays,Total,Completed) values (@CarId,@UserId,@FromDate,@ToDate,@ExtraDays,@Total,@Completed); 
+insert into OrderDetails (CarId,UserId,FromDate,ToDate,ExtraDays,Total,Status,FineAmount,OrderDate) values (@CarId,@UserId,@FromDate,@ToDate,@ExtraDays,@Total,@Status,@FineAmount,@OrderDate); 
 SELECT SCOPE_IDENTITY();
 end; 
 
@@ -147,4 +147,68 @@ create procedure sp_addcar @RegNo nvarchar(30),@Colour nvarchar(30),@ImgUrl nvar
 as
 begin
 insert into car (RegNo,Colour,ImgUrl,CarModelId,UserId,CreatedOn) values (@RegNo,@Colour,@ImgUrl,@CarModelId,@UserId,@CreatedOn);
+end
+
+Create procedure sp_getorderdetailjoined @OrderId int,@UserId int 
+AS 
+begin 
+select 
+userprofile.UserId,
+Userprofile.Name,
+userprofile.DOB,
+userprofile.PhoneNumber,
+userprofile.LicenseNumber,
+car.CarId,
+car.RegNo,
+car.Colour,
+car.ImgUrl,
+CarModel.CarModelId,
+CarModel.CarName,
+CarModel.CarTransmission,
+CarModel.CarType,
+CarModel.ChargePerDay,
+CarModel.SeatCount,
+orderdetails.orderId,
+OrderDetails.fromdate,
+orderdetails.todate,
+orderdetails.total,
+orderdetails.status,
+orderDetails.FineAmount,
+orderDetails.ExtraDays,
+orderdetails.OrderDate,
+payment.paymentid
+from orderdetails inner join userprofile on OrderDetails.UserId=userprofile.userId
+inner join car on orderdetails.carid=car.carid
+inner join carmodel on car.carmodelid=carmodel.carmodelid
+inner join payment on Payment.orderId=orderdetails.orderid
+where OrderDetails.orderid=@OrderId and orderdetails.userid=@UserId
+end
+
+create procedure sp_requestreturn @orderId int
+as
+begin
+update orderdetails set status='requested' where orderid=@OrderId
+end
+
+create procedure sp_getadminrequests 
+as
+begin
+select 
+OrderDetails.orderId,
+OrderDetails.CarId,
+OrderDetails.UserId,
+OrderDetails.FromDate,
+OrderDetails.ToDate,
+OrderDetails.OrderDate,
+UserProfile.Name,
+UserProfile.PhoneNumber,
+UserProfile.ImgUrl,
+car.RegNo,
+car.Colour,
+car.CarModelId,
+CarModel.CarName
+from orderdetails inner join UserProfile on orderdetails.userid=userprofile.userid
+inner join car on orderdetails.carId=car.CarId
+inner join carmodel on carmodel.carmodelid=car.carmodelid
+where orderdetails.status='requested'
 end

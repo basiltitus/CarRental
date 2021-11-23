@@ -1,4 +1,56 @@
-﻿<div>
+﻿@model IEnumerable<CarRentalPortal.Models.ViewModels.AdminRequestVM>
+<div>
     <partial name="_AdminNavBar" />
 </div>
-<h1>Hi admin</h1>
+<h1>Pending Requests</h1>
+
+<div class="row p-4">
+    <div class="col-4 text-center offset-4">
+        <h3>Add Car </h3>
+    </div>
+    <div class="col-3 text-right">
+        <a asp-action="CarList" asp-controller="home" class="btn btn-primary">Back to list</a>
+    </div>
+</div>
+@if (Model == null)
+{
+
+
+    <h5>No pending requests</h5>
+}
+else
+{
+<div class="maxWidthVW p-3 border">
+    @foreach (var item in Model)
+    {
+        <div class="border p-1">
+            <div class="row">
+                <div class="col-2 border-right">
+            <img src="@item.ImgUrl" class="list-img" />
+                </div>
+                <div class="col-6">
+                    <div class="row">
+                        <h5>@item.Name</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">
+                            <b> Car Reg No : </b>@item.RegNo
+                        </div>
+                        <div class="col-3">
+                            <b> Car Name : </b>@item.CarName
+                        </div>
+                        <div class="col-3">
+                            <b> Order Id : </b>@item.OrderId
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <a asp-action="RequestDetail" asp-controller="home" asp-route-id="@item.OrderId" class="btn btn-primary">Validate</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+    
+}
+

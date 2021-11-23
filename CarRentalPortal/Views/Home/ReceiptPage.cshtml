@@ -1,0 +1,67 @@
+﻿@model CarRentalPortal.Models.ViewModels.ReceiptVM 
+    <div>
+        <partial name="_NavBar" />
+    </div>
+<div class="row maxWidthVW backgroundPrimary">
+    &nbsp;
+</div>
+<div class="border p-4 maxWidthVW">
+    <div class="row maxWidth">
+        <div class="col-6">
+            <h2>Reciept</h2>
+
+
+            Order Date : @Html.DisplayFor(m => m.OrderDate)<br />
+            Order Id : @Html.DisplayFor(m => m.OrderId)<br />
+            Payment Id : @Html.DisplayFor(m => m.PaymentId)<br />
+            <h5>Customer Details </h5>
+            Name :@Html.DisplayFor(m => m.Name)<br />
+            Date of birth : @Html.DisplayFor(m => m.DOB)<br />
+            Phone Number :@Html.DisplayFor(m => m.PhoneNumber)<br />
+            License Number : @Html.DisplayFor(m => m.LicenseNumber)<br />
+        </div>
+        <div class="col-6 text-right">
+            <img src="@ViewBag.ImgUrl" class="maxWidth" alt="Car Image" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+           
+        </div>
+        <div class="col-6 ">
+           
+        </div>
+    </div>
+        <h4>Car Details</h4> <hr />
+    <div class="row">
+        <div class="col-6">
+            Name :  @Html.DisplayFor(m => m.CarName)<br />
+            Reg No :  @Html.DisplayFor(m => m.RegNo)<br />
+            Colour :  @Html.DisplayFor(m => m.Colour)<br />
+        </div>
+        <div class="col-6">
+            Transmission :  @Html.DisplayFor(m => m.CarTransmission)<br />
+            Varient :  @Html.DisplayFor(m => m.CarType)<br />
+            Seat Count :  @Html.DisplayFor(m => m.SeatCount)<br />
+        </div>
+    </div>
+    <table class="ninetypercentTable" id="recieptTable">
+        <tr class="backgroundPrimary">
+        <th>
+            Booking From
+        </th>
+        <th>Booking Till</th>
+        <th>Total Booking Amount</th>
+        </tr>
+        <tr>
+            <td>@Html.DisplayFor(m => m.FromDate)</td>
+            <td>@Html.DisplayFor(m => m.ToDate)</td>
+            <td>@Html.DisplayFor(m => m.Total)</td>
+        </tr>
+    </table>
+    Booking Status : @Html.DisplayFor(m => m.Status)
+
+</div>
+<div class="row maxWidthVW backgroundPrimary">
+    &nbsp;
+</div>

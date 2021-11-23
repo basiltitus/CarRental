@@ -1,0 +1,124 @@
+﻿@model CarRentalPortal.Models.ViewModels.AdminRequestVM
+
+<div>
+    <partial name="_AdminNavBar" />
+</div>
+<div class="row p-4">
+    <div class="col-4 text-center offset-4">
+        <h3>Validate Request</h3>
+    </div>
+    <div class="col-3 text-right">
+        <a asp-action="AdminPortal" asp-controller="home" class="btn btn-primary">Back to list</a>
+    </div>
+</div>
+
+@if (Model == null)
+{
+}
+else
+{
+    <div class="maxWidthVW border p-4">
+        <div class="row">
+            <div class="col-6">
+                <b>Customer Name : </b> @Html.DisplayFor(m => m.UserId)<br />
+                <b>Customer Phone : </b> @Html.DisplayFor(m => m.PhoneNumber)<br />
+            </div>
+            <div class="col-6">
+                <img src="@ViewBag.ImgUrl" class="mainImg border50" alt="Car Image" />
+            </div>
+        </div>
+        <div class="row">
+            <table class="ninetypercentTable">
+                <tr class="backgroundPrimary">
+                    <th>Booking Id</th>
+                    <th>Booking Date</th>
+                    <th>Booking From</th>
+                    <th>Booking To</th>
+                </tr>
+                <tr>
+                    <td> @Html.DisplayFor(m => m.OrderId)</td>
+                    <td> @Html.DisplayFor(m => m.OrderDate)</td>
+                    <td> @Html.DisplayFor(m => m.FromDate)</td>
+                    <td> @Html.DisplayFor(m => m.ToDate)</td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <table class="ninetypercentTable">
+                <tr class="backgroundPrimary">
+                    <th>Registration Number</th>
+                    <th>Car Name</th>
+                    <th>Car Colour</th>
+                </tr>
+                <tr>
+                    <td> @Html.DisplayFor(m => m.RegNo)</td>
+                    <td> @Html.DisplayFor(m => m.CarName)</td>
+                    <td> @Html.DisplayFor(m => m.Colour)</td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                Car Returned Date : <input type="date" id="returnedDatePicker" class="form-control formInput" />
+            </div>
+            <div class="col-6">
+                <b>Todays Date : @ViewBag.TodaysDate</b>
+            </div>
+            <br />
+            Additional Fine Amount (If applicable) : <input type="number" id="fineAmountInput" class="form-control formInput" />
+        </div>
+        <div class="row">
+            <div class="col-3 offset-2">
+                <button onclick="approveFn()" class="btn btn-success">Approve</button>
+            </div>
+            <div class="col-3">
+                <button onclick="rejectFn()" class="btn btn-danger">Reject Request</button>
+            </div>
+        </div>
+    </div>
+}
+
+<script type="text/javascript">
+    function approveFn() {
+        var ReturnedDate = document.getElementById("returnedDatePicker").value;
+        var fineAmount = document.getElementById("fineAmountInput").value;
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Approve!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+          Swal.fire(
+                    'Approved!',
+                    'Request was successfully approved.',
+                    'success'
+                )
+                location.href = "@Url.ActionLink("RequestApproved","home")" + "?returndate=" + ReturnedDate + "&fineamount=" + fineAmount + "&orderid=" +@Model.OrderId+"&userid=" +@Model.UserId+"&carmodelid=" +@Model.CarModelId;
+            }
+        })
+    }
+    function rejectFn() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Reject!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Deleted!',
+                    'Request has been rejected.',
+                    'danger'
+                )
+                location.href = "@Url.ActionLink("RequestRejected","home")"+"?orderid="+@Model.OrderId+"&userid="+@Model.UserId;
+            }
+        })
+    }
+</script>
