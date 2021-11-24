@@ -1,20 +1,20 @@
-﻿@model CarRentalPortal.Models.ViewModels.ReceiptVM 
-    <div>
-        <partial name="_NavBar" />
-    </div>
+﻿@model CarRentalPortal.Models.ViewModels.ReceiptVM
+<div>
+    <partial name="_NavBar" />
+</div>
 <div class="row maxWidthVW backgroundPrimary">
     &nbsp;
 </div>
 <div class="border p-4 maxWidthVW">
     <div class="row maxWidth">
         <div class="col-6">
-            <h2>Reciept</h2>
-
-
+            <h2 class="text-right">Reciept</h2>
+            <br />
+            <h4>Order Details</h4> <hr />
             Order Date : @Html.DisplayFor(m => m.OrderDate)<br />
             Order Id : @Html.DisplayFor(m => m.OrderId)<br />
-            Payment Id : @Html.DisplayFor(m => m.PaymentId)<br />
-            <h5>Customer Details </h5>
+            Payment Id : @Html.DisplayFor(m => m.PaymentId)<br /><br />
+            <h4>Cistomer Details</h4> <hr />
             Name :@Html.DisplayFor(m => m.Name)<br />
             Date of birth : @Html.DisplayFor(m => m.DOB)<br />
             Phone Number :@Html.DisplayFor(m => m.PhoneNumber)<br />
@@ -26,13 +26,13 @@
     </div>
     <div class="row">
         <div class="col-6">
-           
+
         </div>
         <div class="col-6 ">
-           
+
         </div>
     </div>
-        <h4>Car Details</h4> <hr />
+    <h4>Car Details</h4> <hr />
     <div class="row">
         <div class="col-6">
             Name :  @Html.DisplayFor(m => m.CarName)<br />
@@ -47,11 +47,11 @@
     </div>
     <table class="ninetypercentTable" id="recieptTable">
         <tr class="backgroundPrimary">
-        <th>
-            Booking From
-        </th>
-        <th>Booking Till</th>
-        <th>Total Booking Amount</th>
+            <th>
+                Booking From
+            </th>
+            <th>Booking Till</th>
+            <th>Total Booking Amount</th>
         </tr>
         <tr>
             <td>@Html.DisplayFor(m => m.FromDate)</td>
@@ -59,7 +59,28 @@
             <td>@Html.DisplayFor(m => m.Total)</td>
         </tr>
     </table>
-    Booking Status : @Html.DisplayFor(m => m.Status)
+    @if (ViewBag.ExtraDays > 0)
+    {
+        <br />
+        <h4>Fine Details</h4> <hr />
+        <table class="ninetypercentTable">
+            <tr >
+                <th class="backgroundDanger">Extra Days</th>
+                <th class="backgroundDanger">Charge for a Single Extra day</th>
+                <th class="backgroundDanger">Other Charges</th>
+                <th class="backgroundDanger">
+                    Total Fine Amount
+                </th>
+            </tr>
+            <tr>
+                <td>@Html.DisplayFor(m => m.ExtraDays)</td>
+                <td>@ViewBag.ChargePerDay</td>
+                <td>@ViewBag.OtherCharges</td>
+                <td>@Html.DisplayFor(m => m.FineAmount)</td>
+            </tr>
+        </table>
+    }
+    Booking Status : <b>@Html.DisplayFor(m => m.Status)</b>
 
 </div>
 <div class="row maxWidthVW backgroundPrimary">

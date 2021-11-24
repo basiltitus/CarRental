@@ -60,11 +60,11 @@ namespace Server.API.Operations
             return Ok(orderOperation.MakePayment(orderId));
         }
         [HttpGet("ExtraDays")]
-        public IActionResult CompleteOrder(int orderId, int extraDays)
+        public IActionResult CompleteOrder(int orderId)
         {
             try
             {
-                return Ok(orderOperation.CompleteOrder(orderId, extraDays));
+                return Ok(orderOperation.CompleteOrder(orderId));
             }
             catch (Exception) { return StatusCode(500); }
         }

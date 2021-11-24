@@ -35,6 +35,7 @@ namespace CarRentalPortal.Models.ViewModels
         public int ExtraDays { get; set; }
         [DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
+        public int ChargePerDay { get; set; }
 
     }
 

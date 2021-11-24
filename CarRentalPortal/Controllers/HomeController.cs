@@ -1164,7 +1164,7 @@ namespace CarRentalPortal.Controllers
                         }
                         else if (type == "fine")
                         {
-                            HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId + "&extraDays=" + ExtraDays);
+                            HttpResponseMessage response = await client.GetAsync("Order/ExtraDays?orderId=" + orderId );
                             if (response.IsSuccessStatusCode)
                             {
                                 var stringData = response.Content.ReadAsStringAsync().Result;
@@ -1190,6 +1190,9 @@ namespace CarRentalPortal.Controllers
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     ReceiptVM receipt = JsonConvert.DeserializeObject<ReceiptVM>(stringData);
                     ViewBag.ImgUrl = receipt.ImgUrl;
+                ViewBag.ExtraDays = receipt.ExtraDays;
+                ViewBag.ChargePerDay = receipt.ChargePerDay * 1.5;
+                ViewBag.OtherCharges = receipt.FineAmount - (receipt.ExtraDays * (receipt.ChargePerDay * 1.5));
                     return View(receipt);
                 }
                 return RedirectToAction(nameof(ErrorPage));
@@ -1308,47 +1311,40 @@ namespace CarRentalPortal.Controllers
                     int userId = (int)HttpContext.Session.GetInt32("_userId");
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
                     HttpResponseMessage response = await client.GetAsync("Order/" + orderId + "/" + userId);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var stringData = response.Content.ReadAsStringAsync().Result;
-                        Order order = JsonConvert.DeserializeObject<Order>(stringData);
-                        if (order == null)
-                            return RedirectToAction("ErrorPage");
-                        DateTime today = DateTime.Today;
-                        HttpResponseMessage carResponse = await client.GetAsync("Car/" + order.CarId);
-                        if (carResponse.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    Order order = JsonConvert.DeserializeObject<Order>(stringData);
+                    if (order == null)
+                        return RedirectToAction("ErrorPage");
+                    if (order.ExtraDays > 0 || order.FineAmount > 0) {
+                        ViewBag.ExtraDays = order.ExtraDays;
+                        ViewBag.OrderId = order.OrderId;
+                        ViewBag.FineAmount = order.FineAmount;
+                        PaymentReciept reciept = new PaymentReciept
                         {
-                            var carStringData = carResponse.Content.ReadAsStringAsync().Result;
-                            CarModel car = JsonConvert.DeserializeObject<CarModel>(carStringData);
-                            int noOfDays;
-                            if (order.ToDate < today)
-                            {
-                                noOfDays = (int)(today - order.ToDate).TotalDays;
-                                ViewBag.ExtraDays = noOfDays;
-                                ViewBag.OrderId = order.OrderId;
-                                ViewBag.FineAmount = noOfDays * (car.ChargePerDay * 1.5);
-                                PaymentReciept reciept = new PaymentReciept
-                                {
-                                    OrderId = order.OrderId,
-                                    Type = "fine",
-                                    Total = (int)(noOfDays * (car.ChargePerDay * 1.5)),
-                                    ExtraDays = noOfDays
-                                };
-                                TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
-                                return View();
-                            }
-                            else
-                            {
-                                HttpResponseMessage updateResponse = await client.GetAsync("Order/ExtraDays?orderId=" + order.OrderId + "&extraDays=0");
-                                if (updateResponse.IsSuccessStatusCode)
-                                {
-                                    var updateStringData = updateResponse.Content.ReadAsStringAsync().Result;
-                                    bool updated = JsonConvert.DeserializeObject<bool>(updateStringData);
-                                    if (updated)
-                                        return RedirectToAction("UserPortal");
-                                }
-                            }
+                            OrderId = order.OrderId,
+                            Type = "fine",
+                            Total = order.FineAmount,
+                            ExtraDays = order.ExtraDays
+                        };
+                        TempData["PaymentReciept"] = JsonConvert.SerializeObject(reciept);
+                        return View();
+                    }
+
+
+                    else
+                    {
+                        HttpResponseMessage updateResponse = await client.GetAsync("Order/ExtraDays?orderId=" + order.OrderId);
+                        if (updateResponse.IsSuccessStatusCode)
+                        {
+                            var updateStringData = updateResponse.Content.ReadAsStringAsync().Result;
+                            bool updated = JsonConvert.DeserializeObject<bool>(updateStringData);
+                            if (updated)
+                                return RedirectToAction("UserPortal");
                         }
+                    } 
+                        
                     }
                     return View();
                 }

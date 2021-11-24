@@ -47,12 +47,11 @@ namespace Server.API.Operations
             else
                 return 0;
         }
-        public bool CompleteOrder(int orderId, int extraDays)
+        public bool CompleteOrder(int orderId)
         {
 
             SqlCommand command = new SqlCommand("sp_completeOrder", sqlConnection);
             command.Parameters.Add("@OrderId", SqlDbType.Int).Value = orderId;
-            command.Parameters.Add("@ExtraDays", SqlDbType.Int).Value = extraDays;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             int response = command.ExecuteNonQuery();
@@ -142,6 +141,7 @@ namespace Server.API.Operations
                 receipt.ExtraDays = Convert.ToInt32(rdr["ExtraDays"]);
                 receipt.PaymentId = Convert.ToInt32(rdr["PaymentId"]);
                 receipt.OrderDate = Convert.ToDateTime(rdr["OrderDate"].ToString());
+                receipt.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
             }
             sqlConnection.Close();
             return receipt;
