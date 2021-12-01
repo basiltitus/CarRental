@@ -272,7 +272,7 @@ namespace Server.API.Operations
 
             return varients;
         }
-        public bool DeleteCarModel(int id)
+       /* public bool DeleteCarModel(int id)
         {
             SqlCommand command = new SqlCommand("sp_deletecarmodel", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
@@ -285,7 +285,7 @@ namespace Server.API.Operations
             else
                 return false;
 
-        }
+        }*/
         public bool ChangeCarActive(int id,bool active)
         {
             SqlCommand command = new SqlCommand("sp_changecaractive", sqlConnection);

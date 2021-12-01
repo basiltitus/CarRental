@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Server.API.Models;
 using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Server.API.Operations
 {
@@ -31,7 +32,15 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.AddOrder(order));
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
         }
         [HttpGet("{orderId}/{userId}")]
@@ -42,7 +51,14 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.GetOrderDetails(orderId, userId));
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [AllowAnonymous]
         [HttpGet("getreceipt/{orderId}/{userId}")]
@@ -52,12 +68,31 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.GetReciept(orderId, userId));
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [HttpGet("makepayment/{orderId}")]
         public IActionResult MakePayment(int orderId)
         {
-            return Ok(orderOperation.MakePayment(orderId));
+            try
+            {
+                return Ok(orderOperation.MakePayment(orderId));
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [HttpGet("ExtraDays")]
         public IActionResult CompleteOrder(int orderId)
@@ -66,7 +101,14 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.CompleteOrder(orderId));
             }
-            catch (Exception) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [HttpGet("userId")]
         [ActionName("orderByUserId")]
@@ -76,7 +118,14 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.GetOrderDetailsByUserId(userId));
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [HttpGet("requestreturn/{id}")]
         public IActionResult RequestReturn(int id)
@@ -85,7 +134,14 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.RequestReturn(id));
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [AllowAnonymous]
         [HttpGet("getadminrequests")]
@@ -95,13 +151,32 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.GetAdminRequests());
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [AllowAnonymous]
         [HttpGet("caravailability/fromdate={FromDate}&todate={ToDate}/{CarId}")]
         public IActionResult GetCarAvailability(DateTime FromDate, DateTime ToDate, int CarId)
         {
-            return Ok(orderOperation.GetCarAvailability(FromDate, ToDate, CarId));
+            try
+            {
+                return Ok(orderOperation.GetCarAvailability(FromDate, ToDate, CarId));
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [AllowAnonymous]
         [HttpPost]
@@ -112,7 +187,13 @@ namespace Server.API.Operations
             {
                 return Ok(orderOperation.UpdateOrder(order));
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Server.API.Operations;
 using Microsoft.Extensions.Configuration;
 using Server.API.Models;
+using System.IO;
+
 namespace Server.API.Controllers
 {
     [Route("api/[controller]")]
@@ -28,10 +30,14 @@ namespace Server.API.Controllers
             {
                 return Ok(paymentOperation.AddPayment(item));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return StatusCode(500);
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         [HttpGet("{userId}")]
@@ -41,10 +47,14 @@ namespace Server.API.Controllers
             {
                 return Ok(paymentOperation.GetPaymentList(userId));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return StatusCode(500);
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Server.API.Operations;
 using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Server.API.Controllers
 {
@@ -32,8 +33,12 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
-
-                return StatusCode(500);
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         [HttpPost]
@@ -46,8 +51,12 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
-
-                return StatusCode(500);
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         [HttpPost]
@@ -58,10 +67,14 @@ namespace Server.API.Controllers
             {
                 return Ok(auth.CheckSecurityIdentity(securityIdentity));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return StatusCode(500);
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         [HttpGet("getuser/{userid}")]
@@ -71,9 +84,13 @@ namespace Server.API.Controllers
             {
                 return Ok(auth.GetUser(userid));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -84,10 +101,14 @@ namespace Server.API.Controllers
             {
                 return Ok(auth.CheckUserExists(emailId));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
-                return StatusCode(500);
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         [HttpPut]
@@ -100,8 +121,12 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
-
-                return StatusCode(500);
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
         [HttpGet("getuserid/{emailid}")]
@@ -113,6 +138,11 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

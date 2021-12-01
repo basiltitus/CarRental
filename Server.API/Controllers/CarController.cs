@@ -9,6 +9,7 @@ using Server.API.Operations;
 using Server.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Server.API.Models.ViewModels;
+using System.IO;
 
 namespace Server.API.Controllers
 {
@@ -30,19 +31,33 @@ namespace Server.API.Controllers
         {
             try
             {
-                    return Ok(carOperation.AddCar(car));
-             }
-            catch (Exception e) { return StatusCode(500); }
+                return Ok(carOperation.AddCar(car));
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
         }
         [HttpGet("checkregnoexists/{regno}")]
-        public IActionResult CheckRegNoExists(string regno) {
+        public IActionResult CheckRegNoExists(string regno)
+        {
             try
             {
                 return Ok(carOperation.CheckRegNoExists(regno));
             }
             catch (Exception e)
             {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -50,13 +65,20 @@ namespace Server.API.Controllers
         [Route("addmodeldetails")]
         public IActionResult Post(CarModel car)
         {
-                try
+            try
+            {
+                return Ok(carOperation.AddCarModel(car));
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
                 {
-                    return Ok(carOperation.AddCarModel(car));
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
                 }
-                catch (Exception) { return StatusCode(500); 
-                }
-           
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
         }
         [HttpGet("getcarlist")]
         public IActionResult GetCarList()
@@ -68,6 +90,11 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -76,11 +103,16 @@ namespace Server.API.Controllers
         {
             try
             {
-                return Ok(carOperation.GetAvailableCarList(dates.FromDate,dates.ToDate));
+                return Ok(carOperation.GetAvailableCarList(dates.FromDate, dates.ToDate));
 
             }
             catch (Exception e)
             {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -93,17 +125,18 @@ namespace Server.API.Controllers
             {
                 return Ok(carOperation.GetList());
             }
-            catch (Exception e) {
-                return StatusCode(500); }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
-            
+
         }
-     
-        /*[HttpGet("getlist/{transmission}/{varient}")]
-        public IActionResult GetCar(int transmission,int varient)
-        {
-            return Ok(carOperation.GetCar(transmission, varient));
-        }*/
         [HttpGet("carvarient")]
         public IActionResult GetCarVarient()
         {
@@ -111,18 +144,32 @@ namespace Server.API.Controllers
             {
                 return Ok(carOperation.GetCarVarients());
             }
-            catch (Exception) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
         [HttpPost]
         [Route("updatecarmodel")]
         public IActionResult UpdateCarModel(CarModel car)
         {
             try
+            {
+                return Ok(carOperation.UpdateCarModel(car));
+            }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
                 {
-                    return Ok(carOperation.UpdateCarModel(car));
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
                 }
-                catch (Exception e) { return StatusCode(500); }
-           
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
 
         }
         [HttpPost]
@@ -133,32 +180,53 @@ namespace Server.API.Controllers
             {
                 return Ok(carOperation.UpdateCar(car));
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
 
         }
-        [HttpPost]
+        /*[HttpPost]
         [Route("deletecarmodel")]
         public IActionResult DeleteCarModel([FromBody] int id)
-        {
-            
-                try
-                {
-                    return Ok(carOperation.DeleteCarModel(id));
-                }
-                catch (Exception e) { return StatusCode(500); }
-            
-        }
-        [HttpGet]
-        [Route("changecaractive/{id}/{active}")]
-        public IActionResult ChangeCarActive(int id,bool active)
         {
 
             try
             {
-                return Ok(carOperation.ChangeCarActive(id,active));
+                return Ok(carOperation.DeleteCarModel(id));
             }
-            catch (Exception e) { return StatusCode(500); }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+        }*/
+        [HttpGet]
+        [Route("changecaractive/{id}/{active}")]
+        public IActionResult ChangeCarActive(int id, bool active)
+        {
+
+            try
+            {
+                return Ok(carOperation.ChangeCarActive(id, active));
+            }
+            catch (Exception e) {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
 
         }
 
@@ -171,7 +239,11 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
-
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -184,7 +256,11 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
-
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
@@ -197,7 +273,11 @@ namespace Server.API.Controllers
             }
             catch (Exception e)
             {
-
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
