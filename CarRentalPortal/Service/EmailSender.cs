@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using CarRentalPortal.Service;
+using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +12,14 @@ namespace SalesManagementSystem.Service
 {
     public class EmailSender
     {
-        
+        private readonly MyOptions _options;
+        public EmailSender(MyOptions options)
+        {
+            _options = options;
+        }
         public Task SendEmailAsync(string email,string subject,string htmlMessage)
         {
-            return Execute("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", subject, htmlMessage, email);
+            return Execute(_options.SendgridKey, subject, htmlMessage, email);
         }
 
         private Task Execute(string sendgridKey, string subject, string htmlMessage, string email)
@@ -32,6 +38,11 @@ namespace SalesManagementSystem.Service
                 return client.SendEmailAsync(msg);
             }catch(Exception e)
             {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
                 return null;
             }
         }

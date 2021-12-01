@@ -1,3 +1,4 @@
+using CarRentalPortal.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,6 +26,7 @@ namespace CarRentalPortal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<MyOptions>(Configuration.GetSection("APIKey"));
             services.AddControllersWithViews().AddRazorRuntimeCompilation(); 
             HttpClient client = new HttpClient();
             string baseUrl;

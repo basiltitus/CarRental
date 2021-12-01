@@ -1,9 +1,11 @@
 ﻿using CarRentalPortal.Models;
 using CarRentalPortal.Models.ViewModels;
+using CarRentalPortal.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SalesManagementSystem.Service;
 using System;
@@ -22,6 +24,7 @@ namespace CarRentalPortal.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly MyOptions _options;
         private readonly ILogger<HomeController> _logger;
         private readonly HttpClient client;
         public async Task<List<CarModel>> RetrieveCarModelList()
@@ -47,10 +50,11 @@ namespace CarRentalPortal.Controllers
             }
             return new List<string>();
         }
-        public HomeController(ILogger<HomeController> logger, HttpClient client)
+        public HomeController(ILogger<HomeController> logger, HttpClient client, IOptions<MyOptions> options)
         {
             this.client = client;
             _logger = logger;
+            _options = options.Value;
         }
         public IActionResult CatchAction(string e)
         {
@@ -158,7 +162,7 @@ namespace CarRentalPortal.Controllers
                             String otp = generator.Next(0, 1000000).ToString("D6");
                             TempData["ForgotPassword"] = 1;
                             HttpContext.Session.SetString("_otp", otp);
-                            EmailSender sender = new EmailSender();
+                            EmailSender sender = new EmailSender(_options);
 
                             HttpResponseMessage userIdResponse = await client.GetAsync("auth/getuserid/" + forgotPasswordVM.EmailId);
                             if (userIdResponse.IsSuccessStatusCode)
@@ -532,7 +536,7 @@ namespace CarRentalPortal.Controllers
                                     User user = JsonConvert.DeserializeObject<User>(userStringData);
                                     userEmailId = user.EmailId;
                                     userName = user.Name;
-                                    EmailSender sender = new EmailSender();
+                                    EmailSender sender = new EmailSender(_options);
                                     string message = null;
                                     if (order.FineAmount == 0)
                                         message = "Dear " + userName + "<br/>Your request for returning car is accepted!. Please login to our site to complete the trip.";
@@ -613,13 +617,11 @@ namespace CarRentalPortal.Controllers
                             switch (sortorder)
                             {
                                 case "ascending":
-                                    requests = requests;
                                     break;
                                 case "descending":
                                     requests.Reverse();
                                     break;
                                 default:
-                                    requests = requests;
                                     break;
                             }
 
@@ -668,7 +670,7 @@ namespace CarRentalPortal.Controllers
                                     User user = JsonConvert.DeserializeObject<User>(userStringData);
                                     userEmailId = user.EmailId;
                                     userName = user.Name;
-                                    EmailSender sender = new EmailSender();
+                                    EmailSender sender = new EmailSender(_options);
                                     string message = null;
                                     if (order.FineAmount == 0)
                                         message = "Dear " + userName + "<br/>Your request for returning car is rejected!.Please contact our customer care for further details";
@@ -872,13 +874,11 @@ namespace CarRentalPortal.Controllers
                 switch (sortorder)
                 {
                     case "ascending":
-                        carModelList = carModelList;
                         break;
                     case "descending":
                         carModelList.Reverse();
                         break;
                     default:
-                        carModelList = carModelList;
                         break;
                 }
                 return View(carModelList);
@@ -929,7 +929,6 @@ namespace CarRentalPortal.Controllers
                     switch (transmission)
                     {
                         case "all":
-                            carList = carList;
                             break;
                         case "manual":
                             carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)0).ToList();
@@ -938,7 +937,6 @@ namespace CarRentalPortal.Controllers
                             carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)1).ToList();
                             break;
                         default:
-                            carList = carList;
                             break;
                     }
                     if (status != "all")
@@ -971,13 +969,11 @@ namespace CarRentalPortal.Controllers
                     switch (sortorder)
                     {
                         case "ascending":
-                            carList = carList;
                             break;
                         case "descending":
                             carList.Reverse();
                             break;
                         default:
-                            carList = carList;
                             break;
                     }
                     return View(carList);
@@ -1301,7 +1297,6 @@ namespace CarRentalPortal.Controllers
                     switch (transmission)
                     {
                         case "all":
-                            carList = carList;
                             break;
                         case "manual":
                             carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)0).ToList();
@@ -1310,7 +1305,6 @@ namespace CarRentalPortal.Controllers
                             carList = carList.Where(x => x.CarModelDetails.CarTransmission == (CarTransmission)1).ToList();
                             break;
                         default:
-                            carList = carList;
                             break;
                     }
                     if (varient != "all" && varient != null)
@@ -1335,13 +1329,11 @@ namespace CarRentalPortal.Controllers
                     switch (sortorder)
                     {
                         case "ascending":
-                            carList = carList;
                             break;
                         case "descending":
                             carList.Reverse();
                             break;
                         default:
-                            carList = carList;
                             break;
                     }
                     return View(carList);
@@ -1391,7 +1383,6 @@ namespace CarRentalPortal.Controllers
             {
                 return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
             }
-            return View();
         }
 
         public async Task<IActionResult> ConfirmPageYesAsync(int id)
@@ -1498,7 +1489,7 @@ namespace CarRentalPortal.Controllers
                         HttpResponseMessage response = await client.GetAsync("order/makepayment/" + orderId);
                         if (response.IsSuccessStatusCode)
                         {
-                            EmailSender sender = new EmailSender();
+                            EmailSender sender = new EmailSender(_options);
                             string emailId = HttpContext.Session.GetString("_emailId");
                             string userName = HttpContext.Session.GetString("_userName");
                             string message = "Dear " + userName + "<br/>Your booking has beeen successfull";
@@ -1674,7 +1665,7 @@ namespace CarRentalPortal.Controllers
                             bool updated = JsonConvert.DeserializeObject<bool>(updateStringData);
                             if (updated)
                             {
-                                EmailSender sender = new EmailSender();
+                                EmailSender sender = new EmailSender(_options);
                                 string emailId = HttpContext.Session.GetString("_emailId");
                                 string userName = HttpContext.Session.GetString("_userName");
                                 string message = "Dear " + userName + "<br/>Thank you for using Car Rental Portal.Hope to see you soon";
