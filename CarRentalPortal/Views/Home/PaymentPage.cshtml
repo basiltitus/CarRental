@@ -14,7 +14,7 @@
         <div class="col-7">
             <div class="rentDiv wideBox">
                 Please Confirm your <br />Order ID : (@ViewBag.OrderId)<br />Total : @ViewBag.Total
-                <button type="button" class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("PaymentPagePost", "home", new { orderId = @ViewBag.OrderId, total = ViewBag.Total ,type=ViewBag.Type,ExtraDays=ViewBag.ExtraDays})';return false;">Pay Now</button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="location.href='@Url.Action("PaymentPagePost", "home", new { orderId = @ViewBag.OrderId, total = ViewBag.Total })';return false;">Pay Now</button>
             </div>
         </div>
         <div class="col-4"></div>

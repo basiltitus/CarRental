@@ -104,5 +104,17 @@ namespace Server.API.Controllers
                 return StatusCode(500);
             }
         }
+        [HttpGet("getuserid/{emailid}")]
+        public IActionResult GetUserId(string emailid)
+        {
+            try
+            {
+                return Ok(auth.GetUserId(emailid));
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }

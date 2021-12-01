@@ -30,6 +30,9 @@ namespace CarRentalPortal.Models.ViewModels
 
         public User UserDetails { get; set; }
         public DateTime CreatedOn { get; set; }
+        public bool Active { get; set; }
+        public bool Available { get; set; }
+        public string NextAvailable { get; set; }
         public CarListVM()
         {
             CarModelDetails = new CarModel();

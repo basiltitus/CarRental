@@ -1,27 +1,42 @@
-﻿@model CarRentalPortal.Models.ViewModels.ReceiptVM
+﻿@using Microsoft.AspNetCore.Http;
+@model CarRentalPortal.Models.ViewModels.ReceiptVM
 <div>
-    <partial name="_NavBar" />
+    @if (Context.Session.GetString("_userType") == "Admin"|| Context.Session.GetString("_userType") == "Super")
+    {
+        <partial name="_AdminNavBar" />
+    }
+    else
+    {
+        <partial name="_NavBar" />
+    }
 </div>
-<div class="row maxWidthVW backgroundPrimary">
+<div class="row maxWidthVW backgroundPrimary ">
     &nbsp;
 </div>
-<div class="border p-4 maxWidthVW">
+<div class="border p-4 maxWidthVW receiptFont">
+    <h2 class="text-center page-title">Reciept</h2>
     <div class="row maxWidth">
         <div class="col-6">
-            <h2 class="text-right">Reciept</h2>
             <br />
             <h4>Order Details</h4> <hr />
             Order Date : @Html.DisplayFor(m => m.OrderDate)<br />
             Order Id : @Html.DisplayFor(m => m.OrderId)<br />
             Payment Id : @Html.DisplayFor(m => m.PaymentId)<br /><br />
-            <h4>Cistomer Details</h4> <hr />
+            <h4>Customer Details</h4> <hr />
             Name :@Html.DisplayFor(m => m.Name)<br />
             Date of birth : @Html.DisplayFor(m => m.DOB)<br />
             Phone Number :@Html.DisplayFor(m => m.PhoneNumber)<br />
             License Number : @Html.DisplayFor(m => m.LicenseNumber)<br />
         </div>
         <div class="col-6 text-right">
-            <img src="@ViewBag.ImgUrl" class="maxWidth" alt="Car Image" />
+            @if (Context.Session.GetString("_userType") == "Admin" || Context.Session.GetString("_userType") == "Super")
+            {
+                <a asp-action="RequestHistory" asp-controller="home" class="btn btn-primary"><i class="fas fa-history"></i> Back to request history</a>
+            }
+            else
+            {
+                <a asp-action="OrderHistory" asp-controller="home" class="btn btn-primary"><i class="fas fa-history"></i> Back to order history</a>
+            }<img src="@ViewBag.ImgUrl" class="maxWidth" alt="Car Image" />
         </div>
     </div>
     <div class="row">
@@ -32,6 +47,7 @@
 
         </div>
     </div>
+    <br />
     <h4>Car Details</h4> <hr />
     <div class="row">
         <div class="col-6">
@@ -59,12 +75,12 @@
             <td>@Html.DisplayFor(m => m.Total)</td>
         </tr>
     </table>
-    @if (ViewBag.ExtraDays > 0)
+    @if (ViewBag.ExtraDays > 0||ViewBag.OtherCharges>0)
     {
         <br />
         <h4>Fine Details</h4> <hr />
         <table class="ninetypercentTable">
-            <tr >
+            <tr>
                 <th class="backgroundDanger">Extra Days</th>
                 <th class="backgroundDanger">Charge for a Single Extra day</th>
                 <th class="backgroundDanger">Other Charges</th>

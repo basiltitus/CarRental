@@ -23,6 +23,18 @@ namespace Server.API.Operations
             conStr = this.Configuration.GetConnectionString("CarRentDB");
             sqlConnection = new SqlConnection(conStr);
         }
+        public string checkAvailability(DateTime FromDate, DateTime ToDate,int CarId)
+        {
+            SqlCommand commandchecker = new SqlCommand("sp_checkcaravailable", sqlConnection);
+            commandchecker.Parameters.Add("@CarId", SqlDbType.Int).Value = (int)CarId;
+            commandchecker.Parameters.Add("@FromDate", SqlDbType.Date).Value = FromDate;
+            commandchecker.Parameters.Add("@ToDate", SqlDbType.Date).Value = ToDate;
+            commandchecker.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            string response = (string)commandchecker.ExecuteScalar();
+            sqlConnection.Close();
+            return response;
+        }
         public bool AddCar(Car car)
         {
             SqlCommand command = new SqlCommand("sp_addcar", sqlConnection);
@@ -74,6 +86,49 @@ namespace Server.API.Operations
             else
                 return false;
         }
+        public List<CarListVM> GetAvailableCarList(DateTime FromDate,DateTime ToDate)
+        {
+            List<CarListVM> carList = new List<CarListVM>();
+            SqlCommand command = new SqlCommand("sp_getuserjoincarjoincarmodel", sqlConnection);
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                CarListVM car = new CarListVM();
+                car.CarModelId = Convert.ToInt32(rdr["CarModelId"]);
+                car.CarId = Convert.ToInt32(rdr["CarId"]);
+                car.UserId = Convert.ToInt32(rdr["UserId"]);
+                car.UserDetails.Name = Convert.ToString(rdr["Name"]);
+                car.CarModelDetails.CarName = Convert.ToString(rdr["CarName"]);
+                car.CarModelDetails.CarTransmission = (CarTransmission)Enum.Parse(typeof(CarTransmission), rdr["CarTransmission"].ToString());
+                car.CarModelDetails.CarType = (CarVarient)Enum.Parse(typeof(CarVarient), rdr["CarType"].ToString());
+                car.CarModelDetails.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
+                car.CarModelDetails.SeatCount = Convert.ToInt32(rdr["SeatCount"]);
+                car.CreatedOn = Convert.ToDateTime(rdr["CreatedOn"].ToString());
+                car.RegNo = Convert.ToString(rdr["RegNo"]);
+                car.Colour = Convert.ToString(rdr["Colour"]);
+                car.ImgUrl = Convert.ToString(rdr["ImgUrl"]);
+                car.CarModelDetails.CarModelId = Convert.ToInt32(rdr["CarModelId"]);
+                car.Active = Convert.ToBoolean(rdr["Active"]);
+                carList.Add(car);
+            }
+            sqlConnection.Close();
+            foreach(var item in carList)
+            {
+                if (this.checkAvailability(FromDate, ToDate, item.CarId) == "available")
+                {
+                    item.Available = true;
+                }
+                else
+                {
+                    item.Available = false;
+                    item.NextAvailable = this.checkAvailability(FromDate, ToDate, item.CarId);
+                }
+            }
+            return carList;
+        }
         public List<CarListVM> GetCarList()
         {
             List<CarListVM> carList = new List<CarListVM>();
@@ -99,7 +154,7 @@ namespace Server.API.Operations
                 car.Colour = Convert.ToString(rdr["Colour"]);
                 car.ImgUrl = Convert.ToString(rdr["ImgUrl"]);
                 car.CarModelDetails.CarModelId = Convert.ToInt32(rdr["CarModelId"]);
-
+                car.Active = Convert.ToBoolean(rdr["Active"]);
                 carList.Add(car);
             }
             sqlConnection.Close();
@@ -231,11 +286,12 @@ namespace Server.API.Operations
                 return false;
 
         }
-        public bool DeleteCar(int id)
+        public bool ChangeCarActive(int id,bool active)
         {
-            SqlCommand command = new SqlCommand("sp_deletecar", sqlConnection);
+            SqlCommand command = new SqlCommand("sp_changecaractive", sqlConnection);
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.Add("@CarId", SqlDbType.Int).Value = id;
+            command.Parameters.Add("@Active", SqlDbType.Bit).Value = active;
             sqlConnection.Open();
             int rows = command.ExecuteNonQuery();
             sqlConnection.Close();

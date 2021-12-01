@@ -79,7 +79,8 @@ body {
     background-color: white;
     margin-bottom: 60px;
     height: 100vh;
-    width: 100vw !important;
+    width: 100vw !important;/*
+    font-family: 'Lobster',cursive;*/
 }
 
 .row-size {
@@ -164,7 +165,7 @@ nav{
     width:100vw;
 }
 .carDetailsDiv {
-    margin-left: 40%;
+    margin-left: 50%;
     width: 40%;
     border: 3px solid grey;
     border-radius: 5px;
@@ -391,14 +392,13 @@ nav {
 
 
 .action-button {
-    width: 100px;
     background: #e19d00;
     font-weight: bold;
     color: white;
     border: 0 none;
     border-radius: 0px;
     cursor: pointer;
-    padding: 10px 5px;
+    padding: 10px 10px;
     margin: 10px 5px;
     margin-top: 9% important;
 }
@@ -542,6 +542,7 @@ select.list-dt {
     vertical-align: middle;
     width: 50px;
     height: 50px;
+    margin-top:-10px;
     border-radius: 50%;
 }
 .backgroundDiv {
@@ -554,7 +555,11 @@ select.list-dt {
 }
 .list-img {
     width: 150px;
-    height:150px;
+    height: 150px;
+}
+#RequestHistory .list-img {
+    width: 125px;
+    height: 125px;
 }
 .scrollable {
     overflow-y: scroll;
@@ -640,4 +645,57 @@ select.list-dt {
 }
 .backgroundDanger{
     background-color:red
+}
+.opaceDiv {
+    background-color: rgba(0,0,0,.5);
+    z-index: 9999;
+    opacity: 1;
+}
+.opaceDiv input{
+    color:white;
+}
+    ::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+.border-primary {
+    color: #e19d00;
+}
+.text-primary {
+    color: color: #e19d00;
+}
+.page-title,h3 {
+    font-family: 'Lobster',cursive;
+}
+.receiptFont{
+font-family: 'Roboto Mono', monospace;
+}
+.border50{
+    border-radius:50%
+}
+.margintop30 {
+    margin-top: 20px;
+}
+.marginleft10{
+    margin-left:10px
+}
+.margintop60{
+    margin-top:30px;
+}
+#activeBtn i,#inactiveBtn i{
+    width:100%;
+}
+.backgroundGrey {
+    background-color: #ececec
+}
+.width25{
+    width:25%;
+}
+#fineAmountInput{
+    margin-left:15px;
+}
+#searchBar{
+    margin-top:30px
+}
+.width440{
+    width:440px;
 }

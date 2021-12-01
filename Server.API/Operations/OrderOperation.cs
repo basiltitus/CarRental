@@ -217,6 +217,7 @@ namespace Server.API.Operations
                 order.CarModelId = Convert.ToInt32(rdr["CarModelId"]);
                 order.CarId = Convert.ToInt32(rdr["CarId"]);
                 order.UserId = Convert.ToInt32(rdr["UserId"]);
+                order.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
                 order.OrderDate = Convert.ToDateTime(rdr["OrderDate"]);
                 order.FromDate = Convert.ToDateTime(rdr["FromDate"]);
                 order.ToDate = Convert.ToDateTime(rdr["ToDate"]);
@@ -226,6 +227,7 @@ namespace Server.API.Operations
                 order.RegNo = rdr["RegNo"].ToString();
                 order.Name = rdr["Name"].ToString();
                 order.PhoneNumber = rdr["PhoneNumber"].ToString();
+                order.Status= rdr["Status"].ToString();
                 orderList.Add(order);
             }
             sqlConnection.Close();

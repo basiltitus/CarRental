@@ -1,5 +1,5 @@
 ﻿@model CarRentalPortal.Models.ViewModels.CarListVM
-
+@using Microsoft.AspNetCore.Http;
 <div>
     <partial name="_AdminNavBar" />
 </div>
@@ -8,36 +8,64 @@
         <h3>View Car</h3>
     </div>
     <div class="col-3 text-right">
-        <a asp-action="CarList" asp-controller="home" class="btn btn-primary">Back to list</a>
+        @if (Context.Session.GetString("_userType") == "Admin" || Context.Session.GetString("_userType") == "Super")
+        {
+            <a asp-action="CarList" asp-controller="home" class="btn btn-primary"><i class="fas fa-hand-point-left"></i> Back to list</a>
+            <a asp-action="CarBookingHistory" class="btn btn-secondary" asp-route-id="@ViewBag.CarId"><i class="fas fa-calendar-times"></i> See Bookings</a>
+        }
+        else
+        {
+            <a asp-action="UserCarList" asp-controller="home" class="btn btn-primary"><i class="fas fa-hand-point-left"></i> Back to list</a>
+        }
     </div>
 </div>
+<div class="row">
+    <div class="col-4 offset-1">
+        <div class="container p-4">
 
-<div class="carDetailsDiv container">
-    <img src='@ViewBag.ImgUrl' class="list-img" />
-    @Html.LabelFor(model => model.CarModelDetails.CarName, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.CarModelDetails.CarName)
+            <h2> @Html.DisplayFor(model => model.CarModelDetails.CarName)</h2> <br />
+            @if (Context.Session.GetString("_userType") == "Admin" || Context.Session.GetString("_userType") == "Super")
+            {
 
-    @Html.LabelFor(model => model.CarModelDetails.CarTransmission, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.CarModelDetails.CarTransmission)
 
-    @Html.LabelFor(model => model.CarModelDetails.CarType, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.CarModelDetails.CarType)
+                <span class="carLabel">Status : </span>
+                @if (ViewBag.Active == true)
+                {
+                    <span>ACTIVE</span>
+                }
 
-    @Html.LabelFor(model => model.CarModelDetails.SeatCount, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.CarModelDetails.SeatCount)
+                else
+                {
+                    <span> INACTIVE </span >
+                }
+                @Html.LabelFor(model => model.RegNo, new { @class = "carLabel" })
+                @Html.DisplayFor(model => model.RegNo)<br />
+            }
+            @Html.LabelFor(model => model.Colour, new { @class = "carLabel" })
+            @Html.DisplayFor(model => model.Colour)<br />
 
-    @Html.LabelFor(model => model.CarModelDetails.ChargePerDay, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.CarModelDetails.ChargePerDay)
+            @Html.LabelFor(model => model.CarModelDetails.CarTransmission, new { @class = "carLabel" })
+            @Html.DisplayFor(model => model.CarModelDetails.CarTransmission)<br />
 
-    @Html.LabelFor(model => model.CreatedOn, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.CreatedOn)
+            @Html.LabelFor(model => model.CarModelDetails.CarType, new { @class = "carLabel" })
+            @Html.DisplayFor(model => model.CarModelDetails.CarType)<br />
 
-    <span class="carLabel">Created By</span>
-    @Html.DisplayFor(model => model.UserDetails.Name)
+            @Html.LabelFor(model => model.CarModelDetails.SeatCount, new { @class = "carLabel" })
+            @Html.DisplayFor(model => model.CarModelDetails.SeatCount)<br />
 
-    @Html.LabelFor(model => model.RegNo, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.RegNo)
+            @Html.LabelFor(model => model.CarModelDetails.ChargePerDay, new { @class = "carLabel" })
+            @Html.DisplayFor(model => model.CarModelDetails.ChargePerDay)<br />
+            @if (Context.Session.GetString("_userType") == "Admin" || Context.Session.GetString("_userType") == "Super")
+            {
+                @Html.LabelFor(model => model.CreatedOn, new { @class = "carLabel" })
+                @Html.DisplayFor(model => model.CreatedOn)<br /><br />
 
-    @Html.LabelFor(model => model.Colour, new { @class = "carLabel" })
-    @Html.DisplayFor(model => model.Colour)
+                <span class="carLabel">Created By</span>
+                @Html.DisplayFor(model => model.UserDetails.Name)<br />
+            }
+    </div>
+</div>
+<div class="col-5">
+    <img src='@ViewBag.ImgUrl' class="maxWidth" />
+</div>
 </div>

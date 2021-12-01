@@ -25,7 +25,7 @@ namespace CarRentalPortal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddRazorRuntimeCompilation(); 
             HttpClient client = new HttpClient();
             string baseUrl;
                 baseUrl = Configuration.GetValue<string>("ApiUrls:BaseUrl");
@@ -36,7 +36,7 @@ namespace CarRentalPortal
             client.DefaultRequestHeaders.Accept.Add(contentType);
             services.AddSingleton<HttpClient>(client);
             services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(300);//You can set Time   
+                /*options.IdleTimeout = TimeSpan.FromMinutes(300);//You can set Time */  
                 options.Cookie.HttpOnly = true;
             });
         }

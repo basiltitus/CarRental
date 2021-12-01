@@ -12,20 +12,22 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right ml-auto">
-                <label class="text-light">Welcome @Context.Session.GetString("_userName")</label>
                 <li class="nav-item">
-                    @if (Context.Session.GetString("_avatarUrl") != "0")
-            {
-
-                    <a asp-action="UserProfile" asp-controller="Home"><img src="@Context.Session.GetString("_avatarUrl")" alt="Avatar" class="avatar"></a>
-            }
-            else
-            {
-                <a asp-action="UserProfile" asp-controller="Home"><img src="https://www.dcrc.co/wp-content/uploads/2019/04/blank-head-profile-pic-for-a-man.jpg" alt="Avatar" class="avatar"></a>
-            }
+                    <a class="nav-link">Welcome @Context.Session.GetString("_userName")</a>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="btn btn-danger right-btn " onclick="location.href='@Url.Action("Logout", "home")';return false;">Logout</button>
+                    @if (Context.Session.GetString("_avatarUrl") != "0")
+                    {
+
+                        <a asp-action="UserProfile" asp-controller="Home" class="nav-link"><img src="@Context.Session.GetString("_avatarUrl")" alt="Avatar" class="avatar"></a>
+                    }
+                    else
+                    {
+                        <a asp-action="UserProfile" asp-controller="Home" class="nav-link"><img src="https://www.dcrc.co/wp-content/uploads/2019/04/blank-head-profile-pic-for-a-man.jpg" alt="Avatar" class="avatar"></a>
+                    }
+                </li>
+                <li class="nav-item">
+                    <button type="button" class="btn btn-danger right-btn nav-link" onclick="location.href='@Url.Action("Logout", "home")';return false;"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </li>
             </ul>
         </div>

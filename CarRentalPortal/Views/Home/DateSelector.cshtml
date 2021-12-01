@@ -5,9 +5,9 @@
 <div class="fullScreen backgroundImage">
 </div><div class="bg-text">
     <center>
-        <div class="border border-primary">
+        <div class="border opaceDiv p-4">
             <form action="DateSelector" method="post">
-                <h2 class="text-primary">Select Dates</h2>
+                <h2 >Select Dates</h2>
                 <div class="row maxWidth">
                     <div class="col-5 offset-1">
                         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
@@ -22,7 +22,8 @@
                     </div>
                 </div>
                 <span id="dateValidationMessage" class=" row text-danger"></span>
-                <input type="submit" class="action-button" value="Next Step" />
+                <br />
+                <button type="submit" class="action-button" ><i class="fas fa-arrow-circle-right"></i> Next Step</button>
             </form>
         </div>
     </center>

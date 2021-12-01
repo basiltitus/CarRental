@@ -44,7 +44,7 @@ namespace Server.API.Operations
             }
             catch (Exception e) { return StatusCode(500); }
         }
-
+        [AllowAnonymous]
         [HttpGet("getreceipt/{orderId}/{userId}")]
         public IActionResult GetReciept(int orderId, int userId)
         {

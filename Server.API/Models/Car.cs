@@ -30,6 +30,6 @@ namespace Server.API.Models
 
         [Required]
         public DateTime CreatedOn { get; set; }
-        
+        public bool Active { get; set; }
     }
 }

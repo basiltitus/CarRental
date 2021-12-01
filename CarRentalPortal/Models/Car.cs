@@ -12,10 +12,13 @@ namespace CarRentalPortal.Models
         public int CarId { get; set; }
 
         [Required(ErrorMessage = "Please enter Registration Number")]
+        [RegularExpression("[a-zA-Z]{2}[-]{1}[0-9]{2}[-]{1}[a-zA-Z]{1,2}[-]{1}[0-9]{4}",
+        ErrorMessage = "Registration Number is required and must be properly formatted.")]
         public string RegNo { get; set; }
         [Required(ErrorMessage = "Please enter colour of the car")]
         public string Colour { get; set; }
         [DataType(DataType.Url)]
+        [Required(ErrorMessage ="Car Image is required")]
         public string ImgUrl { get; set; }
 
         [Display(Name = "Car Model ID")]
@@ -28,6 +31,6 @@ namespace CarRentalPortal.Models
         public int UserId { get; set; }
 
         public DateTime CreatedOn { get; set; }
-       
+        public bool Active { get; set; }
     }
 }

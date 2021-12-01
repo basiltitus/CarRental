@@ -1,0 +1,66 @@
+﻿@model IEnumerable<CarRentalPortal.Models.ViewModels.AdminRequestVM>
+
+<div>
+    <partial name="_AdminNavBar" />
+</div>
+<div class="row p-4">
+    <div class="col-4 text-center offset-4">
+        <h3>View Car</h3>
+    </div>
+    <div class="col-3 text-right">
+        <a asp-action="ViewCar" asp-route-id="@ViewBag.CarId" class="btn btn-primary"><i class="fas fa-car"></i> Car Details</a>
+        <a asp-action="CarList" class="btn btn-secondary"><i class="fas fa-list-ul"></i> Back to car list</a>
+    </div>
+</div>
+<h2>Upcoming Rides</h2>
+@if (Model.Where(x => x.Status != "completed").Count() == 0)
+{
+
+    <h5 class="p-5">No Upcoming Rides</h5>
+}
+else
+{
+    <table class="table-striped table-bordered">
+        <tr>
+            <th>Booking From</th>
+            <th>Booking Till</th>
+            <th>Customer Name</th>
+            <th>Details</th>
+        </tr>
+        @foreach (var item in Model.Where(x => x.Status != "completed"))
+        {
+            <tr>
+                <td>@item.FromDate.ToShortDateString()</td>
+                <td>@item.ToDate.ToShortDateString()</td>
+                <td>@item.Name</td>
+                <td><a asp-action="ReceiptPage" asp-route-id="@item.OrderId" asp-route-userId="@item.UserId" class="btn btn-secondary"><i class="fas fa-info-circle"></i> Details</a></td>
+            </tr>
+        }
+    </table>
+}<br/>
+<h2>Completed Rides</h2>
+@if (Model.Where(x => x.Status == "completed").Count() == 0)
+{
+
+    <h5 class="p-5">No Completed Rides</h5>
+}
+else
+{
+    <table class="table-striped table-bordered">
+        <tr>
+            <th>Booking From</th>
+            <th>Booking Till</th>
+            <th>Customer Name</th>
+            <th>Details</th>
+        </tr>
+        @foreach (var item in Model.Where(x => x.Status == "completed"))
+        {
+            <tr>
+                <td>@item.FromDate.ToShortDateString()</td>
+                <td>@item.ToDate.ToShortDateString()</td>
+                <td>@item.Name</td>
+                <td><a asp-action="ReceiptPage" asp-route-id="@item.OrderId" asp-route-userId="@item.UserId" class="btn btn-secondary"><i class="fas fa-info-circle"></i> Details</a></td>
+            </tr>
+        }
+    </table>
+}

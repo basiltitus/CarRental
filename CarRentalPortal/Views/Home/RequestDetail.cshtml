@@ -8,7 +8,7 @@
         <h3>Validate Request</h3>
     </div>
     <div class="col-3 text-right">
-        <a asp-action="AdminPortal" asp-controller="home" class="btn btn-primary">Back to list</a>
+        <a asp-action="AdminPortal" asp-controller="home" class="btn btn-primary"><i class="fas fa-hand-point-left"></i> Back to list</a>
     </div>
 </div>
 
@@ -17,13 +17,13 @@
 }
 else
 {
-    <div class="maxWidthVW border p-4">
+    <div class="maxWidthVW border p-5 receiptFont">
         <div class="row">
-            <div class="col-6">
-                <b>Customer Name : </b> @Html.DisplayFor(m => m.UserId)<br />
+            <div class="col-7 offset-1">
+                <b>Customer Name : </b> @Html.DisplayFor(m => m.Name)<br />
                 <b>Customer Phone : </b> @Html.DisplayFor(m => m.PhoneNumber)<br />
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <img src="@ViewBag.ImgUrl" class="mainImg border50" alt="Car Image" />
             </div>
         </div>
@@ -57,22 +57,33 @@ else
                 </tr>
             </table>
         </div>
+        <br />
         <div class="row">
-            <div class="col-6">
-                Car Returned Date : <input type="date" id="returnedDatePicker" class="form-control formInput" />
+            <div class="col-4 offset-1">
+               Car Returned Date :
             </div>
-            <div class="col-6">
+            <div class="col-2">
+                <input type="date" id="returnedDatePicker" class="form-control formInput" />
+            </div>
+            <div class="col-3 offset-1">
                 <b>Todays Date : @ViewBag.TodaysDate</b>
             </div>
-            <br />
-            Additional Fine Amount (If applicable) : <input type="number" id="fineAmountInput" class="form-control formInput" />
-        </div>
+            <br /><br />
+            <div class="row">
+                <div class="col-4 offset-1">
+                    &nbsp;Additional Fine Amount (If applicable) :
+                </div>
+                <div class="col-2">
+                    <input type="number" id="fineAmountInput" class="form-control formInput" />
+                </div>
+            </div>
+        </div><br />
         <div class="row">
-            <div class="col-3 offset-2">
-                <button onclick="approveFn()" class="btn btn-success">Approve</button>
+            <div class="col-3 offset-3">
+                <button onclick="approveFn()" class="btn btn-success btn-block"><i class="fas fa-thumbs-up"></i> Approve</button>
             </div>
             <div class="col-3">
-                <button onclick="rejectFn()" class="btn btn-danger">Reject Request</button>
+                <button onclick="rejectFn()" class="btn btn-danger btn-block"><i class="fas fa-thumbs-down"></i> Reject Request</button>
             </div>
         </div>
     </div>
@@ -80,6 +91,10 @@ else
 
 <script type="text/javascript">
     function approveFn() {
+        if (document.getElementById("returnedDatePicker").value == "") {
+            Swal.fire('Please choose a return date')
+            return;
+        }
         var ReturnedDate = document.getElementById("returnedDatePicker").value;
         var fineAmount = document.getElementById("fineAmountInput").value;
         Swal.fire({

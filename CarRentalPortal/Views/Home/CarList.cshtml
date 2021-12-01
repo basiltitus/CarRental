@@ -9,8 +9,9 @@
         <h3>Car List</h3>
     </div>
     <div class="col-5 text-right">
-        <a asp-action="CreateCar" asp-controller="home" class="btn btn-primary">Add a car</a>
-        <input type="button" id="delete" class="btn btn-danger" value="Delete Selected Car" />
+        <a asp-action="CreateCar" asp-controller="home" class="btn btn-primary"><i class="fas fa-plus-square"></i> Add a car</a>
+        <button type="button" id="ActiveBtn" class="btn btn-success"><i class="fas fa-check-circle"></i>Activate</button>
+        <button type="button" id="InActiveBtn" class="btn btn-danger"><i class="fas fa-ban"></i> De Activate</button>
     </div>
 </div>
 
@@ -20,57 +21,52 @@
 <div class="row">
     <div class="col-2">
         <div class="container sidePanel p-3 border" id="leftpanel">
-            <span class="border">
+            <div class="margintop30">
                 <b> Filter By Transmission</b>
                 <div class="row maxWidth">
                     <div class="col-6">
-                        <a asp-action="CarList" id="manualBtn" asp-controller="home" asp-route-transmission="manual" asp-route-varient="@ViewBag.Varient" asp-route-model="@ViewBag.Model" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t2.png" alt="" async=""> Manual</a>
+                        <a asp-action="CarList" id="manualBtn" asp-controller="home" asp-route-transmission="manual" asp-route-varient="@ViewBag.Varient" asp-route-status="@ViewBag.Status" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t2.png" alt="" async=""> Manual</a>
                     </div>
                     <div class="col-6">
-                        <a asp-action="CarList" id="automaticBtn" asp-controller="home" asp-route-transmission="automatic" asp-route-varient="@ViewBag.Varient" asp-route-model="@ViewBag.Model" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t1.png" alt="" async=""> Automatic</a>
+                        <a asp-action="CarList" id="automaticBtn" asp-controller="home" asp-route-transmission="automatic" asp-route-varient="@ViewBag.Varient" asp-route-status="@ViewBag.Status" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t1.png" alt="" async=""> Automatic</a>
                     </div>
                 </div>
                 @*<a asp-action="CarList" asp-controller="home" asp-route-transmission="all" asp-route-varient="@ViewBag.Varient" asp-route-model="@ViewBag.Model" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn">Show All</a>*@
 
 
-            </span>
-            <span class="border">
-                <b>   Filter By Model</b>
-                <select class="form-control formInput" id="modelSelector" onchange="carModelSelected()">
-                    <option value="0">--All--</option>
-                    @foreach (var item in ViewBag.ModelList)
-                    {
-                        if (item.CarModelId == ViewBag.Model)
-                        {
-                            <option value="@item.CarModelId" selected>@item.CarName</option>
-                        }
-                        else
-                        {
-                            <option value="@item.CarModelId">@item.CarName</option>
-                        }
-                    }
-                </select>
-            </span>
-            <span class="border">
-                <b> Filter By Varient</b>
-                <select class="form-control formInput" id="varientSelector" onchange="carVarientSelected()">
-                    <option value="all">--All--</option>
-                    @foreach (var item in ViewBag.VarientList)
-                    {
-                        if (item == ViewBag.Varient)
-                        {
-                            <option value="@item" selected>@item</option>
-                        }
-                        else
-                        {
-                            <option value="@item">@item</option>
-                        }
-                    }
-                </select>
-            </span>
-            <a asp-action="CarList" asp-controller="home" class="btn btn-outline-danger">Reset Filteration</a>
-        </div>
-    </div>
+            </div>
+            <div class="margintop30">
+                <b>   Filter By Car Status</b>
+                <div class="row maxWidth">
+                    <div class="col-6">
+                        <a asp-action="CarList" id="activeBtn" asp-controller="home" asp-route-transmission="@ViewBag.Transmission" asp-route-varient="@ViewBag.Varient" asp-route-status="active" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><i class="fas fa-check-circle"></i> Active</a>
+                       </div><div class="col-6">
+    <a asp-action="CarList" id="inactiveBtn" asp-controller="home" asp-route-transmission="@ViewBag.Transmission" asp-route-varient="@ViewBag.Varient" asp-route-status="inactive" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><i class="fas fa-ban"></i> InActive</a>
+                    </div>
+</div>
+                </div>
+                    <div class="margintop30">
+                        <b> Filter By Varient</b>
+                        <select class="form-control formInput" id="varientSelector" onchange="carVarientSelected()">
+                            <option value="all">--All--</option>
+                            @foreach (var item in ViewBag.VarientList)
+                            {
+                                if (item == ViewBag.Varient)
+                                {
+                                    <option value="@item" selected>@item</option>
+                                }
+                                else
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="margintop30">
+                        <a asp-action="CarList" asp-controller="home" class="btn btn-outline-danger">Reset Filteration</a>
+                    </div>
+                </div>
+            </div>
     <div class="col-10">
         <div class="sidePanel row p-3 border">
             <div class="col-4">
@@ -136,7 +132,7 @@
             </div>
         </div>
         <div class="container">
-            <div class="p-4 border scrollable">
+            <div class="p-4 border maxWidthVW scrollable">
                 <input type="checkbox" id="checkAll" />
                 @if (Model.Count() == 0)
                 {
@@ -144,11 +140,11 @@
                 }
                 @foreach (var item in Model)
                 {
-                    <div class="container p-1 border">
+                    <div class="container maxWidthVW p-1 border">
                         <input type="checkbox" class="checkBox"
                                value="@item.CarId" />
                         <div class="row">
-                            <div class="col-2 border-right">
+                            <div class="col-2 border-right text-center">
                                 <img src='@item.ImgUrl' class="list-img" />
                             </div>
                             <div class="col-6">
@@ -156,10 +152,22 @@
                                     <div class="col-4">
                                         <h4 class="font-weight-bold">@item.CarModelDetails.CarName</h4>
                                     </div>
+                                    
+                                        <div class="custom-control custom-switch col-1 offset-2">
+                                            @if (item.Active == true)
+                                            {
 
-                                    <div class="col-1 offset-2">
-                                        <a class="btn btn-outline-secondary" asp-action="ViewCar" asp-route-id="@item.CarId" asp-controller="home"><i class="fas fa-eye"></i></a>
-                                    </div>
+                                                <input type="checkbox" class="custom-control-input dltBnt" id="customSwitch1" data-prop="@item.CarId" checked>
+                                                <label class="custom-control-label" for="customSwitch1">Active</label>
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" class="custom-control-input dltBnt" id="customSwitch1" data-prop="@item.CarId">
+                                            <label class="custom-control-label" for="customSwitch1">Inactive</label>
+                                            }
+                                        </div>
+                                    
+                                    
                                 </div>
                                 <div class="row">
                                     <div class="col-2">
@@ -172,13 +180,10 @@
                                     <div class="col-2">
                                         <b>Seat Count : </b>@item.CarModelDetails.SeatCount
                                     </div>
-
-                                    @if (Context.Session.GetInt32("_userId") == item.UserId)
-                                    {
-                                        <div class="col-1">
-                                            <a class="btn btn-outline-primary" asp-action="EditCar" asp-controller="home" asp-route-id="@item.CarId"><i class="fas fa-edit"></i></a>
-                                        </div>
-                                    }
+                                    <div class="col-1">
+                                        <a class="btn btn-outline-secondary" asp-action="ViewCar" asp-route-id="@item.CarId" asp-controller="home"><i class="fas fa-eye"></i></a>
+                                    </div>
+                                    
                                 </div>
                                 <div class="row">
                                     <div class="col-2">
@@ -190,10 +195,10 @@
                                     <div class="col-2">
                                         <b>Charge Per Day : </b>@item.CarModelDetails.ChargePerDay
                                     </div>
-                                    @if (Context.Session.GetInt32("_userId") == item.UserId)
+                                    @if (Context.Session.GetInt32("_userId") == item.UserId || Context.Session.GetString("_userType") == "Super")
                                     {
                                         <div class="col-1">
-                                            <button type="button" class="btn btn-outline-danger dltBnt" data-prop="@item.CarId"><i class="fas fa-trash"></i></button>
+                                            <a class="btn btn-outline-primary" asp-action="EditCar" asp-controller="home" asp-route-id="@item.CarId"><i class="fas fa-edit"></i></a>
                                         </div>
                                     }
                                 </div>
@@ -210,20 +215,28 @@
     function initializeTransmissionBtn() {
         var manualBtn = document.getElementById("manualBtn");
         var automaticBtn = document.getElementById("automaticBtn");
+        var activeBtn = document.getElementById("activeBtn");
+        var inactiveBtn = document.getElementById("inactiveBtn");
         if ("@ViewBag.Transmission.ToString()" == "manual") {
             manualBtn.classList.add("selectedBtn");
         } else if ("@ViewBag.Transmission.ToString()" == "automatic"){
             automaticBtn.classList.add("selectedBtn");
         }
+
+        if ("@ViewBag.Status.ToString()" == "active") {
+            activeBtn.classList.add("selectedBtn");
+        } else if ("@ViewBag.Status.ToString()" == "inactive") {
+            inactiveBtn.classList.add("selectedBtn");
+        }
     }
     $(document).ready(function () {
         initializeTransmissionBtn();
-     $("#checkAll").click(function () {
+        $("#checkAll").click(function () {
             $(".checkBox").prop('checked',
                 $(this).prop('checked'));
         });
 
-        $("#delete").click(function () {
+        $("#ActiveBtn").click(function () {
             var selectedIDs = new Array();
             $('input:checkbox.checkBox').each(function () {
                 if ($(this).prop('checked')) {
@@ -232,20 +245,65 @@
                 }
             });
             if (selectedIDs.length == 0) {
-                Swal.fire('Please select atleast One to delete')
+                Swal.fire('Please select atleast one to change status')
                 return false;
             }
             console.log(selectedIDs);
             var options = {};
-            options.url = "/home/DeleteCarSelected";
+            options.url = "/home/ActiveCarSelected";
             options.type = "POST";
             options.data = JSON.stringify(selectedIDs);
             options.contentType = "application/json";
             options.dataType = "json";
             options.success = function (msg) {
                 Swal.fire(
-                    'Deleted!',
-                    'Selected items has been deleted.',
+                    'Activated!',
+                    'Selected cars has been activated.',
+                    'success'
+                )
+                location.href = "@Url.Action("CarList", "home")"
+            };
+            options.error = function () {
+                alert("Error while changing status!");
+            };
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Selected cars will be activated!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Activate it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax(options);
+                }
+            })
+
+        });
+        $("#InActiveBtn").click(function () {
+            var selectedIDs = new Array();
+            $('input:checkbox.checkBox').each(function () {
+                if ($(this).prop('checked')) {
+                    selectedIDs.push($(this).val());
+
+                }
+            });
+            if (selectedIDs.length == 0) {
+                Swal.fire('Please select atleast one to change status')
+                return false;
+            }
+            console.log(selectedIDs);
+            var options = {};
+            options.url = "/home/InActiveCarSelected";
+            options.type = "POST";
+            options.data = JSON.stringify(selectedIDs);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.success = function (msg) {
+                Swal.fire(
+                    'De Activated!',
+                    'Selected cars has been deactivated.',
                     'success'
                 )
                 location.href = "@Url.Action("CarList", "home")"
@@ -255,12 +313,12 @@
             };
             Swal.fire({
                 title: 'Are you sure?',
-                text: "Cars coming under this model will also be deleted!",
+                text: "The selected cars will be Deactivated!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Yes, Deactivate it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax(options);
@@ -269,38 +327,39 @@
 
         });
 
-          $('.dltBnt').click(function () {
-        var prop = $(this).attr('data-prop');
- Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                 location.href = "@Url.Action("DeleteCar", "home")" + "/" + prop ;
+        $('.dltBnt').on('change', function () {
+                var prop = $(this).attr('data-prop');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Change Status'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.href = "@Url.Action("ChangeCarActive", "home")" + "?id=" + prop + "&active=" + $(this).is(":checked");
 
-                Swal.fire(
-                'Deleted!',
-                'Car has been deleted.',
-                'success'
-                )
-                return false;
-                }
+                        Swal.fire(
+                            'Status Changed!',
+                            'Car status has been changed.',
+                            'success'
+                        )
+                        return false;
+                    }
                 })
-    });
+            }
+        );
 
         $(function () {
             $('input[name="orderRadio"]').click(function () {
                 var transmission = "@ViewBag.Transmission.ToString()";
                 var varient = "@ViewBag.Varient.ToString()";
-                var carModel = "@ViewBag.Model.ToString()";
+                var status = "@ViewBag.Status.ToString()";
                 var sortby = "@ViewBag.SortBy.ToString()";
                 if ($(this).is(':checked')) {
-                    location.href = "@Url.Action("CarList", "home")" + "?transmission=" + transmission + "&model=" + carModel + "&varient=" + varient + "&sortby=" + sortby + "&sortOrder=" + $(this).val();
+                    location.href = "@Url.Action("CarList", "home")" + "?transmission=" + transmission + "&status=" + status + "&varient=" + varient + "&sortby=" + sortby + "&sortOrder=" + $(this).val();
                 }
             });
         });
@@ -308,29 +367,21 @@
             $('input[name="sortRadio"]').click(function () {
                 var transmission = "@ViewBag.Transmission.ToString()";
                 var varient = "@ViewBag.Varient.ToString()";
-                var carModel = "@ViewBag.Model.ToString()";
+                var status = "@ViewBag.Status.ToString()";
                 var sortOrder = "@ViewBag.SortOrder.ToString()";
                 if ($(this).is(':checked')) {
-                    location.href = "@Url.Action("CarList", "home")" + "?transmission=" + transmission + "&model=" + carModel + "&varient=" + varient + "&sortby=" + $(this).val() + "&sortOrder=" + sortOrder;
+                    location.href = "@Url.Action("CarList", "home")" + "?transmission=" + transmission + "&status=" + status + "&varient=" + varient + "&sortby=" + $(this).val() + "&sortOrder=" + sortOrder;
                 }
             });
         });
     });
-        function carModelSelected() {
-            var carModel = document.getElementById("modelSelector").value;
-            var transmission = "@ViewBag.Transmission.ToString()";
-            var varient = "@ViewBag.Varient.ToString()";
-            var sortby = "@ViewBag.SortBy.ToString()";
-            var sortOrder = "@ViewBag.SortOrder.ToString()";
-            location.href = "@Url.Action("CarList", "home")" + "?transmission=" + transmission + "&model=" + carModel + "&varient=" + varient + "&sortby=" + sortby + "&sortOrder=" + sortOrder;
-        }
         function carVarientSelected() {
             var carVarient = document.getElementById("varientSelector").value;
             var transmission = "@ViewBag.Transmission.ToString()";
-            var model =@ViewBag.Model;
+            var status =@ViewBag.Status;
             var sort = "@ViewBag.SortBy.ToString()";
             var sortOrder = "@ViewBag.SortOrder.ToString()";
-            location.href = "@Url.Action("CarList", "home")" + "?transmission=" + transmission + "&model=" + model + "&varient=" + carVarient + "&sortby=" + sort + "&sortOrder=" + sortOrder;
+            location.href = "@Url.Action("CarList", "home")" + "?transmission=" + transmission + "&status=" + status + "&varient=" + carVarient + "&sortby=" + sort + "&sortOrder=" + sortOrder;
         }
 
 </script>

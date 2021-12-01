@@ -1,0 +1,228 @@
+﻿@model IEnumerable<CarRentalPortal.Models.ViewModels.AdminRequestVM>
+<div>
+    <partial name="_AdminNavBar" />
+</div>
+
+<div class="row p-4">
+    <div class="col-4 text-center offset-4">
+        <h3>Request History </h3>
+    </div>
+    <div class="col-4 text-right">
+
+        <a asp-action="AdminPortal" asp-controller="Home" class="btn btn-secondary"><i class="fas fa-business-time"></i> Pending Requests</a>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-3 offset-9">
+
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-2">
+        <div class="container text-center sidePanel p-3 border" id="leftpanel">
+            <div class="margintop30">
+                <b> Filter By Status</b>
+                <div class="row maxWidth">
+                    <div class="col-6">
+                        <a asp-action="RequestHistory" id="approvedBtn" asp-controller="home" asp-route-status="approved" asp-route-search="@ViewBag.Search" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><i class="fas fa-thumbs-up"></i>Approved</a>
+                    </div>
+                    <div class="col-6">
+                        <a asp-action="RequestHistory" id="rejectedBtn" asp-controller="home" asp-route-status="rejected" asp-route-search="@ViewBag.Search" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><i class="fas fa-thumbs-down"></i> Rejected</a>
+                    </div>
+                </div>
+                @*<a asp-action="CarList" asp-controller="home" asp-route-transmission="all" asp-route-varient="@ViewBag.Varient" asp-route-model="@ViewBag.Model" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn">Show All</a>*@
+
+
+            </div>
+
+            <div class="margintop30">
+                <a asp-action="RequestHistory" asp-controller="home" class="btn btn-outline-danger">Reset Filteration</a>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-10">
+        <div class="sidePanel row p-3 border">
+            <div class="col-3 ">
+                <b> Sort Order : </b><div class="switch-field">
+                    @if (ViewBag.SortOrder == "ascending")
+                    {
+                        <input type="radio" name="orderRadio" class="orderRadio btn-check" id="ascendingRadio" value="ascending" autocomplete="off" checked>
+                    }
+                    else
+                    {
+                        <input type="radio" name="orderRadio" class="orderRadio btn-check" id="ascendingRadio" value="ascending" autocomplete="off">
+                    }
+                    <label class="btn btn-outline-success" for="ascendingRadio"><i class="fas fa-sort-amount-down-alt"></i> Low->High</label>
+
+
+                    @if (ViewBag.SortOrder == "descending")
+                    {
+                        <input type="radio" name="orderRadio" class="orderRadio btn-check" id="descendingRadio" value="descending" autocomplete="off" checked>
+                    }
+                    else
+                    {
+                        <input type="radio" name="orderRadio" class="orderRadio btn-check" id="descendingRadio" value="descending" autocomplete="off">
+                    } <label class="btn btn-outline-success" for="descendingRadio"><i class="fas fa-sort-amount-down"></i> High->Low</label>
+                </div>
+            </div>
+            <div class="col-3 offset-1">
+                <b> Sort By : </b><div class="switch-field">
+
+                    @if (ViewBag.SortBy == "orderid")
+                    {
+                        <input type="radio" name="sortRadio" value="orderid" class="sortbyradio btn-check" id="chargeRadio" autocomplete="off" checked>
+                    }
+                    else
+                    {
+                        <input type="radio" name="sortRadio" value="orderid" class="sortbyradio btn-check"  autocomplete="off" id="chargeRadio">
+                    }
+                    <label class="form-check-label" for="chargeRadio">
+                        <i class="fas fa-business-time"></i> Order Date
+                    </label>
+                    @if (ViewBag.SortBy == "name")
+                    {
+                        <input type="radio" name="sortRadio" id="createdRadio" value="name" class="sortbyradio" checked>
+                    }
+                    else
+                    {
+                        <input type="radio" name="sortRadio" id="createdRadio" class="sortbyradio" value="name">
+                    }
+                    <label class="form-check-label" for="createdRadio">
+                        <i class="fas fa-address-card"></i> Name
+                    </label>
+
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row maxWidth" id="searchBar">
+                    <div class="col-10">
+
+                        <input type="text" placeholder="Customer Name" value="@ViewBag.Search" class="form-control" id="searchInput" />
+                    </div>
+                    <div class="col-2">
+
+                        <button class="btn btn-primary" onclick="search()"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @if (Model.Count() == 0)
+    {
+
+<div class="row offset-5">
+    <h5 class="p-5">No request history!</h5>
+</div>
+    }
+    else
+    {
+        <div class="row" id="RequestHistory">
+            <div class="col-2 backgroundGrey">
+
+            </div>
+            <div class="col-10 p-3 border scrollable">
+                @foreach (var item in Model)
+                {
+                    <div class="border p-1">
+                        <div class="row p-4">
+                            <div class="col-1 border-right text-center">
+                                <img src="@item.ImgUrl" class="list-img border50" />
+                            </div>
+                            <div class="col-1 offset-1">
+                                <div class="row">
+                                    <div class="col-3 maxWidth">
+                                        <div class="row maxWidth">
+                                            <div class="col-2">
+                                                <b> #</b>@item.OrderId
+                                            </div>
+                                            <div class="col-10">
+                                                <h3> @item.Name</h3>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-2">
+                                        <b> Car Name : </b>@item.CarName
+                                    </div>
+                                    <div class="col-6">
+                                        <b>Registration No : </b>@item.RegNo
+                                    </div>
+
+                                </div>
+                                <div class="row p-3">
+                                    <div class="col-2">
+                                       
+                                    </div>
+                                    <div class="col-2 offset-2">
+                                        <a class="btn btn-primary" asp-action="ReceiptPage" asp-controller="home" asp-route-id="@item.OrderId" asp-route-userId="@item.UserId"><i class="fas fa-receipt"></i> View Receipt</a>
+                                    </div>
+                                    <div class="col-2">
+                                        @if (item.Status == "completed")
+                                        {
+                                            <a class="btn btn-success disabled"><i class="fas fa-thumbs-up"></i> Approved</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-danger disabled"><i class="fas fa-thumbs-down"></i> Rejected</a>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+                }
+            </div>
+        </div>
+    }
+    <script type="text/javascript">
+    function initializeTransmissionBtn() {
+        var approvedBtn = document.getElementById("approvedBtn");
+        var rejectedBtn = document.getElementById("rejectedBtn");
+        if ("@ViewBag.Status.ToString()" == "approved") {
+            approvedBtn.classList.add("selectedBtn");
+        } else if ("@ViewBag.Status.ToString()" == "rejected"){
+            rejectedBtn.classList.add("selectedBtn");
+        }
+    }
+    function search() {
+        var search = document.getElementById("searchInput").value;
+        var status = '@ViewBag.Status';
+                var sortby="@ViewBag.SortBy"
+                var sortorder="@ViewBag.SortOrder"
+        location.href = "@Url.Action("RequestHistory", "home")" + "?status=" + status  + "&sortby=" + sortby + "&sortorder=" + sortorder+"&search="+search;
+    }
+    $(document).ready(function () {
+
+        initializeTransmissionBtn();
+
+        $(function () {
+            $('input[name="orderRadio"]').click(function () {
+                var status = '@ViewBag.Status';
+                var sortby="@ViewBag.SortBy"
+                var search="@ViewBag.Search"
+                if ($(this).is(':checked')) {
+                    location.href = "@Url.Action("RequestHistory", "home")" + "?status=" + status  + "&sortby=" + sortby + "&sortorder=" + $(this).val()+"&search="+search;
+                }
+            });
+        });
+        $(function () {
+            $('input[name="sortRadio"]').click(function () {
+                var status = '@ViewBag.Status';
+                var search="@ViewBag.Search"
+                var sortorder = "@ViewBag.SortOrder.ToString()";
+                if ($(this).is(':checked')) {
+                    location.href = "@Url.Action("RequestHistory", "home")" + "?status=" + status + "&sortby=" + $(this).val() + "&sortorder=" + sortorder + "&search=" + search;
+                }
+            });
+        });
+    });
+    </script>

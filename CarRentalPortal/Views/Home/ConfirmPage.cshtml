@@ -4,43 +4,57 @@
 </div>
 <div class="row p-4">
     <div class="col-4 text-center offset-4">
-        <h3>Confirm Order</h3>
+        <h3 class="page-title">Confirm Order</h3>
     </div>
     <div class="col-3 text-right">
-        <a asp-action="DateSelector" asp-controller="home" class="btn btn-primary">Retry</a>
+        <a asp-action="UserCarList" asp-controller="home" class="btn btn-primary"><i class="fas fa-sync"></i> Change Order</a>
     </div>
 </div>
-<div class="carDetailsDiv container">
-    <label class="control-label carLabel">From Date</label>
-    @ViewBag.FromDate
+<div class="row">
 
-    <label class="control-label carLabel">To Date</label>
-    @ViewBag.ToDate
+    <div class="col-5 offset-1">
+        <h1> @Html.DisplayFor(model => model.CarModelDetails.CarName)<br /></h1>
 
-    <label class="control-label carLabel">Number of days rented for</label>
-    @ViewBag.NoOfDays
+        <label class="control-label carLabel">Car Transmission type</label>
+        @Html.DisplayFor(model => model.CarModelDetails.CarTransmission)<br />
+
+        <label class="control-label carLabel">Car Varient</label>
+        @Html.DisplayFor(model => model.CarModelDetails.CarType)<br />
+
+        <label class="control-label carLabel">Car Colour</label>
+        @Html.DisplayFor(model => model.Colour)<br />
+
+        <label class="control-label carLabel">Number of Seats</label>
+        @Html.DisplayFor(model => model.CarModelDetails.SeatCount)<br />
+        <table class="marginleft10 table-bordered">
+            <tr>
+                <th>From</th>
+                <th>To</th>
+                <th>No of days</th>
+                <th>Charge Per Day</th>
+                <th>Total Charge</th>
+            </tr>
+            <tr>
+                <td>@ViewBag.FromDate</td>
+                <td>@ViewBag.ToDate</td>
+                <td>@ViewBag.NoOfDays</td>
+                <td>@Html.DisplayFor(model => model.CarModelDetails.ChargePerDay)</td>
+                <td>@ViewBag.Total</td>
+            </tr>
+        </table>
 
 
-    <label class="control-label carLabel">Car Name</label>
-    @Html.DisplayFor(model => model.CarModelDetails.CarName)
 
-    <label class="control-label carLabel">Car Transmission type</label>
-    @Html.DisplayFor(model => model.CarModelDetails.CarTransmission)
 
-    <label class="control-label carLabel">Car Varient</label>
-    @Html.DisplayFor(model => model.CarModelDetails.CarType)
-
-    <label class="control-label carLabel">Car Colour</label>
-    @Html.DisplayFor(model => model.Colour)
-
-    <label class="control-label carLabel">Number of Seats</label>
-    @Html.DisplayFor(model => model.CarModelDetails.SeatCount)
-
-    <label class="control-label carLabel">Charge Per Day</label>
-    @Html.DisplayFor(model => model.CarModelDetails.ChargePerDay)
-
-    <label class="control-label carLabel">Total Charge</label>
-    @ViewBag.Total
-
-    <a asp-controller="home" asp-action="ConfirmPageYes" asp-route-id="@ViewBag.CarId" class="btn btn-primary" > Confirm </a>
+    </div>
+    <div class="col-4">
+        <img src="@ViewBag.ImgUrl" class="width440" />
+    </div>
+    <br />
+    <br />
+    <div class="row margintop60">
+        <div class="col-3 offset-5">
+            <a asp-controller="home" asp-action="ConfirmPageYes" asp-route-id="@ViewBag.CarId" class="btn btn-outline-success font-weight-bold btn-block"> Confirm </a>
+        </div>
+    </div>
 </div>

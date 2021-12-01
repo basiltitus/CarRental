@@ -63,13 +63,21 @@ namespace Server.API.Operations
                     userProfile.role = "admin";
                     return userProfile;
                 }
-                else
+                else if(role=="customer")
                 {
                     userProfile.Name = name;
                     userProfile.ImgUrl = imgurl;
                     userProfile.token = JSONWebToken.GenerateJSONWebToken(emailId, "Customer");
 
                     userProfile.role = "customer";
+                    return userProfile;
+                }
+                else
+                {
+                    userProfile.Name = name;
+                    userProfile.ImgUrl = imgurl;
+                    userProfile.token = JSONWebToken.GenerateJSONWebToken(emailId, "Admin");
+                    userProfile.role = "super";
                     return userProfile;
                 }
             }
@@ -202,6 +210,17 @@ namespace Server.API.Operations
             sqlConnection.Open();
             command.ExecuteNonQuery();
             sqlConnection.Close();
+        }
+        public int GetUserId(string email)
+        {
+            SqlCommand command = new SqlCommand("sp_getuserid", sqlConnection);
+            command.Parameters.Add("@EmailId", SqlDbType.NVarChar).Value = email;
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+           var userId= (int)command.ExecuteScalar();
+            
+            sqlConnection.Close();
+            return userId;
         }
     }
 }

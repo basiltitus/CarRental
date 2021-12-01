@@ -8,7 +8,7 @@
         <h3>Edit Car </h3>
     </div>
     <div class="col-3 text-right">
-        <a asp-action="CarList" asp-controller="home" class="btn btn-primary">Back to list</a>
+        <a asp-action="CarList" asp-controller="home" class="btn btn-primary"><i class="fas fa-hand-point-left"></i> Back to list</a>
     </div>
 </div>
 <div class="alert alert-danger text-center" role="alert" id="createError">
@@ -41,8 +41,8 @@
 
             @Html.LabelFor(model => model.ImgUrl, new { @class = "carLabel" })
             @Html.EditorFor(model => model.ImgUrl, new { htmlAttributes = new { placeholder = "Image URL", @class = "form-control formInput", @type = "url" } })
-            @Html.ValidationMessageFor(model => model.ImgUrl, "", new { @class = "text-danger" })
-            <input type="submit" class="btn btn-primary" id="submitBtn" value="Edit Car" />
+            @Html.ValidationMessageFor(model => model.ImgUrl, "", new { @class = "text-danger" })<br/>
+            <input type="submit" class="btn btn-primary btn-block" id="submitBtn" value="Edit Car" />
         </form>
     </div>
 }

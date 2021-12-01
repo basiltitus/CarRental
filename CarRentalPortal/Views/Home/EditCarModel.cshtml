@@ -7,12 +7,12 @@
 <div>
     <partial name="_AdminNavBar" />
 </div>
-<div class="row p-4">
+<div class="row p-4 maxWidthVW">
     <div class="col-4 text-center offset-4">
         <h3>Edit Car Model</h3>
     </div>
     <div class="col-3 text-right">
-        <a asp-action="CarModelList" asp-controller="home" class="btn btn-primary">Back to list</a>
+        <a asp-action="CarModelList" asp-controller="home" class="btn btn-primary"><i class="fas fa-hand-point-left"></i> Back to list</a>
     </div>
 </div>
 @if (ViewBag.SuccessMessage == "error")
@@ -59,7 +59,7 @@
         @Html.ValidationMessageFor(model => model.ChargePerDay, "", new { @class = "text-danger" })
         <br />
         <div class="form-group">
-            <input type="submit" id="btn-one" value="Save" class="btn btn-primary formSubmit" />
+            <input type="submit" id="btn-one" value="Save" class="btn btn-primary btn-block" />
         </div>
     </form>
 </div>

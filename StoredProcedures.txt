@@ -143,11 +143,12 @@ begin
 select * from userprofile where UserId=@UserId
 end
 
-create procedure sp_addcar @RegNo nvarchar(30),@Colour nvarchar(30),@ImgUrl nvarchar(max),@CarModelId int,@ChargePerDay int,@UserId int,@CreatedOn date
+create procedure sp_addcar @RegNo nvarchar(30),@Colour nvarchar(30),@ImgUrl nvarchar(max),@CarModelId int,@UserId int,@CreatedOn date
 as
 begin
-insert into car (RegNo,Colour,ImgUrl,CarModelId,UserId,CreatedOn) values (@RegNo,@Colour,@ImgUrl,@CarModelId,@UserId,@CreatedOn);
+insert into car (RegNo,Colour,ImgUrl,CarModelId,UserId,CreatedOn,Active) values (@RegNo,@Colour,@ImgUrl,@CarModelId,@UserId,@CreatedOn,1);
 end
+
 
 Create procedure sp_getorderdetailjoined @OrderId int,@UserId int 
 AS 

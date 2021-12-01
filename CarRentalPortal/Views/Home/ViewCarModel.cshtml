@@ -1,39 +1,40 @@
 ﻿@model CarRentalPortal.Models.ViewModels.CarModelListVM
 
-    <div>
-        <partial name="_AdminNavBar" />
+<div>
+    <partial name="_AdminNavBar" />
+</div>
+<div class="row p-4">
+    <div class="col-4 text-center offset-4">
+        <h3>View Car Model</h3>
     </div>
-    <div class="row p-4">
-        <div class="col-4 text-center offset-4">
-            <h3>View Car Model</h3>
-        </div>
-        <div class="col-3 text-right">
-            <a asp-action="CarModelList" asp-controller="home" class="btn btn-primary">Back to list</a>
-        </div>
+    <div class="col-3 text-right">
+        <a asp-action="CarModelList" asp-controller="home" class="btn btn-primary"><i class="fas fa-hand-point-left"></i> Back to list</a>
     </div>
-
-    <div class="carDetailsDiv container">
-        @Html.LabelFor(model => model.CarName, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.CarName)
+</div>
+<div class="row">
+    <div class="col-5 offset-2">
+        
+        <h1>@Html.DisplayFor(model => model.CarName)</h1>
 
         @Html.LabelFor(model => model.CarTransmission, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.CarTransmission)
+        @Html.DisplayFor(model => model.CarTransmission)<br />
 
         @Html.LabelFor(model => model.CarType, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.CarType)
+        @Html.DisplayFor(model => model.CarType)<br />
 
         @Html.LabelFor(model => model.SeatCount, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.SeatCount)
+        @Html.DisplayFor(model => model.SeatCount)<br />
 
         @Html.LabelFor(model => model.ChargePerDay, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.ChargePerDay)
+        @Html.DisplayFor(model => model.ChargePerDay)<br />
 
         @Html.LabelFor(model => model.CreatedOn, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.CreatedOn)
+        @Html.DisplayFor(model => model.CreatedOn)<br /><br />
 
         <span class="carLabel">Created By</span>
         @Html.DisplayFor(model => model.UserDetails.Name)
-
-        @Html.LabelFor(model => model.CarName, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.CarName)
     </div>
+    <div class="col-4">
+        <img src="https://img.freepik.com/free-vector/city-driver-concept-illustration_114360-1209.jpg?size=626&ext=jpg" class="maxWidth" />
+    </div>
+</div>

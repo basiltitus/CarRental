@@ -7,16 +7,17 @@
 </div>
 <div class="row p-4">
     <div class="col-2 text-center offset-5">
-        <h3>Order History</h3>
+        <h3 class="page-title">Order History</h3>
     </div>
     <div class="col-5 text-right">
-        <a asp-action="CreateCar" asp-controller="home" class="btn btn-primary">Rent a Car</a>
+        <a asp-action="DateSelector" asp-controller="home" class="btn btn-primary"><i class="fas fa-car"></i> Rent a Car</a>
+        <a asp-action="OrderHistory" asp-controller="Home" class="btn btn-primary"><i class="fas fa-sync"></i></a>
     </div>
 </div>
 
 <div class="col-12">
     <div class="sidePanel row p-3 border">
-        <div class="col-4">
+        <div class="col-3 offset-2">
             <b> Sort Order : </b><div class="switch-field">
                 @if (ViewBag.SortOrder == "ascending")
                 {
@@ -39,7 +40,7 @@
                 } <label class="btn btn-outline-success" for="descendingRadio"><i class="fas fa-sort-amount-down"></i> High->Low</label>
             </div>
         </div>
-        <div class="col-6 offset-2">
+        <div class="col-4 offset-3">
             <b> Sort By : </b><div class="switch-field">
                 @if (ViewBag.SortBy == "orderdate")
                 {
@@ -50,7 +51,7 @@
                     <input type="radio" name="sortRadio" id="createdRadio" class="sortbyradio" value="orderdate">
                 }
                 <label class="form-check-label" for="createdRadio">
-                    <i class="fas fa-calendar-day"></i> Created On
+                    <i class="fas fa-calendar-day"></i> Order Date
                 </label>
 
                 @if (ViewBag.SortBy == "total")
@@ -62,25 +63,25 @@
                     <input type="radio" name="sortRadio" value="total" class="sortbyradio" id="chargeRadio">
                 }
                 <label class="form-check-label" for="chargeRadio">
-                    <i class="fas fa-rupee-sign"></i> Charge Per Day
+                    <i class="fas fa-rupee-sign"></i> Total Cost
                 </label>
             </div>
         </div>
     </div>
-    <div class="container maxW">
-        <div class="p-4 border scrollable">
+    <div class="container maxWidth">
+        <div class="p-4 row border scrollable">
             @if (Model.Count() == 0)
             {
                 <span class="text-center">No records found in this category!</span>
             }
             @foreach (var item in Model)
             {
-                <div class="container p-1 border">
+                <div class="col-10 offset-1 p-1 border">
                     <div class="row">
-                        <div class="col-2 border-right">
+                        <div class="col-2 border-right text-center">
                             <img src='@item.ImgUrl' class="list-img" />
                         </div>
-                        <div class="col-6">
+                        <div class="col-10">
                             <div class="row">
                                 <div class="col-4">
                                     <h4 class="font-weight-bold">@item.CarName</h4>
@@ -89,45 +90,48 @@
                             </div>
                             <div class="row">
                                 <div class="col-2">
-                                    <b>Order Date : </b>@item.OrderDate
+                                    <b>Order Date : </b>@item.OrderDate.ToShortDateString()
                                 </div>
 
-                                <div class="col-2">
-                                    <b>Booking From : </b>@item.FromDate
+                                <div class="col-3">
+                                    <b>Booking From : </b>@item.FromDate.ToShortDateString()
                                 </div>
-                                <div class="col-2">
-                                    <b>Booking Till : </b>@item.ToDate
+                                <div class="col-3">
+                                    <b>Booking Till : </b>@item.ToDate.ToShortDateString()
                                 </div>
 
                             </div>
                             <div class="row">
-                                <div class="col-2">
+                                <div class="col-3">
                                     <b>Total : </b>@item.Total
                                 </div>
-                                <div class="col-2">
+                                <div class="col-2 text-right">
                                     @if (item.Status == "booked" || item.Status == "accepted" || item.Status == "completed")
                                     {
-                                        <a asp-action="ReceiptPage" asp-controller="home" asp-route-id="@item.OrderId" class="btn btn-primary">View Reciept</a>
+                                        <a asp-action="ReceiptPage" asp-controller="home" asp-route-id="@item.OrderId" class="btn btn-outline-secondary"><i class="fas fa-receipt"></i> View Reciept</a>
                                     }
                                 </div>
                                 <div class="col-2">
                                     @if (item.Status == "booked")
                                     {
-                                        <a asp-action="RequestReturn" asp-controller="home" asp-route-id="@item.OrderId" class="btn btn-primary">Request Return</a>
+                                        <button onclick="requestReturn(@item.OrderId)" class="btn btn-primary btn-block"><i class="fas fa-warehouse"></i> Request Return</button>
+                                        @* <a asp-action="RequestReturn" asp-controller="home" asp-route-id="@item.OrderId" ></a>*@
+                                    }
+                                    else if (item.Status == "rejected")
+                                    {
+                                <button onclick="requestReturn(@item.OrderId)" class="btn btn-danger btn-block"><i class="fab fa-rev"></i> Re Request</button>
+                                       @* <a asp-action="RequestReturn" asp-controller="home" asp-route-id="@item.OrderId" class="btn btn-danger"></a>*@
                                     }
                                     else if (item.Status == "requested")
                                     {
-                                        <a class="btn btn-outline-warning disabled" >Waiting for Approval</a>
+                                        <a class="btn btn-secondary disabled text-light btn-block"><i class="fas fa-business-time"></i> Waiting for Approval</a>
                                     }
-                                    else if (item.Status == "accepted")
-                                    {
-                                        <a class="btn btn-success" asp-action="CompleteTrip" asp-route-orderId="@item.OrderId">Approved!Click to continue</a>
-                                    }
+                                   
                                     else if (item.Status == "completed")
                                     {
-                                          <a class="btn-outline-success disabled" >Completed</a>
+                                        <a class="btn btn-success disabled text-white btn-block"><i class="fas fa-check-circle"></i> Success</a>
                                     }
-                                    }
+                                    
                                 </div>
 
                             </div>
@@ -139,6 +143,27 @@
     </div>
 </div>
 <script type="text/javascript">
+    function requestReturn(orderId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Car should be returned to drop-off location before requesting!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Request!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    'Requested!',
+                    'Request has been submitted.Please wait for maximum 2 hours for the status update! Thank you for your patience',
+                    'success'
+                )
+                location.href = "@Url.Action("RequestReturn","Home")" + "?id=" + orderId;
+            }
+        })
+
+    }
     $(document).ready(function () {
     $(function () {
             $('input[name="orderRadio"]').click(function () {

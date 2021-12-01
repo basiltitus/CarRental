@@ -10,6 +10,7 @@ namespace Server.API.Models.ViewModels
     {
         public int OrderId { get; set; }
         public int UserId { get; set; }
+        public int ChargePerDay { get; set; }
         public int CarModelId { get; set; }
         public int CarId { get; set; }
         public string RegNo { get; set; }
@@ -24,6 +25,7 @@ namespace Server.API.Models.ViewModels
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
         public string ImgUrl { get; set; }
+        public string Status { get; set; }
 
     }
 }

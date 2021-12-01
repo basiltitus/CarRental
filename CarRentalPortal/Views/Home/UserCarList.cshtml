@@ -6,39 +6,23 @@
 
 <div class="row">
     <div class="col-2">
-        <div class="container sidePanel p-3 border" id="leftpanel">
-            <span class="border">
+        <div class="container text-center sidePanel p-3 border" id="leftpanel">
+            <div class="margintop30">
                 <b> Filter By Transmission</b>
                 <div class="row maxWidth">
                     <div class="col-6">
-                        <a asp-action="UserCarList" id="manualBtn" asp-controller="home" asp-route-transmission="manual" asp-route-varient="@ViewBag.Varient" asp-route-model="@ViewBag.Model" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t2.png" alt="" async=""> Manual</a>
+                        <a asp-action="UserCarList" id="manualBtn" asp-controller="home" asp-route-transmission="manual" asp-route-varient="@ViewBag.Varient" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t2.png" alt="" async=""> Manual</a>
                     </div>
                     <div class="col-6">
-                        <a asp-action="UserCarList" id="automaticBtn" asp-controller="home" asp-route-transmission="automatic" asp-route-varient="@ViewBag.Varient" asp-route-model="@ViewBag.Model" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t1.png" alt="" async=""> Automatic</a>
+                        <a asp-action="UserCarList" id="automaticBtn" asp-controller="home" asp-route-transmission="automatic" asp-route-varient="@ViewBag.Varient" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn"><img src="https://www.indusgo.in/images/t1.png" alt="" async=""> Automatic</a>
                     </div>
                 </div>
                 @*<a asp-action="CarList" asp-controller="home" asp-route-transmission="all" asp-route-varient="@ViewBag.Varient" asp-route-model="@ViewBag.Model" asp-route-sortby="@ViewBag.SortBy" asp-route-sortorder=@ViewBag.SortOrder class="btn transmissionBtn">Show All</a>*@
 
 
-            </span>
-            <span class="border">
-                <b>   Filter By Model</b>
-                <select class="form-control formInput" id="modelSelector" onchange="carModelSelected()">
-                    <option value="0">--All--</option>
-                    @foreach (var item in ViewBag.ModelList)
-                    {
-                        if (item.CarModelId == ViewBag.Model)
-                        {
-                            <option value="@item.CarModelId" selected>@item.CarName</option>
-                        }
-                        else
-                        {
-                            <option value="@item.CarModelId">@item.CarName</option>
-                        }
-                    }
-                </select>
-            </span>
-            <span class="border">
+            </div>
+
+            <div class="margintop30">
                 <b> Filter By Varient</b>
                 <select class="form-control formInput" id="varientSelector" onchange="carVarientSelected()">
                     <option value="all">--All--</option>
@@ -54,13 +38,19 @@
                         }
                     }
                 </select>
-            </span>
-            <a asp-action="CarList" asp-controller="home" class="btn btn-outline-danger">Reset Filteration</a>
-
-            <div class="border">
-                <b>Selected Dates : </b>
-                @ViewBag.FromDate -> @ViewBag.ToDate
-                <a action="DateSelector" asp-controller="home" class="btn btn-link">Change</a>
+            </div>
+            <div class="margintop30">
+                <a asp-action="UserCarList" asp-controller="home" class="btn btn-outline-danger">Reset Filteration</a>
+            </div>
+            <div class="margintop30">
+                <b>Selected Dates</b><br />
+                <center>
+                    @ViewBag.FromDate <br />
+                    <i class="fas fa-people-arrows"></i>
+                    <br />
+                    @ViewBag.ToDate<br/>
+                    <a asp-action="DateSelector" asp-controller="home" class="btn btn-link">Change</a>
+                </center>
             </div>
         </div>
     </div>
@@ -128,17 +118,17 @@
                 </div>
             </div>
         </div>
-        <div class="container">
-            <div class="p-4 border scrollable">
+        <div class="container maxWidthVW">
+            <div class="p-4 border maxWidthVW scrollable">
                 @if (Model.Count() == 0)
                 {
                     <span class="text-center">No records found in this category!</span>
                 }
-                @foreach (var item in Model)
+                @foreach (var item in Model.OrderByDescending(x => x.Available))
                 {
                     <div class="container p-1 border">
                         <div class="row">
-                            <div class="col-2 border-right">
+                            <div class="col-2 border-right text-center">
                                 <img src='@item.ImgUrl' class="list-img" />
                             </div>
                             <div class="col-6">
@@ -147,9 +137,7 @@
                                         <h4 class="font-weight-bold">@item.CarModelDetails.CarName</h4>
                                     </div>
 
-                                    <div class="col-1 offset-2">
-                                        <a class="btn btn-outline-secondary" asp-action="ViewCar" asp-route-id="@item.CarId" asp-controller="home"><i class="fas fa-eye"></i></a>
-                                    </div>
+
                                 </div>
                                 <div class="row">
                                     <div class="col-2">
@@ -162,19 +150,33 @@
                                     <div class="col-2">
                                         <b>Seat Count : </b>@item.CarModelDetails.SeatCount
                                     </div>
+                                    <div class="col-1">
+                                        <a class="btn btn-outline-secondary" asp-action="ViewCar" asp-route-id="@item.CarId" asp-controller="home"><i class="fas fa-eye"></i></a>
+                                    </div>
                                 </div>
                                 <div class="row">
-                                    
                                     <div class="col-2">
                                         <b>Colour : @item.Colour </b>
                                     </div>
                                     <div class="col-2">
                                         <b>Charge Per Day : </b>@item.CarModelDetails.ChargePerDay
                                     </div>
-                                    <div class="col-3 offset-2">
-                                        <a asp-controller="home" asp-action="ConfirmPage" asp-route-id="@item.CarId" class="btn btn-primary">Book Now</a>
-                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    @if (item.Available)
+                                    {
+                                        <div class="col-3 offset-6">
+                                            <a asp-controller="home" asp-action="ConfirmPage" asp-route-id="@item.CarId" class="btn btn-primary font-weight-bold">Book <i class="fas fa-car"></i></a>
+                                        </div> }
+                                    else
+                                    {
+                                        <div class="col-3 offset-4">
+                                            <img src="https://previews.123rf.com/images/arcady31/arcady311511/arcady31151100046/48049098-sold-out-sticker.jpg" class="width25" /> <a class="font-weight-bold"> Next Available on : @item.NextAvailable</a>
+                                        </div>
                                     }
+
+
                                 </div>
                             </div>
                         </div>
@@ -204,10 +206,9 @@
             $('input[name="orderRadio"]').click(function () {
                 var transmission = "@ViewBag.Transmission.ToString()";
                 var varient = "@ViewBag.Varient.ToString()";
-                var carModel = "@ViewBag.Model.ToString()";
                 var sortby = "@ViewBag.SortBy.ToString()";
                 if ($(this).is(':checked')) {
-                    location.href = "@Url.Action("UserCarList", "home")" + "?transmission=" + transmission + "&model=" + carModel + "&varient=" + varient + "&sortby=" + sortby + "&sortOrder=" + $(this).val();
+                    location.href = "@Url.Action("UserCarList", "home")" + "?transmission=" + transmission + "&varient=" + varient + "&sortby=" + sortby + "&sortOrder=" + $(this).val();
                 }
             });
         });
@@ -215,29 +216,20 @@
             $('input[name="sortRadio"]').click(function () {
                 var transmission = "@ViewBag.Transmission.ToString()";
                 var varient = "@ViewBag.Varient.ToString()";
-                var carModel = "@ViewBag.Model.ToString()";
                 var sortOrder = "@ViewBag.SortOrder.ToString()";
                 if ($(this).is(':checked')) {
-                    location.href = "@Url.Action("UserCarList", "home")" + "?transmission=" + transmission + "&model=" + carModel + "&varient=" + varient + "&sortby=" + $(this).val() + "&sortOrder=" + sortOrder;
+                    location.href = "@Url.Action("UserCarList", "home")" + "?transmission=" + transmission + "&varient=" + varient + "&sortby=" + $(this).val() + "&sortOrder=" + sortOrder;
                 }
             });
         });
     });
-        function carModelSelected() {
-            var carModel = document.getElementById("modelSelector").value;
-            var transmission = "@ViewBag.Transmission.ToString()";
-            var varient = "@ViewBag.Varient.ToString()";
-            var sortby = "@ViewBag.SortBy.ToString()";
-            var sortOrder = "@ViewBag.SortOrder.ToString()";
-            location.href = "@Url.Action("UserCarList", "home")" + "?transmission=" + transmission + "&model=" + carModel + "&varient=" + varient + "&sortby=" + sortby + "&sortOrder=" + sortOrder;
-        }
+
         function carVarientSelected() {
             var carVarient = document.getElementById("varientSelector").value;
             var transmission = "@ViewBag.Transmission.ToString()";
-            var model =@ViewBag.Model;
             var sort = "@ViewBag.SortBy.ToString()";
             var sortOrder = "@ViewBag.SortOrder.ToString()";
-            location.href = "@Url.Action("UserCarList", "home")" + "?transmission=" + transmission + "&model=" + model + "&varient=" + carVarient + "&sortby=" + sort + "&sortOrder=" + sortOrder;
+            location.href = "@Url.Action("UserCarList", "home")" + "?transmission=" + transmission +"&varient=" + carVarient + "&sortby=" + sort + "&sortOrder=" + sortOrder;
         }
 
 </script>

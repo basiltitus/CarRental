@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Server.API.Operations;
 using Server.API.Models;
 using Microsoft.AspNetCore.Authorization;
+using Server.API.Models.ViewModels;
 
 namespace Server.API.Controllers
 {
@@ -63,6 +64,19 @@ namespace Server.API.Controllers
             try
             {
                 return Ok(carOperation.GetCarList());
+
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpPost("getavailablecarlist")]
+        public IActionResult GetAvailableCarList(DatesVM dates)
+        {
+            try
+            {
+                return Ok(carOperation.GetAvailableCarList(dates.FromDate,dates.ToDate));
 
             }
             catch (Exception e)
@@ -135,14 +149,14 @@ namespace Server.API.Controllers
                 catch (Exception e) { return StatusCode(500); }
             
         }
-        [HttpPost]
-        [Route("deletecar")]
-        public IActionResult DeleteCar([FromBody] int id)
+        [HttpGet]
+        [Route("changecaractive/{id}/{active}")]
+        public IActionResult ChangeCarActive(int id,bool active)
         {
 
             try
             {
-                return Ok(carOperation.DeleteCar(id));
+                return Ok(carOperation.ChangeCarActive(id,active));
             }
             catch (Exception e) { return StatusCode(500); }
 

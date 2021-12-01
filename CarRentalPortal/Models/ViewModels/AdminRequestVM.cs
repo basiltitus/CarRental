@@ -11,6 +11,7 @@ namespace CarRentalPortal.Models.ViewModels
         public int OrderId { get; set; }
         public int UserId { get; set; }
         public int CarModelId { get; set; }
+        public int ChargePerDay { get; set; }
         public int CarId { get; set; }
         public string RegNo { get; set; }
         public string CarName { get; set; }
@@ -27,6 +28,6 @@ namespace CarRentalPortal.Models.ViewModels
         [DataType(DataType.Date)]
         public DateTime ReturnedDate { get; set; }
         public int FineAmount { get; set; }
-
+        public string Status { get; set; }
     }
 }
