@@ -81,17 +81,7 @@
             </div>
             <div class="col-6 offset-2">
                 <b> Sort By : </b><div class="switch-field">
-                    @if (ViewBag.SortBy == "created")
-                    {
-                        <input type="radio" name="sortRadio" id="createdRadio" value="created" class="sortbyradio" checked>
-                    }
-                    else
-                    {
-                        <input type="radio" name="sortRadio" id="createdRadio" class="sortbyradio" value="created">
-                    }
-                    <label class="form-check-label" for="createdRadio">
-                        <i class="fas fa-calendar-day"></i> Created On
-                    </label>
+                    
 
                     @if (ViewBag.SortBy == "charge")
                     {

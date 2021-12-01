@@ -144,7 +144,6 @@ namespace CarRentalPortal.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordVM forgotPasswordVM)
         {
             try
@@ -201,7 +200,6 @@ namespace CarRentalPortal.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> PasswordChange(PasswordChangeVM newPassword)
         {
             try
@@ -297,7 +295,6 @@ namespace CarRentalPortal.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AdminSecurity(SecurityTable securityIdentity)
         {
             try
@@ -344,7 +341,6 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction("AdminSecurity", new { pageId = "signup" });
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> AdminSignUp(User item)
         {
             try
@@ -1191,7 +1187,6 @@ namespace CarRentalPortal.Controllers
             return Json("All the customers deleted successfully!");
         }*/
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ActiveCarSelected([FromBody] int[] selectedId)
         {
             try
@@ -1210,7 +1205,6 @@ namespace CarRentalPortal.Controllers
             }
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> InActiveCarSelected([FromBody] int[] selectedId)
         {
             try
@@ -1234,7 +1228,6 @@ namespace CarRentalPortal.Controllers
             return View();
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult DateSelector(DateSelectorVM dates)
         {
             if (ModelState.IsValid)
