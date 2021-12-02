@@ -1,2 +1,3 @@
 01-12-2021 10:31:04 : No connection could be made because the target machine actively refused it. (localhost:44305)
 01-12-2021 12:07:24 : No connection could be made because the target machine actively refused it. (localhost:44305)
+02-12-2021 11:50:30 : Nullable object must have a value.

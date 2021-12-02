@@ -25,7 +25,7 @@ namespace Server.Library
                 issuer: "mySystem",
                 audience: "myUsers",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(15),
+                expires: DateTime.Now.AddMonths(1),
                 signingCredentials: credentials
                 );
             return new JwtSecurityTokenHandler().WriteToken(token);

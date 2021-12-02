@@ -33,7 +33,7 @@
                             @Html.ValidationMessageFor(model => model.DOB, "", new { @class = "text-danger" })
                             <input type="text" name="PhoneNumber" class="form-control formInput" placeholder="Phone Number" />
                             @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
-                            @Html.EditorFor(model => model.LicenseNumber, new { htmlAttributes = new { placeholder = "Aadhar Number", @class = "form-control formInput" } })
+                            @Html.EditorFor(model => model.LicenseNumber, new { htmlAttributes = new { placeholder = "License Number", @class = "form-control formInput" } })
                             @Html.ValidationMessageFor(model => model.LicenseNumber, "", new { @class = "text-danger" })
                             <span id="errorMessageSpan" class="text-danger"> @ViewBag.ErrorMessage</span>
                             <div class="d-grid gap-2 d-md-block">
