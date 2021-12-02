@@ -96,6 +96,17 @@ else
             return;
         }
         var ReturnedDate = document.getElementById("returnedDatePicker").value;
+        var returnedDateObj = new Date(ReturnedDate);
+        var fromDateObj =new Date('@Model.FromDate.Year',parseInt('@Model.FromDate.Month.ToString()')-1,'@Model.FromDate.Day');
+
+        if (returnedDateObj <fromDateObj) {
+            Swal.fire(
+                'Failed!',
+                'Car return date cannot be before the booking start date!.',
+                'error'
+            );
+            return;
+        }
         var fineAmount = document.getElementById("fineAmountInput").value;
         Swal.fire({
             title: 'Are you sure?',
