@@ -15,6 +15,7 @@ namespace Server.API.Operations
     public class OrderOperation
     {
         SqlConnection sqlConnection;
+        CouponOperation couponOperation;
         readonly string conStr;
         private IConfiguration Configuration;
         public OrderOperation(IConfiguration _configuration)
@@ -22,7 +23,9 @@ namespace Server.API.Operations
             Configuration = _configuration;
             conStr = Configuration.GetConnectionString("CarRentDB");
             sqlConnection = new SqlConnection(conStr);
+            couponOperation = new CouponOperation(_configuration);
         }
+       
         public int AddOrder(Order order)
         {
            /* string[] res= this.GetCarAvailability(order.FromDate, order.ToDate, order.CarId);
@@ -38,6 +41,7 @@ namespace Server.API.Operations
             command.Parameters.Add("@Status", SqlDbType.NVarChar).Value = order.Status;
             command.Parameters.Add("@FineAmount", SqlDbType.Int).Value = order.FineAmount;
             command.Parameters.Add("@OrderDate", SqlDbType.Date).Value = order.OrderDate;
+            command.Parameters.Add("@CouponId", SqlDbType.Int).Value = order.CouponId;
             command.CommandType = CommandType.StoredProcedure;
             sqlConnection.Open();
             int response = Convert.ToInt32(command.ExecuteScalar());
@@ -99,8 +103,16 @@ namespace Server.API.Operations
                 order.Status = rdr["Status"].ToString();
                 order.FineAmount = Convert.ToInt32(rdr["FineAmount"]);
                 order.OrderDate = Convert.ToDateTime(rdr["OrderDate"].ToString());
+                order.CouponId = Convert.ToInt32(rdr["CouponId"]);
             }
             sqlConnection.Close();
+            Coupon couponDetails=couponOperation.GetCoupon(order.CouponId);
+            order.CouponName = couponDetails.CouponName;
+            int total = order.Total;
+            if ((total * couponDetails.PercentageDiscount/100) > couponDetails.MaxDiscount)
+                order.Discount = couponDetails.MaxDiscount;
+            else
+                order.Discount = (total * couponDetails.PercentageDiscount/100);
             return order;
         }
         public ReceiptVM GetReciept(int orderId,int userId)
@@ -142,8 +154,16 @@ namespace Server.API.Operations
                 receipt.PaymentId = Convert.ToInt32(rdr["PaymentId"]);
                 receipt.OrderDate = Convert.ToDateTime(rdr["OrderDate"].ToString());
                 receipt.ChargePerDay = Convert.ToInt32(rdr["ChargePerDay"]);
+                receipt.CouponId = Convert.ToInt32(rdr["CouponId"]);
             }
             sqlConnection.Close();
+            Coupon couponDetails = couponOperation.GetCoupon(receipt.CouponId);
+            receipt.CouponName = couponDetails.CouponName;
+            int total = receipt.Total;
+            if ((total * couponDetails.PercentageDiscount/100) > couponDetails.MaxDiscount)
+                receipt.Discount = couponDetails.MaxDiscount;
+            else
+                receipt.Discount = total * couponDetails.PercentageDiscount/100;
             return receipt;
         }
         public List<OrderHistoryVM> GetOrderDetailsByUserId(int userId)
@@ -168,9 +188,18 @@ namespace Server.API.Operations
                 order.CarName = rdr["CarName"].ToString();
                 order.ImgUrl = rdr["ImgUrl"].ToString();
                 order.Total = Convert.ToInt32(rdr["Total"]);
+                order.CouponId = Convert.ToInt32(rdr["CouponId"]);
+                Coupon couponDetails = couponOperation.GetCoupon(order.CouponId);
+                order.CouponName = couponDetails.CouponName;
+                int total = order.Total;
+                if (((total * couponDetails.PercentageDiscount)/100) > couponDetails.MaxDiscount)
+                    order.Discount = couponDetails.MaxDiscount;
+                else
+                    order.Discount = (total * couponDetails.PercentageDiscount)/100;
                 orderList.Add(order);
             }
             sqlConnection.Close();
+            
             return orderList;
         }
         public string[] GetCarAvailability(DateTime FromDate,DateTime ToDate,int CarId)

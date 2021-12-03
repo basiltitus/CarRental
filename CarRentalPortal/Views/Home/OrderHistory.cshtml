@@ -103,7 +103,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-3">
-                                    <b>Total : </b>@item.Total
+                                    <b>Total : </b>@(@item.Total-@item.Discount)
                                 </div>
                                 <div class="col-2 text-right">
                                     @if (item.Status == "booked" || item.Status == "accepted" || item.Status == "completed")

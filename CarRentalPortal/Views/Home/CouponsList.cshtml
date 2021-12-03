@@ -1,0 +1,305 @@
+﻿@using Microsoft.AspNetCore.Http;
+@model IEnumerable<CarRentalPortal.Models.Coupon>
+
+<div>
+    <partial name="_AdminNavBar" />
+</div>
+<div class="row p-4">
+    <div class="col-4 text-center offset-4">
+        <h3>Coupon List</h3>
+    </div>
+    <div class="col-4 text-right">
+        <a asp-action="CreateCoupon" asp-controller="home" class="btn btn-primary"><i class="fas fa-plus-square"></i> Add Coupon</a>
+        <button type="button" id="ActiveBtn" class="btn btn-success"><i class="fas fa-check-circle"></i>Activate</button>
+        <button type="button" id="InActiveBtn" class="btn btn-danger"><i class="fas fa-ban"></i> De Activate</button>
+    </div>
+</div>
+<div class="sidePanel row p-3 border">
+    <div class="col-4 offset-1">
+        <b> Sort Order : </b><div class="switch-field">
+            @if (ViewBag.SortOrder == "ascending")
+            {
+                <input type="radio" name="orderRadio" class="orderRadio btn-check" id="ascendingRadio" value="ascending" autocomplete="off" checked>
+            }
+            else
+            {
+                <input type="radio" name="orderRadio" class="orderRadio btn-check" id="ascendingRadio" value="ascending" autocomplete="off">
+            }
+            <label class="btn btn-outline-success" for="ascendingRadio"><i class="fas fa-sort-amount-down-alt"></i> Low->High</label>
+
+
+            @if (ViewBag.SortOrder == "descending")
+            {
+                <input type="radio" name="orderRadio" class="orderRadio btn-check" id="descendingRadio" value="descending" autocomplete="off" checked>
+            }
+            else
+            {
+                <input type="radio" name="orderRadio" class="orderRadio btn-check" id="descendingRadio" value="descending" autocomplete="off">
+            } <label class="btn btn-outline-success" for="descendingRadio"><i class="fas fa-sort-amount-down"></i> High->Low</label>
+        </div>
+    </div>
+    <div class="col-5 offset-1">
+        <b> Sort By : </b><div class="switch-field">
+            @if (ViewBag.SortBy == "created")
+            {
+                <input type="radio" name="sortRadio" id="createdRadio" value="created" class="sortbyradio" checked>
+            }
+            else
+            {
+                <input type="radio" name="sortRadio" id="createdRadio" class="sortbyradio" value="created">
+            }
+            <label class="form-check-label" for="createdRadio">
+                <i class="fas fa-calendar-day"></i> Created On
+            </label>
+
+            @if (ViewBag.SortBy == "charge")
+            {
+                <input type="radio" name="sortRadio" value="charge" class="sortbyradio" id="chargeRadio" checked>
+            }
+            else
+            {
+                <input type="radio" name="sortRadio" value="charge" class="sortbyradio" id="chargeRadio">
+            }
+            <label class="form-check-label" for="chargeRadio">
+                <i class="fas fa-rupee-sign"></i> Charge Per Day
+            </label>
+            @if (ViewBag.SortBy == "seat")
+            {
+                <input type="radio" name="sortRadio" value="seat" class="sortbyradio" id="seatRadio" checked>
+            }
+            else
+            {
+                <input type="radio" name="sortRadio" value="seat" class="sortbyradio" id="seatRadio">
+            }
+            <label class="form-check-label" for="seatRadio">
+                <i class="fas fa-chair"></i> Seat Count
+            </label>
+        </div>
+    </div>
+</div>
+@if (Model == null)
+{
+    <h5 class="p-5">No Coupons Available</h5>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+
+                <th>
+                    <input type="checkbox" id="checkAll" />
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CouponName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MinOrderAmount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PercentageDiscount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MaxDiscount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Active)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{ foreach (var item in Model)
+                {
+                    <tr>
+
+                        <td>
+                            <input type="checkbox" class="checkBox"
+                                   value="@item.CouponId" />
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CouponName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MinOrderAmount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PercentageDiscount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MaxDiscount)
+                        </td>
+                        <td>
+                            <div class="custom-control custom-switch col-1 offset-2">
+                                @if (item.Active == true)
+                                {
+
+                                    <input type="checkbox" class="custom-control-input dltBnt" id="customSwitch1" data-prop="@item.CouponId" checked>
+                                    <label class="custom-control-label" for="customSwitch1">Active</label>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" class="custom-control-input dltBnt" id="customSwitch1" data-prop="@item.CouponId">
+                                    <label class="custom-control-label" for="customSwitch1">Inactive</label>
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-secondary" data-toggle="popover" title="Details" data-content="Created By : @item.CreatedBy <br /> Created On : @item.CreatedOn" data-html="true"><i class="far fa-eye"></i></button>
+                            @if (Context.Session.GetInt32("_userId") == item.CreatedBy || Context.Session.GetString("_userType") == "Super")
+                            {
+                                <button type="button" class="btn btn-primary edit-btn " onclick="location.href='@Url.Action("EditCoupon", "home", new { id = item.CouponId })';return false;"><i class="fas fa-pen-square"></i></button>
+                                @*<button type="button" class="btn btn-danger dltBnt" data-prop="@item.CarModelId"><i class="fas fa-trash"></i></button>*@
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+        $("#checkAll").click(function () {
+            $(".checkBox").prop('checked',
+                $(this).prop('checked'));
+        });
+
+        $("#ActiveBtn").click(function () {
+            var selectedIDs = new Array();
+            $('input:checkbox.checkBox').each(function () {
+                if ($(this).prop('checked')) {
+                    selectedIDs.push($(this).val());
+
+                }
+            });
+            if (selectedIDs.length == 0) {
+                Swal.fire('Please select atleast one to change status')
+                return false;
+            }
+            console.log(selectedIDs);
+            var options = {};
+            options.url = "/home/ActivateCouponSelected";
+            options.type = "POST";
+            options.data = JSON.stringify(selectedIDs);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.success = function (msg) {
+                Swal.fire(
+                    'Activated!',
+                    'Selected coupons has been activated.',
+                    'success'
+                )
+                location.href = "@Url.Action("CouponsList", "home")"
+            };
+            options.error = function () {
+                alert("Error while changing status!");
+            };
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Selected coupons will be activated!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Activate it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax(options);
+                }
+            })
+
+        });
+        $("#InActiveBtn").click(function () {
+            var selectedIDs = new Array();
+            $('input:checkbox.checkBox').each(function () {
+                if ($(this).prop('checked')) {
+                    selectedIDs.push($(this).val());
+
+                }
+            });
+            if (selectedIDs.length == 0) {
+                Swal.fire('Please select atleast one to change status')
+                return false;
+            }
+            console.log(selectedIDs);
+            var options = {};
+            options.url = "/home/DeActivateCouponSelected";
+            options.type = "POST";
+            options.data = JSON.stringify(selectedIDs);
+            options.contentType = "application/json";
+            options.dataType = "json";
+            options.success = function (msg) {
+                Swal.fire(
+                    'De Activated!',
+                    'Selected coupons has been deactivated.',
+                    'success'
+                )
+                location.href = "@Url.Action("CouponsList", "home")"
+            };
+            options.error = function () {
+                alert("Error while deleting the records!");
+            };
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "The selected coupons will be Deactivated!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Deactivate it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax(options);
+                }
+            })
+
+        });
+
+        $('.dltBnt').on('change', function () {
+            var prop = $(this).attr('data-prop');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Change Status'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.href = "@Url.Action("ChangeCouponActive", "home")" + "?id=" + prop + "&active=" + $(this).is(":checked");
+
+                    Swal.fire(
+                        'Status Changed!',
+                        'Coupon status has been changed.',
+                        'success'
+                    )
+                    return false;
+                }
+            })
+        }
+        );
+
+        $(function () {
+            $('input[name="orderRadio"]').click(function () {
+                var sortby = "@ViewBag.SortBy.ToString()";
+                if ($(this).is(':checked')) {
+                    location.href = "@Url.Action("CarModelList", "home")" + "?sortby=" + sortby + "&sortOrder=" + $(this).val();
+                }
+            });
+        });
+        $(function () {
+            $('input[name="sortRadio"]').click(function () {
+                var sortOrder = "@ViewBag.SortOrder.ToString()";
+                if ($(this).is(':checked')) {
+                    location.href = "@Url.Action("CarModelList", "home")" + "?sortby=" + $(this).val() + "&sortOrder=" + sortOrder;
+                }
+            });
+        });
+    });
+</script>
+

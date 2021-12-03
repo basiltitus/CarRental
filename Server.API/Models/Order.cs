@@ -44,5 +44,8 @@ namespace Server.API.Models
         public int FineAmount { get; set; }
         [DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
+        public int CouponId { get; set; } = 0;
+        public string CouponName { get; set; }
+        public int Discount { get; set; }
     }
 }

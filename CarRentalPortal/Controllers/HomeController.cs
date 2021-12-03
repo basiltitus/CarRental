@@ -482,6 +482,178 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
             }
         }
+        public async Task<IActionResult> CouponsList(string sortby, string sortorder)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "Super")
+                {
+                    if (sortby == null)
+                        ViewBag.SortBy = "created";
+                    else
+                        ViewBag.SortBy = sortby;
+                    if (sortorder == null)
+                        ViewBag.SortOrder = "ascending";
+                    else
+                        ViewBag.SortOrder = sortorder;
+                    HttpResponseMessage response = await client.GetAsync("Coupon");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        List<Coupon> Coupons = JsonConvert.DeserializeObject<List<Coupon>>(stringData);
+                        return View(Coupons);
+                    }
+                    return RedirectToAction(nameof(ErrorPage));
+                }
+                return RedirectToAction(nameof(UnauthorizedPage));
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        public IActionResult CreateCoupon()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateCouponAsync(Coupon coupon)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    coupon.CreatedBy = (int)HttpContext.Session.GetInt32("_userId");
+                    coupon.CreatedOn = DateTime.Now;
+                    coupon.Active = true;
+                    HttpResponseMessage response = await client.PostAsJsonAsync("Coupon", coupon);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        bool couponAdded = JsonConvert.DeserializeObject<Boolean>(stringData);
+                        if (couponAdded)
+                        {
+                            ViewBag.SuccessMessage = "Added";
+                            ModelState.Clear();
+                            return View();
+                        }
+                    }
+                }
+                ViewBag.SuccessMessage = "error";
+                return View();
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        public async Task<IActionResult> ChangeCouponActiveAsync(int id,bool active)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("_userType") == "Customer")
+                    return RedirectToAction("UnauthorizedPage");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                HttpResponseMessage response = await client.GetAsync("Coupon/ChangeCouponStatus/" + id + "/" + active);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    bool deleted = JsonConvert.DeserializeObject<bool>(stringData);
+                    if (deleted)
+                        return RedirectToAction("CouponsList");
+                }
+                return RedirectToAction("ErrorPage");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> ActivateCouponSelected([FromBody] int[] selectedId)
+        {
+            try
+            {
+
+                foreach (var item in selectedId)
+                {
+                    HttpResponseMessage response = await client.GetAsync("Coupon/ChangeCouponStatus/" + item + "/true");
+
+                }
+                return Json("All the coupons deleted successfully!");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeActivateCouponSelected([FromBody] int[] selectedId)
+        {
+            try
+            {
+                foreach (var item in selectedId)
+                {
+                    HttpResponseMessage response = await client.GetAsync("Coupon/ChangeCouponStatus/" + item + "/false");
+
+                }
+                return Json("All the coupons deleted successfully!");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        public async Task<IActionResult> EditCoupon(int id)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("_userType") == "Customer")
+                    return RedirectToAction("UnauthorizedPage");
+
+                HttpResponseMessage response = await client.GetAsync("Coupon/" + id);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    Coupon coupon = JsonConvert.DeserializeObject<Coupon>(stringData);
+                    if (coupon.CreatedBy== HttpContext.Session.GetInt32("_userId") || HttpContext.Session.GetString("_userType") == "Super")
+                        return View(coupon);
+                    return RedirectToAction(nameof(UnauthorizedPage));
+                }
+
+                return RedirectToAction("ErrorPage");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditCoupon(Coupon coupon)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                    HttpResponseMessage response = await client.PutAsJsonAsync("Coupon", coupon);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        bool updated = JsonConvert.DeserializeObject<bool>(stringData);
+                        if (updated)
+                        {
+                            return RedirectToAction("CouponsList");
+                        }
+                    }
+                }
+                return RedirectToAction("EditCoupon", new { id = coupon.CouponId });
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
         public async Task<IActionResult> RequestApprovedAsync(string returndate, int fineamount, int orderid, int userid, int carmodelid)
         {
             try
@@ -890,7 +1062,7 @@ namespace CarRentalPortal.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("_userType") == "Customer" )
+                if (HttpContext.Session.GetString("_userType") == "Customer")
                     return RedirectToAction("UnauthorizedPage");
                 if (transmission == null)
                     ViewBag.Transmission = "all";
@@ -983,7 +1155,7 @@ namespace CarRentalPortal.Controllers
         }
         public async Task<IActionResult> CreateCarAsync()
         {
-            if (HttpContext.Session.GetString("_userType") == "Customer" )
+            if (HttpContext.Session.GetString("_userType") == "Customer")
                 return RedirectToAction("UnauthorizedPage");
             List<CarModel> carModelList = (List<CarModel>)await RetrieveCarModelList();
             ViewBag.ModelList = carModelList;
@@ -1244,7 +1416,7 @@ namespace CarRentalPortal.Controllers
             {
                 if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "Super" || HttpContext.Session.GetString("_userType") == "")
                     return RedirectToAction(nameof(UnauthorizedPage));
-                    DateTime fromDate = new DateTime(), toDate = new DateTime();
+                DateTime fromDate = new DateTime(), toDate = new DateTime();
                 if (TempData.ContainsKey("FromDate"))
                     fromDate = Convert.ToDateTime(TempData["FromDate"]);
                 else
@@ -1339,7 +1511,7 @@ namespace CarRentalPortal.Controllers
             }
         }
 
-        public async Task<IActionResult> ConfirmPageAsync(int id)
+        public async Task<IActionResult> ConfirmPageAsync(int id,int coupon)
         {
             if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "Super" || HttpContext.Session.GetString("_userType") == "")
                 return RedirectToAction(nameof(UnauthorizedPage));
@@ -1359,7 +1531,9 @@ namespace CarRentalPortal.Controllers
             ViewBag.CarId = id;
             try
             {
-
+                int total = 0;
+                    int discount=0;
+                ConfirmPageVM confirmPageVM = new ConfirmPageVM();
                 HttpResponseMessage response = await client.GetAsync("Car/getcarjoined/" + id);
                 if (response.IsSuccessStatusCode)
                 {
@@ -1367,8 +1541,37 @@ namespace CarRentalPortal.Controllers
                     CarListVM car = JsonConvert.DeserializeObject<CarListVM>(stringData);
                     ViewBag.ImgUrl = car.ImgUrl;
                     ViewBag.Total = car.CarModelDetails.ChargePerDay * noOfDays;
+                    total = car.CarModelDetails.ChargePerDay * noOfDays;
+                    confirmPageVM.carListVM = car;
+                }
+                HttpResponseMessage couponResponse = await client.GetAsync("Coupon");
+                if (couponResponse.IsSuccessStatusCode)
+                {
+                    var stringData = couponResponse.Content.ReadAsStringAsync().Result;
+                    List<Coupon> coupons = JsonConvert.DeserializeObject<List<Coupon>>(stringData);
+                    confirmPageVM.Coupons = coupons.Where(x=>x.Active==true).ToList();
 
-                    return View(car);
+                    if (coupon != 0)
+                    {
+                        Coupon selectedCoupon = coupons.Where(x => x.CouponId == coupon).Single();
+                        if (selectedCoupon.MinOrderAmount > total)
+                        {
+                            ViewBag.Message = "Minimum order value criteria not met";
+                            return View(confirmPageVM);
+                        }
+                        else
+                        {
+                            discount = (total * selectedCoupon.PercentageDiscount) / 100;
+                            if (discount > selectedCoupon.MaxDiscount)
+                                discount = selectedCoupon.MaxDiscount;
+
+                            ViewBag.Discount = (discount);
+                            ViewBag.Message = "Coupon Applied";
+                        }
+                    }
+                    ViewBag.Coupon = coupon;
+                    ViewBag.FinalAmount = total -discount;
+                    return View(confirmPageVM);
                 }
                 return RedirectToAction("ErrorPage");
             }
@@ -1378,7 +1581,7 @@ namespace CarRentalPortal.Controllers
             }
         }
 
-        public async Task<IActionResult> ConfirmPageYesAsync(int id)
+        public async Task<IActionResult> ConfirmPageYesAsync(int id,int coupon)
         {
             try
             {
@@ -1402,6 +1605,7 @@ namespace CarRentalPortal.Controllers
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     CarListVM car = JsonConvert.DeserializeObject<CarListVM>(stringData);
                     order.Total = car.CarModelDetails.ChargePerDay * noOfDays;
+                    order.CouponId = coupon;
                     order.FineAmount = 0;
                     order.Status = "unpaid";
                     order.OrderDate = DateTime.Now;
@@ -1450,7 +1654,7 @@ namespace CarRentalPortal.Controllers
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     Order order = JsonConvert.DeserializeObject<Order>(stringData);
                     ViewBag.OrderId = order.OrderId;
-                    ViewBag.Total = order.Total;
+                    ViewBag.Total = order.Total-order.Discount;
                     return View();
                 }
 
@@ -1521,6 +1725,7 @@ namespace CarRentalPortal.Controllers
                     var stringData = response.Content.ReadAsStringAsync().Result;
                     ReceiptVM receipt = JsonConvert.DeserializeObject<ReceiptVM>(stringData);
                     ViewBag.ImgUrl = receipt.ImgUrl;
+                    ViewBag.FinalAmount = receipt.Total - receipt.Discount;
                     ViewBag.ExtraDays = receipt.ExtraDays;
                     ViewBag.ChargePerDay = receipt.ChargePerDay * 1.5;
                     ViewBag.OtherCharges = receipt.FineAmount - (receipt.ExtraDays * (receipt.ChargePerDay * 1.5));
@@ -1680,7 +1885,7 @@ namespace CarRentalPortal.Controllers
         {
             try
             {
-                if (HttpContext.Session.GetString("_userType") == "Customer"|| HttpContext.Session.GetString("_userType") == "")
+                if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
                     return RedirectToAction(nameof(UnauthorizedPage));
                 HttpResponseMessage Response = await client.GetAsync("Order/getadminrequests");
                 if (Response.IsSuccessStatusCode)

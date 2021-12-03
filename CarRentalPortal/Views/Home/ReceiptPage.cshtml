@@ -67,13 +67,24 @@
                 Booking From
             </th>
             <th>Booking Till</th>
-            <th>Total Booking Amount</th>
+            <th>Booking Amount</th>
+            @if (Model.Discount != 0) {
+                <th>Coupon Applied</th>
+                <th>Discount</th>
+                <th>Amount Paid</th>
+            }
         </tr>
         <tr>
             <td>@Html.DisplayFor(m => m.FromDate)</td>
             <td>@Html.DisplayFor(m => m.ToDate)</td>
             <td>@Html.DisplayFor(m => m.Total)</td>
-        </tr>
+            @if (Model.Discount != 0)
+            {
+        <td>@Html.DisplayFor(m => m.CouponName)</td>
+        <td>@Html.DisplayFor(m => m.Discount)</td>
+        <td>@ViewBag.FinalAmount</td>
+            }
+            </tr>
     </table>
     @if (ViewBag.ExtraDays > 0||ViewBag.OtherCharges>0)
     {

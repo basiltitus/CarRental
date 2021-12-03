@@ -445,3 +445,6 @@ C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\bin\Debug\net5.0\Mic
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\PasswordChange.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\RequestHistory.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\CarBookingHistory.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\CouponsList.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\CreateCoupon.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\EditCoupon.cshtml.g.cs

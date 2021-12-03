@@ -36,6 +36,8 @@ namespace CarRentalPortal.Models.ViewModels
         [DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
         public int ChargePerDay { get; set; }
+        public string CouponName { get; set; }
+        public int Discount { get; set; }
 
     }
 

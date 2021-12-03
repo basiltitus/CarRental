@@ -21,5 +21,7 @@ namespace CarRentalPortal.Models.ViewModels
         public string CarName { get; set; }
         public string ImgUrl { get; set; }
         public int Total { get; set; }
+        public string CouponName { get; set; }
+        public int Discount { get; set; }
     }
 }

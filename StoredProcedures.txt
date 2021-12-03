@@ -40,7 +40,7 @@ CREATE PROCEDURE sp_getcar @CarId int  as  begin  select * from car where carid=
  
 //Order Controller
  
-CREATE PROCEDURE sp_addorder @CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Status nvarchar(30),@OrderDate Date,@FineAmount int  AS   begin  insert into OrderDetails (CarId,UserId,FromDate,ToDate,ExtraDays,Total,Status,FineAmount,OrderDate) values (@CarId,@UserId,@FromDate,@ToDate,@ExtraDays,@Total,@Status,@FineAmount,@OrderDate);   SELECT SCOPE_IDENTITY();  end; 
+CREATE PROCEDURE sp_addorder @CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Status nvarchar(30),@OrderDate Date,@FineAmount int,@CouponId int  AS   begin  insert into OrderDetails (CarId,UserId,FromDate,ToDate,ExtraDays,Total,Status,FineAmount,OrderDate,CouponId) values (@CarId,@UserId,@FromDate,@ToDate,@ExtraDays,@Total,@Status,@FineAmount,@OrderDate,@CouponId);   SELECT SCOPE_IDENTITY();  end; 
  
 CREATE PROCEDURE sp_completeOrder @OrderId int  AS    begin  update OrderDetails set Status='completed' where OrderId=@OrderId;   end;  
  
@@ -48,9 +48,9 @@ CREATE PROCEDURE sp_makepayment @OrderId int  AS    begin  update OrderDetails s
  
 CREATE PROCEDURE sp_getorderdetail @OrderId int,@UserId int   AS   begin   select * from OrderDetails where OrderId=@OrderId and UserId=@UserId  end; 
  
-CREATE PROCEDURE sp_getorderdetailjoined @OrderId int,@UserId int   AS   begin   select   userprofile.UserId,  Userprofile.Name,  userprofile.DOB,  userprofile.PhoneNumber,  userprofile.LicenseNumber,  car.CarId,  car.RegNo,  car.Colour,  car.ImgUrl,  CarModel.CarModelId,  CarModel.ChargePerDay,  CarModel.CarName,  CarModel.CarTransmission,  CarModel.CarType,  CarModel.ChargePerDay,  CarModel.SeatCount,  orderdetails.orderId,  OrderDetails.fromdate,  orderdetails.todate,  orderdetails.total,  orderdetails.status,  orderDetails.FineAmount,  orderDetails.ExtraDays,  orderdetails.OrderDate,  payment.paymentid  from orderdetails inner join userprofile on OrderDetails.UserId=userprofile.userId  inner join car on orderdetails.carid=car.carid  inner join carmodel on car.carmodelid=carmodel.carmodelid  inner join payment on Payment.orderId=orderdetails.orderid  where OrderDetails.orderid=@OrderId and orderdetails.userid=@UserId  end  
+CREATE PROCEDURE sp_getorderdetailjoined @OrderId int,@UserId int   AS   begin   select   userprofile.UserId,  Userprofile.Name,  userprofile.DOB,  userprofile.PhoneNumber,  userprofile.LicenseNumber,  car.CarId,  car.RegNo,  car.Colour,  car.ImgUrl,  CarModel.CarModelId,  CarModel.ChargePerDay,  CarModel.CarName,  CarModel.CarTransmission,  CarModel.CarType,  CarModel.ChargePerDay,  CarModel.SeatCount,  orderdetails.orderId,  OrderDetails.fromdate,  orderdetails.todate,  orderdetails.total,  orderdetails.status,  orderDetails.FineAmount,  orderDetails.ExtraDays,  orderdetails.OrderDate,OrderDetails.CouponId, payment.paymentid  from orderdetails inner join userprofile on OrderDetails.UserId=userprofile.userId  inner join car on orderdetails.carid=car.carid  inner join carmodel on car.carmodelid=carmodel.carmodelid  inner join payment on Payment.orderId=orderdetails.orderid  where OrderDetails.orderid=@OrderId and orderdetails.userid=@UserId  end  
  
-CREATE PROCEDURE sp_getorderforuseridjoined @UserId int  as  begin  select OrderDetails.OrderId,  OrderDetails.CarId,  OrderDetails.OrderDate,  OrderDetails.status,  orderdetails.fromdate,  orderdetails.todate,  car.carmodelid,  car.imgurl,  orderdetails.total,  carmodel.carname  from orderdetails inner join car on orderdetails.carid=car.carid  inner join carmodel on carmodel.carmodelid=car.carmodelid  where orderdetails.userid=@Userid  end
+CREATE PROCEDURE sp_getorderforuseridjoined @UserId int  as  begin  select OrderDetails.OrderId,  OrderDetails.CarId,  OrderDetails.OrderDate,  OrderDetails.status,  orderdetails.fromdate,  orderdetails.todate,orderDetails.CouponId,  car.carmodelid,  car.imgurl,  orderdetails.total,  carmodel.carname  from orderdetails inner join car on orderdetails.carid=car.carid  inner join carmodel on carmodel.carmodelid=car.carmodelid  where orderdetails.userid=@Userid  end
  
 CREATE PROCEDURE sp_checkcaravailable @CarId int,@FromDate date,@ToDate date  as  begin  declare @tempvar int;  select @tempvar=count(*) from OrderDetails where status<>'completed' and Status<>'unpaid' and CarId=@CarId and ((@FromDate between FromDate and ToDate) or(@ToDate between FromDate and ToDate) or(FromDate between @FromDate and @ToDate )or(ToDate between @FromDate and @ToDate))  if(@tempvar=0)  select 'available'  else  begin  Declare @lastdate Date;  SELECT @lastdate=ToDate  FROM OrderDetails  WHERE ToDate >= @FromDate and CarId=@CarId and status<>'completed' and status<>'unpaid'  select Concat(' ',FORMAT(DATEADD(day,1,@lastdate),'dd-MM-yyyy'))  end  end  
  
@@ -58,10 +58,22 @@ CREATE PROCEDURE sp_requestreturn @orderId int  as  begin  update orderdetails s
  
 CREATE PROCEDURE sp_getadminrequests   as  begin  select   OrderDetails.orderId,  OrderDetails.CarId,  OrderDetails.UserId,  OrderDetails.FromDate,  OrderDetails.ToDate,  OrderDetails.OrderDate,  OrderDetails.Status,  UserProfile.Name,  UserProfile.PhoneNumber,  UserProfile.ImgUrl,  car.RegNo,  car.Colour,  car.CarModelId,  CarModel.CarName,  CarModel.ChargePerDay  from orderdetails inner join UserProfile on orderdetails.userid=userprofile.userid  inner join car on orderdetails.carId=car.CarId  inner join carmodel on carmodel.carmodelid=car.carmodelid  end
  
-CREATE PROCEDURE sp_updateorder @OrderId int,@CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Status nvarchar(30),@OrderDate Date,@FineAmount int  AS   begin  Update OrderDetails set CarId=@CarId,UserId=@UserId,FromDate=@FromDate,ToDate=@ToDate,ExtraDays=@ExtraDays,Total=@Total,Status=@Status,FineAmount=@FineAmount,OrderDate=@OrderDate where OrderId=@OrderId;   end;   E 
+CREATE PROCEDURE sp_updateorder @OrderId int,@CarId int,@UserId int,@FromDate Date,@ToDate Date,@ExtraDays int,@Total int,@Status nvarchar(30),@OrderDate Date,@FineAmount int  AS   begin  Update OrderDetails set CarId=@CarId,UserId=@UserId,FromDate=@FromDate,ToDate=@ToDate,ExtraDays=@ExtraDays,Total=@Total,Status=@Status,FineAmount=@FineAmount,OrderDate=@OrderDate where OrderId=@OrderId;   end;   
  
 //Payment Controller
  
 CREATE PROCEDURE sp_insertpayment @OrderId int,@UserId int,@Total int   AS  begin   insert into Payment (OrderId,UserId,Total) values (@OrderId,@UserId,@Total);  end;
  
 CREATE PROCEDURE sp_getpaymentList @UserId int  AS  begin  select * from PaymentTable where UserId=@UserId  end;
+
+//Coupons Controller
+
+Create Procedure sp_getcoupons as begin select * from Coupons end
+
+create procedure sp_insertCoupon @CouponName nvarchar(30),@MinOrderAmount int,@PercentageDiscount int,@MaxDiscount int,@Active bit,@CreatedBy int,@CreatedOn date  as begin insert into Coupons values(@CouponName,@MinOrderAmount,@PercentageDiscount,@MaxDiscount,@Active,@CreatedBy,@CreatedOn) end
+
+ create procedure sp_editCoupon @CouponId int,@CouponName nvarchar(30),@MinOrderAmount int,@PercentageDiscount int,@MaxDiscount int as begin update Coupons set CouponName=@CouponName,MinOrderAmount=@MinOrderAmount,PercentageDiscount=@PercentageDiscount,MaxDiscount=@MaxDiscount where CouponId=@CouponId end
+
+create procedure sp_changecouponstatus @CouponId int,@Active bit as begin update Coupons set Active=@Active where CouponId=@CouponId end
+
+create procedure sp_getcoupon @CouponId int as begin select * from Coupons where CouponId=@CouponId end

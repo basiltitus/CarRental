@@ -1,0 +1,9 @@
+02-12-2021 20:25:53 : Object reference not set to an instance of an object.
+02-12-2021 20:26:37 : Object reference not set to an instance of an object.
+03-12-2021 09:54:40 : Procedure or function sp_activateCoupon has too many arguments specified.
+03-12-2021 14:17:17 : Object cannot be cast from DBNull to other types.
+03-12-2021 14:17:52 : Object cannot be cast from DBNull to other types.
+03-12-2021 14:20:02 : Object cannot be cast from DBNull to other types.
+03-12-2021 14:21:34 : Object cannot be cast from DBNull to other types.
+03-12-2021 15:29:30 : Procedure or function sp_updateorder has too many arguments specified.
+03-12-2021 15:30:47 : Procedure or function sp_updateorder has too many arguments specified.

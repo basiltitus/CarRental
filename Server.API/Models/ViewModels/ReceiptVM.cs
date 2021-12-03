@@ -36,5 +36,8 @@ namespace Server.API.Models.ViewModels
         [DataType(DataType.Date)]
         public DateTime OrderDate { get; set; }
         public int ChargePerDay { get; set; }
+        public int CouponId { get; set; }
+        public string CouponName { get; set; }
+        public int Discount { get; set; }
     }
 }
