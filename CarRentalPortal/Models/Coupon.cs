@@ -21,5 +21,6 @@ namespace CarRentalPortal.Models
         public bool Active { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
+        public string CreatedByName { get; set; }
     }
 }

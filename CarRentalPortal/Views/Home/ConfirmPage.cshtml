@@ -89,7 +89,7 @@
                 <button type="button" class="btn btn-outline-dark" data-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body  p-2">
-                @if (Model.Coupons == null)
+                @if (Model.Coupons.Count() == 0)
             {
                 <h5 class="p-5">No Active Coupons Available!</h5>
             }else{

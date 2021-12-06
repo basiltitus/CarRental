@@ -1,27 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Http;
 <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand brandName text-light" asp-action="AdminPortal">Drive Way</a>
+        <a class="navbar-brand brandName">Drive Way</a>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" asp-action="AdminPortal">Pending Requests</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link " asp-action="CarList" aria-current="page">Cars</a>
 
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-action="CarModelList">Car Models</a>
-                </li>
-                <li>
-                    <a class="nav-link" asp-action="CouponsList">Coupons</a>
-                </li>
-               @if (Context.Session.GetString("_userType") == "Super")
-            {
-                <li><a class="nav-link" asp-action="AccountVerification">Accounts</a></li>
-            }
-            </ul>
             <ul class="nav navbar-nav navbar-right ml-auto">
                 <a class="nav-link">Welcome @Context.Session.GetString("_userName")</a>
                 <li class="nav-item">
@@ -41,4 +23,8 @@
             </ul>
         </div>
     </div>
-</nav>
+</nav>@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}

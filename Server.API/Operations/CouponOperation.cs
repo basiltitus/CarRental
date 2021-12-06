@@ -14,12 +14,19 @@ namespace Server.API.Operations
         SqlConnection sqlConnection;
         string conStr;
         private IConfiguration Configuration;
+        Authentication auth;
         public CouponOperation(IConfiguration _configuration)
         {
             Configuration = _configuration;
             conStr = this.Configuration.GetConnectionString("CarRentDB");
             sqlConnection = new SqlConnection(conStr);
+            auth = new Authentication(_configuration);
 
+        }
+        public string GetUserName(int id)
+        {
+            User user = auth.GetUser(id);
+            return user.Name;
         }
         public List<Coupon> GetCoupons()
         {
@@ -42,6 +49,10 @@ namespace Server.API.Operations
                 Coupons.Add(coupon);
             }
             sqlConnection.Close();
+            foreach(var item in Coupons)
+            {
+                item.CreatedByName = this.GetUserName(item.CreatedBy);
+            }
             return Coupons;
         }
         public Coupon GetCoupon(int id)

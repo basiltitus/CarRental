@@ -7,3 +7,9 @@
 03-12-2021 14:21:34 : Object cannot be cast from DBNull to other types.
 03-12-2021 15:29:30 : Procedure or function sp_updateorder has too many arguments specified.
 03-12-2021 15:30:47 : Procedure or function sp_updateorder has too many arguments specified.
+03-12-2021 18:46:00 : Procedure or function 'sp_getuserdetails' expects parameter '@UserId', which was not supplied.
+03-12-2021 18:46:02 : Procedure or function 'sp_getuserdetails' expects parameter '@UserId', which was not supplied.
+03-12-2021 18:48:19 : Procedure or function 'sp_getuserdetails' expects parameter '@UserId', which was not supplied.
+03-12-2021 18:48:23 : Procedure or function 'sp_getuserdetails' expects parameter '@UserId', which was not supplied.
+03-12-2021 19:22:17 : Failed to convert parameter value from a String to a Boolean.
+03-12-2021 19:23:59 : Failed to convert parameter value from a String to a Boolean.

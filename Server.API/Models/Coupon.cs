@@ -16,6 +16,7 @@ namespace Server.API.Models
         public int MaxDiscount { get; set; }
         public bool Active { get; set; }
         public int CreatedBy { get; set; }
+        public string CreatedByName { get; set; }
         public DateTime CreatedOn { get; set; }
     }
 }

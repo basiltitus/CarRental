@@ -38,41 +38,41 @@
             } <label class="btn btn-outline-success" for="descendingRadio"><i class="fas fa-sort-amount-down"></i> High->Low</label>
         </div>
     </div>
-    <div class="col-5 offset-1">
+    <div class="col-5 offset-2">
         <b> Sort By : </b><div class="switch-field">
-            @if (ViewBag.SortBy == "created")
+            @if (ViewBag.SortBy == "name")
             {
-                <input type="radio" name="sortRadio" id="createdRadio" value="created" class="sortbyradio" checked>
+                <input type="radio" name="sortRadio" id="createdRadio" value="name" class="sortbyradio" checked>
             }
             else
             {
-                <input type="radio" name="sortRadio" id="createdRadio" class="sortbyradio" value="created">
+                <input type="radio" name="sortRadio" id="createdRadio" class="sortbyradio" value="name">
             }
             <label class="form-check-label" for="createdRadio">
-                <i class="fas fa-calendar-day"></i> Created On
+                <i class="fas fa-font"></i> Name
             </label>
 
-            @if (ViewBag.SortBy == "charge")
+            @if (ViewBag.SortBy == "percentage")
             {
-                <input type="radio" name="sortRadio" value="charge" class="sortbyradio" id="chargeRadio" checked>
+                <input type="radio" name="sortRadio" value="percentage" class="sortbyradio" id="chargeRadio" checked>
             }
             else
             {
-                <input type="radio" name="sortRadio" value="charge" class="sortbyradio" id="chargeRadio">
+                <input type="radio" name="sortRadio" value="percentage" class="sortbyradio" id="chargeRadio">
             }
             <label class="form-check-label" for="chargeRadio">
-                <i class="fas fa-rupee-sign"></i> Charge Per Day
+                <i class="fas fa-percentage"></i> Percentage Discount
             </label>
-            @if (ViewBag.SortBy == "seat")
+            @if (ViewBag.SortBy == "maximum")
             {
-                <input type="radio" name="sortRadio" value="seat" class="sortbyradio" id="seatRadio" checked>
+                <input type="radio" name="sortRadio" value="maximum" class="sortbyradio" id="seatRadio" checked>
             }
             else
             {
-                <input type="radio" name="sortRadio" value="seat" class="sortbyradio" id="seatRadio">
+                <input type="radio" name="sortRadio" value="maximum" class="sortbyradio" id="seatRadio">
             }
             <label class="form-check-label" for="seatRadio">
-                <i class="fas fa-chair"></i> Seat Count
+                <i class="fas fa-rupee-sign"></i> Maximum Discount
             </label>
         </div>
     </div>
@@ -82,7 +82,7 @@
     <h5 class="p-5">No Coupons Available</h5>
 }
 else
-{
+{<div class=" row ">
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -146,7 +146,7 @@ else
                             </div>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-secondary" data-toggle="popover" title="Details" data-content="Created By : @item.CreatedBy <br /> Created On : @item.CreatedOn" data-html="true"><i class="far fa-eye"></i></button>
+                            <button type="button" class="btn btn-secondary" data-toggle="popover" title="Details" data-content="Created By : @item.CreatedByName <br /> Created On : @item.CreatedOn" data-html="true"><i class="far fa-eye"></i></button>
                             @if (Context.Session.GetInt32("_userId") == item.CreatedBy || Context.Session.GetString("_userType") == "Super")
                             {
                                 <button type="button" class="btn btn-primary edit-btn " onclick="location.href='@Url.Action("EditCoupon", "home", new { id = item.CouponId })';return false;"><i class="fas fa-pen-square"></i></button>
@@ -159,6 +159,7 @@ else
 
         </tbody>
     </table>
+</div>
 }
 <script type="text/javascript">
     $(document).ready(function () {
@@ -288,7 +289,7 @@ else
             $('input[name="orderRadio"]').click(function () {
                 var sortby = "@ViewBag.SortBy.ToString()";
                 if ($(this).is(':checked')) {
-                    location.href = "@Url.Action("CarModelList", "home")" + "?sortby=" + sortby + "&sortOrder=" + $(this).val();
+                    location.href = "@Url.Action("CouponsList", "home")" + "?sortby=" + sortby + "&sortOrder=" + $(this).val();
                 }
             });
         });
@@ -296,7 +297,7 @@ else
             $('input[name="sortRadio"]').click(function () {
                 var sortOrder = "@ViewBag.SortOrder.ToString()";
                 if ($(this).is(':checked')) {
-                    location.href = "@Url.Action("CarModelList", "home")" + "?sortby=" + $(this).val() + "&sortOrder=" + sortOrder;
+                    location.href = "@Url.Action("CouponsList", "home")" + "?sortby=" + $(this).val() + "&sortOrder=" + sortOrder;
                 }
             });
         });

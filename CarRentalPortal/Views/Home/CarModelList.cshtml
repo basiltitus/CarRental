@@ -127,7 +127,7 @@
                         @Html.DisplayFor(modelItem => item.ChargePerDay)
                     </td>
                     <td>
-                        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("ViewCarModel", "home", new { id = item.CarModelId })';return false;"><i class="fas fa-eye"></i></button>|
+                        <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("ViewCarModel", "home", new { id = item.CarModelId })';return false;"><i class="fas fa-eye"></i></button>
                         @if (Context.Session.GetInt32("_userId") == item.UserId || Context.Session.GetString("_userType") == "Super")
                         {
                             <button type="button" class="btn btn-primary edit-btn " onclick="location.href='@Url.Action("EditCarModel", "home", new { id = item.CarModelId })';return false;"><i class="fas fa-pen-square"></i></button>
@@ -159,10 +159,10 @@
                 }
             });
         });
-       @* $("#checkAll").click(function () {
-            $(".checkBox").prop('checked',
-                $(this).prop('checked'));
-        });*@
+           @* $("#checkAll").click(function () {
+                $(".checkBox").prop('checked',
+                    $(this).prop('checked'));
+            });*@
 
        @* $("#delete").click(function () {
             var selectedIDs = new Array();

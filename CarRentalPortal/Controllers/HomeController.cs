@@ -92,11 +92,14 @@ namespace CarRentalPortal.Controllers
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
                         UserProfile userProfile = JsonConvert.DeserializeObject<UserProfile>(stringData);
-                        if (userProfile.token != "unavailable" && userProfile.role == "admin")
+                        if (userProfile.token != "unavailable" && (userProfile.role == "admin"||userProfile.role=="lockedadmin"))
                         {
                             HttpContext.Session.SetString("_token", userProfile.token);
                             HttpContext.Session.SetInt32("_userId", userProfile.userId);
                             HttpContext.Session.SetString("_userName", userProfile.Name);
+                            if(userProfile.role=="lockedadmin")
+                            HttpContext.Session.SetString("_userType", "LockedAdmin");
+                            else
                             HttpContext.Session.SetString("_userType", "Admin");
                             HttpContext.Session.SetInt32("_userId", userProfile.userId);
                             HttpContext.Session.SetString("_avatarUrl", userProfile.ImgUrl);
@@ -347,7 +350,7 @@ namespace CarRentalPortal.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    item.Role = "admin";
+                    item.Role = "lockedadmin";
                     HttpResponseMessage response = await client.PostAsJsonAsync("auth/signup", item);
                     if (response.IsSuccessStatusCode)
                     {
@@ -358,6 +361,9 @@ namespace CarRentalPortal.Controllers
                             HttpContext.Session.SetString("_token", userProfile.token);
                             HttpContext.Session.SetString("_userName", userProfile.Name);
                             HttpContext.Session.SetString("_avatarUrl", userProfile.ImgUrl);
+                            if(userProfile.role=="lockedadmin")
+                            HttpContext.Session.SetString("_userType", "LockedAdmin");
+                            else
                             HttpContext.Session.SetString("_userType", "Admin");
                             HttpContext.Session.SetInt32("_userId", userProfile.userId);
                             return RedirectToAction("AdminPortal");
@@ -482,7 +488,7 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
             }
         }
-        public async Task<IActionResult> CouponsList(string sortby, string sortorder)
+        public async Task<IActionResult> CouponsList(string sortby, string sortOrder)
         {
             try
             {
@@ -492,15 +498,32 @@ namespace CarRentalPortal.Controllers
                         ViewBag.SortBy = "created";
                     else
                         ViewBag.SortBy = sortby;
-                    if (sortorder == null)
+                    if (sortOrder == null)
                         ViewBag.SortOrder = "ascending";
                     else
-                        ViewBag.SortOrder = sortorder;
+                        ViewBag.SortOrder = sortOrder;
                     HttpResponseMessage response = await client.GetAsync("Coupon");
                     if (response.IsSuccessStatusCode)
                     {
                         var stringData = response.Content.ReadAsStringAsync().Result;
                         List<Coupon> Coupons = JsonConvert.DeserializeObject<List<Coupon>>(stringData);
+                        switch (sortby)
+                        {
+                            case "name":
+                                Coupons = Coupons.OrderBy(c => c.CouponName).ToList();
+                                break;
+                            case "percentage":
+                                Coupons = Coupons.OrderBy(c => c.PercentageDiscount).ToList();
+                                break;
+                            case "maximum":
+                                Coupons = Coupons.OrderBy(c => c.MaxDiscount).ToList();
+                                break;
+                            default:
+                                Coupons = Coupons.OrderBy(c => c.CouponName).ToList();
+                                break;
+                        }
+                        if (sortOrder == "descending")
+                            Coupons.Reverse();
                         return View(Coupons);
                     }
                     return RedirectToAction(nameof(ErrorPage));
@@ -992,7 +1015,7 @@ namespace CarRentalPortal.Controllers
                     if (response.IsSuccessStatusCode)
                     {
                         HttpContext.Session.SetString("_userName", user.Name);
-                        if (HttpContext.Session.GetString("_userType") == "Admin" || HttpContext.Session.GetString("_userType") == "Super")
+                        if (HttpContext.Session.GetString("_userType") == "Admin"|| HttpContext.Session.GetString("_userType") == "LockedAdmin" || HttpContext.Session.GetString("_userType") == "Super")
                             return RedirectToAction("AdminPortal");
                         else
                             return RedirectToAction("UserPortal");
@@ -1903,6 +1926,139 @@ namespace CarRentalPortal.Controllers
                 return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
             }
         }
+        public async Task<IActionResult> AccountVerificationAsync(string sortby,string sortorder,string status)
+        {
+            if (HttpContext.Session.GetString("_userType") == "Super")
+            {
+                try
+                {
+                    if (HttpContext.Session.GetString("_userType") == "Customer")
+                        return RedirectToAction("UnauthorizedPage");
+                    if (status == null)
+                        ViewBag.Status = "all";
+                    else
+                        ViewBag.Status = status;
+                    if (sortby == null)
+                        ViewBag.SortBy = "created";
+                    else
+                        ViewBag.SortBy = sortby;
+                    if (sortorder == null)
+                        ViewBag.SortOrder = "ascending";
+                    else
+                        ViewBag.SortOrder = sortorder;
+
+                    if (HttpContext.Session.GetString("_userType") == "Customer" || HttpContext.Session.GetString("_userType") == "")
+                        return RedirectToAction("UnauthorizedPage");
+
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                    HttpResponseMessage response = await client.GetAsync("Auth/getadmins");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var stringData = response.Content.ReadAsStringAsync().Result;
+                        List<User> userList = JsonConvert.DeserializeObject<List<User>>(stringData); ;
+                        userList=userList.OrderByDescending(x => x.Role).ToList();
+                        switch (status)
+                        {
+                            case "locked":
+                                userList = userList.Where(x => x.Role == "lockedadmin").ToList();
+                                break;
+                            case "unlocked":userList = userList.Where(x => x.Role == "admin").ToList();
+                                break;
+                           default:
+                                break;
+                        }
+                        switch (sortby)
+                        {
+                            case "created":
+                                userList = userList.OrderBy(x => x.UserId).ToList();
+                                break;
+                            case "name":
+                                userList = userList.OrderBy(x => x.Name).ToList();
+                                break;
+                            default:
+                                userList = userList.OrderBy(x => x.UserId).ToList();
+                                break;
+                        }
+                        switch (sortorder)
+                        {
+                            case "ascending":
+                                break;
+                            case "descending":
+                                userList.Reverse();
+                                break;
+                            default:
+                                break;
+                        }
+                        return View(userList);
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+                }
+                return View();
+            }
+            return RedirectToAction(nameof(UnauthorizedPage));
+        }
+        [HttpPost]
+        public async Task<IActionResult> LockSelectedAccount([FromBody] int[] selectedId)
+        {
+            try
+            {
+
+                foreach (var item in selectedId)
+                {
+                    HttpResponseMessage response = await client.GetAsync("Auth/Changelockstatus/" + item + "/lock");
+
+                }
+                return Json("All the coupons deleted successfully!");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> UnlockSelectedAccount([FromBody] int[] selectedId)
+        {
+            try
+            {
+
+                foreach (var item in selectedId)
+                {
+                    HttpResponseMessage response = await client.GetAsync("auth/Changelockstatus/" + item + "/unlock");
+
+                }
+                return Json("All the coupons deleted successfully!");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
+        public async Task<IActionResult> ChangeLockStatus(int id,string status)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("_userType") != "Super")
+                    return RedirectToAction("UnauthorizedPage");
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("_token"));
+                HttpResponseMessage response = await client.GetAsync("auth/Changelockstatus/" + id + "/" + status);
+                if (response.IsSuccessStatusCode)
+                {
+                    var stringData = response.Content.ReadAsStringAsync().Result;
+                    bool deleted = JsonConvert.DeserializeObject<bool>(stringData);
+                    if (deleted)
+                        return RedirectToAction("AccountVerification");
+                }
+                return RedirectToAction("ErrorPage");
+            }
+            catch (Exception e)
+            {
+                return RedirectToAction(nameof(CatchAction), new { e = e.Message.ToString() });
+            }
+        }
         public IActionResult Logout()
         {
             HttpContext.Session.SetString("_userType", "");
@@ -1910,9 +2066,15 @@ namespace CarRentalPortal.Controllers
             HttpContext.Session.SetString("_token", "");
             return RedirectToAction("Index");
         }
+        public IActionResult LockedAdmin()
+        {
+            return View();
+        }
 
         public IActionResult UnauthorizedPage()
         {
+            if (HttpContext.Session.GetString("_userType") == "LockedAdmin")
+                return RedirectToAction(nameof(LockedAdmin));
             return View();
         }
         public IActionResult ZeroHistoryPage()

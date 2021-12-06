@@ -146,5 +146,40 @@ namespace Server.API.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+        [HttpGet("getadmins")]
+        public IActionResult GetAdmins()
+        {
+            try
+            {
+                return Ok(auth.GetAdmins());
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpGet("Changelockstatus/{id}/{status}")]
+        public IActionResult ChangeLockStatus(int id,string status)
+        {
+            try
+            {
+                return Ok(auth.ChangeLockStatus(id,status));
+            }
+            catch (Exception e)
+            {
+                using (StreamWriter writetext = new StreamWriter("Error.txt", append: true))
+                {
+                    var currentTime = DateTime.Now;
+                    writetext.WriteLine(currentTime + " : " + e.Message.ToString());
+                }
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
     }
 }

@@ -4,6 +4,8 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using Server.Library;
+using System.Collections.Generic;
+
 namespace Server.API.Operations
 {
     public class Authentication
@@ -70,6 +72,14 @@ namespace Server.API.Operations
                     userProfile.token = JSONWebToken.GenerateJSONWebToken(emailId, "Customer");
 
                     userProfile.role = "customer";
+                    return userProfile;
+                }
+                else if(role=="lockedadmin")
+                {
+                    userProfile.Name = name;
+                    userProfile.ImgUrl = imgurl;
+                    userProfile.token = JSONWebToken.GenerateJSONWebToken(emailId, "LockedAdmin");
+                    userProfile.role = "lockedadmin";
                     return userProfile;
                 }
                 else
@@ -221,6 +231,47 @@ namespace Server.API.Operations
             
             sqlConnection.Close();
             return userId;
+        }
+        public List<User> GetAdmins()
+        {
+            SqlCommand command = new SqlCommand("sp_getadmins", sqlConnection);
+            command.CommandType = CommandType.StoredProcedure;
+            sqlConnection.Open();
+            SqlDataReader rdr = command.ExecuteReader();
+            List<User> userList = new List<User>();
+            while (rdr.Read())
+            {
+            User user = new User();
+                user.UserId = Convert.ToInt32(rdr["UserId"].ToString());
+                user.Role = rdr["Role"].ToString().Trim();
+                user.Name = rdr["Name"].ToString().Trim();
+                user.PhoneNumber = rdr["PhoneNumber"].ToString().Trim();
+                user.LicenseNumber = rdr["LicenseNumber"].ToString().Trim();
+                user.EmailId = rdr["EmailId"].ToString().Trim();
+                user.Password = rdr["Password"].ToString().Trim();
+                user.DOB = Convert.ToDateTime(rdr["DOB"].ToString().Trim());
+                userList.Add(user);
+            }
+            sqlConnection.Close();
+            return userList;
+        }
+        public bool ChangeLockStatus(int id,string status)
+        {
+            SqlCommand command = new SqlCommand("sp_changelockstatus", sqlConnection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.Add("@UserId", SqlDbType.Int).Value = id;
+            if(status=="lock")
+            command.Parameters.Add("@Role", SqlDbType.NVarChar).Value = "lockedadmin";
+            else
+            command.Parameters.Add("@Role", SqlDbType.NVarChar).Value = "admin";
+
+            sqlConnection.Open();
+            int rows = command.ExecuteNonQuery();
+            sqlConnection.Close();
+            if (rows == 1)
+                return true;
+            else
+                return false;
         }
     }
 }

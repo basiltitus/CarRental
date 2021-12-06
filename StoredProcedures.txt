@@ -12,6 +12,8 @@ CREATE PROCEDURE sp_updateuser     @UserId int,@Name nvarchar(30),@EmailId nvarc
 
 CREATE PROCEDURE sp_getuserid @EmailId nvarchar(30)  as  begin  select userid from userprofile where EmailId=@EmailId;  end
 
+create procedure sp_changelockstatus @UserId int,@Role nvarchar(30)as begin update userprofile set role=@Role where userId=@UserId end
+
 //Car Controller
 
 CREATE PROCEDURE sp_checkcaravailable @CarId int,@FromDate date,@ToDate date  as  begin  declare @tempvar int;  select @tempvar=count(*) from OrderDetails where status<>'completed' and Status<>'unpaid' and CarId=@CarId and ((@FromDate between FromDate and ToDate) or(@ToDate between FromDate and ToDate) or(FromDate between @FromDate and @ToDate )or(ToDate between @FromDate and @ToDate))  if(@tempvar=0)  select 'available'  else  begin  Declare @lastdate Date;  SELECT @lastdate=ToDate  FROM OrderDetails  WHERE ToDate >= @FromDate and CarId=@CarId and status<>'completed' and status<>'unpaid'  select Concat(' ',FORMAT(DATEADD(day,1,@lastdate),'dd-MM-yyyy'))  end  end
@@ -34,7 +36,7 @@ CREATE PROCEDURE sp_changecaractive @CarId int,@Active bit  as  begin  update ca
  
 CREATE PROCEDURE sp_getcarmodel @CarModelId int  as  begin  select carmodel.CarModelId,carmodel.CarName,CarModel.CarTransmission,CarModel.CarType,CarModel.CreatedOn,CarModel.SeatCount,CarModel.ChargePerDay,CarModel.UserId,userprofile.Name from  carmodel inner join userprofile on userprofile.UserId=CarModel.UserId where carmodel.carmodelid=@CarModelId  end
  
-CREATE PROCEDURE sp_getcarjoined @CarId int   as  begin  SELECT userprofile.Name,  userprofile.userId,  carmodel.CarModelId,         carmodel.carname,         carmodel.cartransmission,         carmodel.cartype,      carmodel.chargeperday,      carmodel.seatcount,      carmodel.createdon,      car.RegNo,      car.Colour,      car.ImgUrl,      car.CarId    FROM car   INNER JOIN carmodel ON car.carModelId = carmodel.carModelId   INNER JOIN userprofile ON car.userId = userprofile.userId where Car.CarId=@CarId  end;
+CREATE PROCEDURE sp_getcarjoined @CarId int   as  begin  SELECT userprofile.Name,  userprofile.userId,  carmodel.CarModelId,         carmodel.carname,         carmodel.cartransmission,         carmodel.cartype,      carmodel.chargeperday,      carmodel.seatcount,      carmodel.createdon,      car.RegNo,      car.Colour,      car.ImgUrl, car.Active,     car.CarId    FROM car   INNER JOIN carmodel ON car.carModelId = carmodel.carModelId   INNER JOIN userprofile ON car.userId = userprofile.userId where Car.CarId=@CarId  end;
  
 CREATE PROCEDURE sp_getcar @CarId int  as  begin  select * from car where carid=@carid  end
  

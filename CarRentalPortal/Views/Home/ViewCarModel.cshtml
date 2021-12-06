@@ -29,7 +29,7 @@
         @Html.DisplayFor(model => model.ChargePerDay)<br />
 
         @Html.LabelFor(model => model.CreatedOn, new { @class = "carLabel" })
-        @Html.DisplayFor(model => model.CreatedOn)<br /><br />
+        @Model.CreatedOn.ToShortDateString()<br /><br />
 
         <span class="carLabel">Created By</span>
         @Html.DisplayFor(model => model.UserDetails.Name)

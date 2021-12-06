@@ -350,6 +350,7 @@ namespace Server.API.Operations
                 car.RegNo = Convert.ToString(rdr["RegNo"]);
                 car.Colour = Convert.ToString(rdr["Colour"]);
                 car.ImgUrl = Convert.ToString(rdr["ImgUrl"]);
+                car.Active = Convert.ToBoolean(rdr["Active"]);
 
             }
             sqlConnection.Close();

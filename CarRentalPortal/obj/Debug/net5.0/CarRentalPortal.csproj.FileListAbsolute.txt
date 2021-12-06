@@ -448,3 +448,6 @@ C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Raz
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\CouponsList.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\CreateCoupon.cshtml.g.cs
 C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\EditCoupon.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\LockedAdmin.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Shared\_LockedAdminNavBar.cshtml.g.cs
+C:\Users\basil\source\repos\CarRentalPortal\CarRentalPortal\obj\Debug\net5.0\Razor\Views\Home\AccountVerification.cshtml.g.cs
